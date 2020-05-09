@@ -72,6 +72,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'IMG_Summer_Project.wsgi.application'
 
+REST_FRAMEWORK ={
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

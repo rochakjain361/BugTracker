@@ -51,13 +51,8 @@ class Issues(models.Model):
     reported_by = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='reported_by')
     assigned_to = models.ForeignKey(AppUser, on_delete=models.SET_NULL, blank=True, null=True, related_name='assigned_to')
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(editable=False)
+    created_at = models.DateTimeField(auto_now_add = True)
     tag = models.IntegerField(choices = TAG_OPTIONS, default = 1)
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.created_at = timezone.now()
-        return super(User, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -67,12 +62,9 @@ class Comment(models.Model):
     comment = RichTextField()
     created_at = models.DateTimeField(auto_now_add = True) 
     commented_by = models.ForeignKey(AppUser, related_name='commented_by', on_delete=models.CASCADE)
-    
-    def save(self, *args, **kwargs):
-        super(Comment, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.comments
+        return self.comment
 
 class Image(models.Model):
     comment = models.ForeignKey(Comment, on_delete = models.CASCADE)
