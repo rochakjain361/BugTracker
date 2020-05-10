@@ -51,14 +51,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         members_list = project.members
 
         ser = AppUserSerializer(members_list, many=True)
-        return Response
+        return Response(ser.data)
 
     @action(methods=['get', ], detail=True, url_path='creator', url_name='creator')
     def get_creator(self, request, pk):
         project = Project.objects.get(pk = pk)
         creator = project.creator
 
-        ser = UserSerializer(creator)
+        ser = AppUserSerializer(creator)
         return Response(ser.data)
 
     @permission_classes(IsAdminOrProjectCreator)
