@@ -8,7 +8,7 @@ class IsAdminOrProjectCreator(permissions.BasePermission):
 
 class IsTeamMemberOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if(request.method in permissions.SAFE_METHODS) or (request.method == 'POST')
+        if(request.method in permissions.SAFE_METHODS) or (request.method == 'POST'):
             return True
         return request.user.isAdmin or (request.user in obj.members.all()) 
 

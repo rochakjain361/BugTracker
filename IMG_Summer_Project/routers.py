@@ -1,5 +1,5 @@
 from rest_framework import routers
-from BugTracker.viewsets import *
+from BugTracker.views import *
 
 url_router = routers.DefaultRouter()
 
