@@ -13,7 +13,7 @@ class IsTeamMemberOrAdmin(permissions.BasePermission):
         return request.user.isAdmin or (request.user in obj.members.all()) 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
-    def has_object_permission(self, requet, view, obj):
+    def has_object_permission(self, request, view, obj):
         if request.user.is_superuser:
             return True
         if request.method in permissions.SAFE_METHODS:
