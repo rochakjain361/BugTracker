@@ -12,7 +12,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.AppUserSerilizer
     permission_classes = [IsAdmin]
     
-class UserProjectViewSet(viewsets.ModelViewSet):
+class ProjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         try:
             return models.Project.objects.filter(members=self.kwargs['members_pk'])

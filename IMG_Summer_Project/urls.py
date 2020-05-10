@@ -16,8 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
+from .routers import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('djrichtextfield/', include('djrichtextfield.urls')),
 ]
+
+urlpatterns += url_router.urls 
