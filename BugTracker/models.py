@@ -1,8 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from djrichtextfield.models import RichTextField
 from django.utils import timezone
-
 # Create your models here.
 
 STATUS_CHOICES = (
@@ -25,20 +24,18 @@ TAG_OPTIONS = (
         (3, 'UI/UX Improvement')
 )
 
-class AppUser(models.Model):
-    user_profile = models.OneToOneField(User, on_delete=models.CASCADE)
+class AppUser(AbstractUser):
     user_role = models.IntegerField(choices = USER_ROLE, default = 1)
-    #email = models.OneToOneField(User.email, on_delete=models.CASCADE)
-    #password = models.OneToOneField(User.password)
+    display_picture = models.ImageField(upload_to='media/', null=True)
     def __str__(self):
-        return self.user_profile.username
+        return self.username()
 
 class Project(models.Model):
     name = models.CharField(max_length = 200)
     wiki = RichTextField()
     status = models.IntegerField(choices = STATUS_CHOICES, default = 1)
     #leader = models.ManyToMany(AppUser, related_name='mentor')
-    creator = models.ForeignKey(AppUser, related_name='creator', on_delete=models.CASCADE)
+    creator = models.ForeignKey(AppUser, related_name='creator', on_delete=models.SET_NULL, null=True)
     members = models.ManyToManyField(AppUser, related_name='members_working', blank=True)
     created_at = models.DateTimeField(auto_now_add = True)
     def __str__(self):
@@ -48,7 +45,7 @@ class Issues(models.Model):
     title = models.CharField(max_length=200)
     description = RichTextField()
     bug_status = models.IntegerField(choices = BUG_STATUS, default = 1)
-    reported_by = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='reported_by')
+    reported_by = models.ForeignKey(AppUser, on_delete=models.SET_NULL, related_name='reported_by', null=True)
     assigned_to = models.ForeignKey(AppUser, on_delete=models.SET_NULL, blank=True, null=True, related_name='assigned_to')
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
@@ -61,7 +58,7 @@ class Comment(models.Model):
     issue = models.ForeignKey(Issues, related_name='issue', on_delete=models.CASCADE)
     comment = RichTextField()
     created_at = models.DateTimeField(auto_now_add = True) 
-    commented_by = models.ForeignKey(AppUser, related_name='commented_by', on_delete=models.CASCADE)
+    commented_by = models.ForeignKey(AppUser, related_name='commented_by', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.comment
