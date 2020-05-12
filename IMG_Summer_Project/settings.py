@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'BugTracker.apps.BugtrackerConfig',
     'djrichtextfield',
+    'oauth2_provider',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'IMG_Summer_Project.urls'
@@ -70,12 +73,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'IMG_Summer_Project.wsgi.application'
 
 REST_FRAMEWORK ={
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
     ]
 }
 
 # Database
+
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
@@ -87,8 +91,8 @@ DATABASES = {
     }
 }
 
-
 # Password validation
+
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -106,8 +110,20 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+
+AUTHENTICATION_BACKENDS = {
+        'django.contrib.auth.backends.ModelBackend',
+        'guardian.backends.ObjectPermissionBackend',
+}
+
+OAUTH2_PROVIDER = {
+    # this is the list of available scopes
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'}
+}
 
 # Internationalization
+
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
@@ -120,12 +136,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
+
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 DJRICHTEXTFIELD_CONFIG = {
     'js': ['//tinymce.cachefly.net/4.1/tinymce.min.js'],
     'init_template': 'djrichtextfield/init/tinymce.js',
@@ -136,4 +154,5 @@ DJRICHTEXTFIELD_CONFIG = {
         'width': 700
     }
 }
+
 AUTH_USER_MODEL = 'BugTracker.AppUser'

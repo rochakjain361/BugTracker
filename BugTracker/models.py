@@ -28,7 +28,7 @@ class AppUser(AbstractUser):
     user_role = models.IntegerField(choices = USER_ROLE, default = 1)
     display_picture = models.ImageField(upload_to='media/', null=True)
     def __str__(self):
-        return self.username()
+        return self.get_username()
 
 class Project(models.Model):
     name = models.CharField(max_length = 200)

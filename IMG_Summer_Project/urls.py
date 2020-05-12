@@ -21,6 +21,7 @@ from .routers import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('djrichtextfield/', include('djrichtextfield.urls')),
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]
 
 urlpatterns += url_router.urls 
