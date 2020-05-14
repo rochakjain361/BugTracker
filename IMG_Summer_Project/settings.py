@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'djrichtextfield',
     'oauth2_provider',
     'corsheaders',
+    'guardian',
 ]
 
 MIDDLEWARE = [
@@ -128,7 +129,7 @@ OAUTH2_PROVIDER = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

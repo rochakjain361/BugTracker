@@ -12,7 +12,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.AppUser
-        fields = ['id', 'user_role']
+        fields = ['pk', 'user_role', 'username', 'enrNo', 'first_name', 'email']
 
 class IssueSerializer(serializers.ModelSerializer):
     reported_by = AppUserSerializer()

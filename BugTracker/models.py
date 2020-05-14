@@ -27,6 +27,8 @@ TAG_OPTIONS = (
 class AppUser(AbstractUser):
     user_role = models.IntegerField(choices = USER_ROLE, default = 1)
     display_picture = models.ImageField(upload_to='media/', null=True)
+    enrNo = models.IntegerField(default=0)
+    access_token = models.CharField(max_length=100, default='', blank=True)
     def __str__(self):
         return self.get_username()
 
@@ -40,6 +42,10 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     def __str__(self):
         return self.name
+
+    def remove_members(self, member):
+        member_to_remove = AppUser.objects.filter(AppUser = self.member)
+        
 
 class Issues(models.Model):
     title = models.CharField(max_length=200)

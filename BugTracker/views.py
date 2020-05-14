@@ -5,7 +5,7 @@ from BugTracker.permissions import *
 from rest_framework.response import Response
 from django.http import Http404
 from rest_framework.decorators import action, permission_classes
-
+import requests
 # Create your views here.
 
 # View for displaying the AppUser Content
@@ -13,7 +13,31 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AppUser.objects.all()
     serializer_class = AppUserSerializer
     permission_classes = [IsAdminOrReadOnly]
-    
+
+    @action(methods=['POST', 'OPTIONS', ], detail=False, url_name='logged_in', url_path='logged_in')
+    def logged_in(self, request):
+        request_data = self.request.data
+
+        code = request_data['code']
+
+        #GETTING THE AUTHORISATION CODE
+        url = 'https://internet.channeli.in/open_auth/token/'
+        data = {
+                'client_id':'pHcvos8QgF2QPD0xX4vlG0nZ8PFbqcRjTfjsUUa5',
+                'client_secret':'72jSbiUsmvlGCR4spSmQUizM2YcItiCUMY8QYEv7ahZjjiLPD2WKh4YFs0ac1ZLl5crsz8u7EXq7zz8NPm3rsrki4XyPmJ2YBU3fIsNr4H1RCKKJ9N0kwZNlSe7Lgl5V',
+                'grant_type':'authorization_code',
+                'redirect_url':'http://127.0.0.1:8000/',
+                'code': code
+                } 
+        user_data = requests.post(url=url, data=data).json()
+
+        acs_token = user_data['access_token']
+        #GET ACCESS TOKEN
+        headers={
+                'Authorisation':'Bearer' + acs_token
+                }
+        user_data = requests.get(url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers).json()
+
 class ProjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         try:
