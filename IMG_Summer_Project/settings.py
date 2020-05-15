@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'djrichtextfield',
     'oauth2_provider',
     'corsheaders',
-    'guardian',
     'rest_framework.authtoken',
     'rest_auth',
 ]
@@ -80,12 +79,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'IMG_Summer_Project.wsgi.application'
 
-REST_FRAMEWORK ={
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-    ]
-}
-
 # Database
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -121,8 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 AUTHENTICATION_BACKENDS = {
-        'django.contrib.auth.backends.ModelBackend',
-        'guardian.backends.ObjectPermissionBackend',
+        'django.contrib.auth.backends.ModelBackend' 
 }
 
 OAUTH2_PROVIDER = {

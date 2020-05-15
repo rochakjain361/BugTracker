@@ -7,6 +7,7 @@ from django.http import Http404
 from rest_framework.decorators import action, permission_classes
 import requests
 from django.contrib.auth import login, logout
+from django.http import HttpResponse
 # Create your views here.
 
 # View for displaying the AppUser Content
@@ -18,7 +19,6 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     @action(methods=['post', 'options', 'get',], detail=False, url_name='onlogin', url_path='onlogin')
     def on_login(self, request):
         code = self.request.query_params.get('code')
-
         #GETTING THE AUTHORISATION CODE
         url = 'https://internet.channeli.in/open_auth/token/'
         data = {
@@ -29,17 +29,14 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 'code': code
                 } 
         user_data = requests.post(url=url, data=data).json()
-
         acs_token = user_data['access_token']
         #GET ACCESS TOKEN
         headers={
-                'Authorisation':'Bearer' + acs_token
+                'Authorization':'Bearer ' + acs_token
                 }
         user_data = requests.get(url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers).json()
-        return Response(user_data)
-
+        #return HttpResponse(user_data)
         #CHECK IF USER EXISTS
-
         try:
             user = AppUser.objects.get(enrNo=user_data['student']['enrolmentNumber'])
         except AppUser.DoesNotExist:
@@ -49,7 +46,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 if role["role"] == "Maintainer":
                     in_img = True
                     break
-            if im_img:
+            if in_img:
                 #CREATE USER
                 enrNum = user_data["student"]["enrolmentNumber"]
                 email = user_data["contactInformation"]["instituteWebmailAddress"]
@@ -62,16 +59,17 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 if user_data['student']['currentYear'] >= 3:
                     user_role_assigned = 2
 
-                newUser = AppUser(enrNo = enrNum, email=email, first_name = firstName, username=fullName, user_role = user_role_assigned, access_token = acs_token)
+                newUser = AppUser(enrNo = enrNum, email=email, first_name = firstname, username=fullName, user_role = user_role_assigned, access_token = acs_token)
+                newUser.is_staff = True
+                newUser.is_admin = True
                 newUser.save()
 
-                return Response({'status': 'User Created', 'access_token': ac_tok}, status=status.HTTP_202_ACCEPTED)
+                return Response({'status': 'User Created', 'access_token': acs_token}, status=status.HTTP_202_ACCEPTED)
             else:
                 return Response({'status': 'User not in IMG'}, status=status.HTTP_401_UNAUTHORIZED)
 
         login(request=request, user=user)
-        return Response({'Status': 'User Exits', 'access_token': acs_token})
-
+        return Response({'Status': 'User Exists', 'access_token': acs_token})
     @action(methods=['post', 'options', ], detail=False, url_name='login', url_path='login')
     def login(self, request):
 
