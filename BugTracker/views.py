@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from django.http import Http404
 from rest_framework.decorators import action, permission_classes
 import requests
+from django.contrib.auth import login, logout
 # Create your views here.
 
 # View for displaying the AppUser Content
@@ -14,19 +15,17 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AppUserSerializer
     permission_classes = [IsAdminOrReadOnly]
 
-    @action(methods=['POST', 'OPTIONS', ], detail=False, url_name='logged_in', url_path='logged_in')
-    def logged_in(self, request):
-        request_data = self.request.data
-
-        code = request_data['code']
+    @action(methods=['post', 'options', 'get',], detail=False, url_name='onlogin', url_path='onlogin')
+    def on_login(self, request):
+        code = self.request.query_params.get('code')
 
         #GETTING THE AUTHORISATION CODE
         url = 'https://internet.channeli.in/open_auth/token/'
         data = {
-                'client_id':'pHcvos8QgF2QPD0xX4vlG0nZ8PFbqcRjTfjsUUa5',
-                'client_secret':'72jSbiUsmvlGCR4spSmQUizM2YcItiCUMY8QYEv7ahZjjiLPD2WKh4YFs0ac1ZLl5crsz8u7EXq7zz8NPm3rsrki4XyPmJ2YBU3fIsNr4H1RCKKJ9N0kwZNlSe7Lgl5V',
+                'client_id':'gfZHj4O7eZKrzv8Vpgqi1s5kKWgvgyFCf5vt822c',
+                'client_secret':'0DTRwGP07h4r4gF7IUGdEvpw6jp9mvk7hYchwDldW1PjnqvbhBacIFXBeFSA0etDI8CBouTGeJb42t9hEOhraSXcRWkUrSZ2bidOjawPD4QZBCGiuZV0F4emsGSmYxMz',
                 'grant_type':'authorization_code',
-                'redirect_url':'http://127.0.0.1:8000/',
+                'redirect_url':'http://127.0.0.1:8000/appusers/onlogin',
                 'code': code
                 } 
         user_data = requests.post(url=url, data=data).json()
@@ -37,6 +36,54 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 'Authorisation':'Bearer' + acs_token
                 }
         user_data = requests.get(url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers).json()
+        return Response(user_data)
+
+        #CHECK IF USER EXISTS
+
+        try:
+            user = AppUser.objects.get(enrNo=user_data['student']['enrolmentNumber'])
+        except AppUser.DoesNotExist:
+            # CHECK IMG MEMBER OR NOT
+            in_img = False
+            for role in user_data["person"]["roles"]:
+                if role["role"] == "Maintainer":
+                    in_img = True
+                    break
+            if im_img:
+                #CREATE USER
+                enrNum = user_data["student"]["enrolmentNumber"]
+                email = user_data["contactInformation"]["instituteWebmailAddress"]
+
+                name = (user_data["person"]["fullName"]).split()
+                firstname = name[0]
+                fullName = user_data["person"]["fullName"]
+
+                user_role_assigned = 1
+                if user_data['student']['currentYear'] >= 3:
+                    user_role_assigned = 2
+
+                newUser = AppUser(enrNo = enrNum, email=email, first_name = firstName, username=fullName, user_role = user_role_assigned, access_token = acs_token)
+                newUser.save()
+
+                return Response({'status': 'User Created', 'access_token': ac_tok}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response({'status': 'User not in IMG'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        login(request=request, user=user)
+        return Response({'Status': 'User Exits', 'access_token': acs_token})
+
+    @action(methods=['post', 'options', ], detail=False, url_name='login', url_path='login')
+    def login(self, request):
+
+        data = self.request.data
+        token = data['access_token']
+
+        try:
+            user = AppUser.objects.get(access_token=token)
+        except AppUser.DoesNot.Exist:
+            return Response({'status': 'user does not exist in database'}, status=status.HTTP_403_FORBIDDEN)
+        login(request=request, user=user)
+        return Response({'status': 'user found'}, status=status.HTTP_202_ACCEPTED)
 
 class ProjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):

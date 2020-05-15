@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'corsheaders',
     'guardian',
+    'rest_framework.authtoken',
+    'rest_auth',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +54,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+        'http://127.0.0.1:8000/'
+        )
 
 ROOT_URLCONF = 'IMG_Summer_Project.urls'
 
