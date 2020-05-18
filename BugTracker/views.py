@@ -8,14 +8,13 @@ from rest_framework.decorators import action, permission_classes
 import requests
 from django.contrib.auth import login, logout
 from django.http import HttpResponse
-from rest_framework.parsers import FileUploadParser
 # Create your views here.
 
 # View for displaying the AppUser Content
 class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AppUser.objects.all()
     serializer_class = AppUserSerializer
-    permission_classes = [IsAdminOrReadOnly]
+    #permission_classes = [IsAdminOrReadOnly]
 
     @action(methods=['post', 'options', 'get',], detail=False, url_name='onlogin', url_path='onlogin')
     def on_login(self, request):
@@ -191,7 +190,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             return Comment.objects.all()
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAdminOrReadOnly]
+    #permission_classes = [IsAdminOrReadOnly]
 
 class ImageViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
@@ -201,5 +200,4 @@ class ImageViewSet(viewsets.ModelViewSet):
             return Image.objects.all()
     queryset = Image.objects.all()
     serializer_class = UploadImageSerializers
-    parser_classes = [FileUploadParser]
 

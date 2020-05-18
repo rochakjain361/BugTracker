@@ -15,12 +15,10 @@ class AppUserSerializer(serializers.ModelSerializer):
         fields = ['pk', 'user_role', 'username', 'enrNo', 'first_name', 'email']
 
 class IssueSerializer(serializers.ModelSerializer):
-    reported_by = AppUserSerializer()
-    assigned_to = AppUserSerializer()
     class Meta:
         model = models.Issues
         fields = ['title', 'description', 'bug_status', 'reported_by', 'assigned_to', 'project', 'created_at', 'tag']
-        read_only_fields = ['title', 'reported_by', 'project', 'created_at']
+        #read_only_fields = ['title', 'reported_by', 'project', 'created_at']
         
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,4 +41,4 @@ class ProjectEditSerializers(serializers.ModelSerializer):
 class UploadImageSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Image
-        field = '__all__'
+        fields = '__all__'
