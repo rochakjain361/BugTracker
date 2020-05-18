@@ -39,3 +39,8 @@ class ProjectEditSerializers(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['name', 'wiki', 'creator', 'created_at']
         extra_kwargs = {'issues':{'required':False}, 'members':{'required': False}}
+
+class UploadImageSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Image
+        field = '__all__'

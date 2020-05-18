@@ -9,6 +9,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -92,6 +95,12 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.FileUploadParser',
+    ]
+}
+
 # Password validation
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -156,3 +165,6 @@ DJRICHTEXTFIELD_CONFIG = {
 }
 
 AUTH_USER_MODEL = 'BugTracker.AppUser'
+MEDIA_ROOT = os.path.join(BASE_DIR, '..',  'uploaded_media')
+MEDIA_URL = '/media/'
+

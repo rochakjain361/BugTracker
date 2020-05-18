@@ -8,6 +8,7 @@ from rest_framework.decorators import action, permission_classes
 import requests
 from django.contrib.auth import login, logout
 from django.http import HttpResponse
+from rest_framework.parsers import FileUploadParser
 # Create your views here.
 
 # View for displaying the AppUser Content
@@ -19,6 +20,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     @action(methods=['post', 'options', 'get',], detail=False, url_name='onlogin', url_path='onlogin')
     def on_login(self, request):
         code = self.request.query_params.get('code')
+        print(code)
         #GETTING THE AUTHORISATION CODE
         url = 'https://internet.channeli.in/open_auth/token/'
         data = {
@@ -30,12 +32,13 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 } 
         user_data = requests.post(url=url, data=data).json()
         acs_token = user_data['access_token']
+        print(acs_token)
         #GET ACCESS TOKEN
         headers={
                 'Authorization':'Bearer ' + acs_token
                 }
-        user_data = requests.get(url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers).json()
-        #return HttpResponse(user_data)
+        user_data = requests.get(url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers)
+       # return HttpResponse(user_data)
         #CHECK IF USER EXISTS
         try:
             user = AppUser.objects.get(enrNo=user_data['student']['enrolmentNumber'])
@@ -82,7 +85,6 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({'status': 'user does not exist in database'}, status=status.HTTP_403_FORBIDDEN)
         login(request=request, user=user)
         return Response({'status': 'user found'}, status=status.HTTP_202_ACCEPTED)
-
 class ProjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         try:
@@ -190,3 +192,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+class ImageViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        try:
+            return Image.objects.filter(comment=self.kwargs['comment_pk'])
+        except KeyError:
+            return Image.objects.all()
+    queryset = Image.objects.all()
+    serializer_class = UploadImageSerializers
+    parser_classes = [FileUploadParser]
+
