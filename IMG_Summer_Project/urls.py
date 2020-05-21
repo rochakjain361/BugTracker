@@ -25,6 +25,6 @@ urlpatterns = [
     path('djrichtextfield/', include('djrichtextfield.urls')),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('rest-auth/', include('rest_auth.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 urlpatterns += url_router.urls 

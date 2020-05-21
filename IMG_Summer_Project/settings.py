@@ -157,6 +157,3 @@ DJRICHTEXTFIELD_CONFIG = {
 }
 
 AUTH_USER_MODEL = 'BugTracker.AppUser'
-MEDIA_ROOT = os.path.join(BASE_DIR, '..',  'uploaded_media')
-MEDIA_URL = '/media/'
-

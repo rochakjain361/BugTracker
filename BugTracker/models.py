@@ -72,3 +72,4 @@ class Comment(models.Model):
 class Image(models.Model):
     comment = models.ForeignKey(Comment, on_delete = models.CASCADE)
     image = models.ImageField(null=True, upload_to='media/')
+                
