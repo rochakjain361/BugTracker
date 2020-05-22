@@ -1,5 +1,6 @@
 export const API_URL = 'http://127.0.0.1:8000/'
 export const APP_USERS_URL = API_URL + 'appusers/'
+export const CURRENT_APP_USER_URL = APP_USERS_URL + 'current_user/current_user/'
 export const PROJECTS_URL = API_URL + 'project/'
 export const ISSUES_URL = API_URL + 'issues/'
 export const COMMENT_URL = API_URL + 'comment/'

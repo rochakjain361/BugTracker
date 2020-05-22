@@ -16,8 +16,6 @@ const fetchProjectSuccess = project_data => {
     return{
         type : FETCH_PROJECT_DETAILS_SUCCESS,
         data : project_data,
-        name : project_data.name,
-        status : project_data.status,
     }
 }
 
