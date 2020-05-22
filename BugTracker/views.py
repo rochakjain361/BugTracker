@@ -3,6 +3,7 @@ from BugTracker.serializers import *
 from BugTracker.models import *
 from BugTracker.permissions import *
 from rest_framework.response import Response
+from rest_framework import status
 from django.http import Http404
 from rest_framework.decorators import action, permission_classes
 import requests
@@ -69,21 +70,13 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 return Response({'status': 'User Created', 'access_token': acs_token}, status=status.HTTP_202_ACCEPTED)
             else:
                 return Response({'status': 'User not in IMG'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'Status': 'User Exists', 'access_token': acs_token})
+    @action(methods = ['get',], detail=True, url_path='current_user', url_name='current_user')
+    def get_current_user(self, request, pk):
+        user = request.user
+        serializer = AppUserSerializer(user)
+        return Response(serializer.data)
 
-        login(request=request, user=user)
-        return Response({'Status': 'User Exists', 'access_token': acs_token})
-    @action(methods=['post', 'options', ], detail=False, url_name='login', url_path='login')
-    def login(self, request):
-
-        data = self.request.data
-        token = data['access_token']
-
-        try:
-            user = AppUser.objects.get(access_token=token)
-        except AppUser.DoesNot.Exist:
-            return Response({'status': 'user does not exist in database'}, status=status.HTTP_403_FORBIDDEN)
-        login(request=request, user=user)
-        return Response({'status': 'user found'}, status=status.HTTP_202_ACCEPTED)
 class ProjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         try:
@@ -106,7 +99,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return ProjectEditSerializers
 
     @action(methods=['get', ], detail=True, url_path='issues', url_name='issues')
-    def get_issues(self, requets, pk):
+    def get_issues(self, request, pk):
         try:
             issues_list = Issues.objects.filter(project=pk)
         except KeyError:
@@ -126,8 +119,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(methods=['get', ], detail=True, url_path='creator', url_name='creator')
     def get_creator(self, request, pk):
         project = Project.objects.get(pk = pk)
-        creator = project.creator
-
+        creator = AppUser.objects.get(username = project.creator)
         ser = AppUserSerializer(creator)
         return Response(ser.data)
 
@@ -155,12 +147,12 @@ class IssuesViewSet(viewsets.ModelViewSet):
     queryset = Issues.objects.all()
     serializer_class = IssueSerializer
 
-    @action(methods=['patch', ], detail=True, url_path='assign', url_name='assign')
+    @action(methods=['patch','put', 'get'], detail=True, url_path='assign', url_name='assign')
     @permission_classes([IsTeamMemberOrAdmin, IsAdminOrProjectCreator])
     def assign_issue(self, request, pk):
-        assigned_to = self.request.query_params.get('assigned_to')
         issue = Issues.objects.get(pk=pk)
-        user = AppUser.objects.get(pk=assigned_to)
+        print(issue.assigned_to)
+        user = AppUser.objects.get(username=issue.assigned_to)
 
         if user in issue.project.members.all():
             ser = IssueSerializer(issue, data={'assigned_to': assign_to}, partial=True)

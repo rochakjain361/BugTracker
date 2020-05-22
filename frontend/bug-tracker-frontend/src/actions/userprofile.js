@@ -8,17 +8,18 @@ const requestUserProfile = pk => {
     return dispatch =>{
         fetchUserProfileApi(pk)
         .then(
-            response => dispatch(fetchUserProfileSucces(response.data)),
+            response => dispatch(fetchUserProfileSuccess(response.data)),
             error => dispatch(fetchUserProfileError(error)
             )
         )
     }
 }
 
-const fetchUserProfileSucces = data => {
+const fetchUserProfileSuccess = profile_data => {
     return{
         type : FETCH_USER_PROFILE_SUCCESS,
-        profile : data.json(),
+        data : profile_data,
+        
     }
 }
 

@@ -5,14 +5,12 @@ from django.contrib.auth import get_user_model
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
-        fields = ['name', 'wiki', 'status', 'creator', 'created_at']
-        extra_kwargs = {'members':{'required': False}}
-        read_only_fields = ['creator', 'created_at']
+        fields = '__all__'
 
 class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.AppUser
-        fields = ['pk', 'user_role', 'username', 'enrNo', 'first_name', 'email']
+        fields = ['pk', 'username', 'first_name', 'email', 'enrNo', 'user_role', 'display_picture', 'access_token']
 
 class IssueSerializer(serializers.ModelSerializer):
     class Meta:
