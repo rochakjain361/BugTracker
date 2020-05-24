@@ -15,7 +15,7 @@ class AppUserSerializer(serializers.ModelSerializer):
 class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Issues
-        fields = ['title', 'description', 'bug_status', 'reported_by', 'assigned_to', 'project', 'created_at', 'tag']
+        fields = '__all__'
         #read_only_fields = ['title', 'reported_by', 'project', 'created_at']
         
 class CommentSerializer(serializers.ModelSerializer):

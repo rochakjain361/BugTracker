@@ -25,4 +25,4 @@ const fetchCurrentUserProfileError = error => {
     }
 }
 
-export {requestUserProfile}
+export {requestCurrentUserProfile}

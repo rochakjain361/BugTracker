@@ -72,10 +72,31 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 return Response({'status': 'User not in IMG'}, status=status.HTTP_401_UNAUTHORIZED)
             return Response({'Status': 'User Exists', 'access_token': acs_token})
     @action(methods = ['get',], detail=True, url_path='current_user', url_name='current_user')
-    def get_current_user(self, request, pk):
+    def get_current_user_data(self, request, pk):
         user = request.user
         serializer = AppUserSerializer(user)
-        return Response(serializer.data)
+        user_projects = Project.objects.filter(members=user.pk)
+        serializer2 = ProjectSerializer(user_projects, many=True)
+        user_assigned_issues = Issues.objects.filter(assigned_to=user.pk)
+        serializer3 = IssueSerializer(user_assigned_issues, many=True)
+        user_reported_issues = Issues.objects.filter(reported_by=user.pk)
+        serializer4 = IssueSerializer(user_reported_issues, many=True)
+        return Response({"user_data": serializer.data,
+                         "projects": serializer2.data,
+                         "assigned_issues": serializer3.data,
+                         "reported_issues": serializer4.data})
+
+    @action(methods = ['get',], detail=True, url_path='user_info', url_name='user_info')
+    def get_user_info(self, request, pk):
+        user = AppUser.objects.get(pk=pk)
+        user_projects = Project.objects.filter(members=user.pk)
+        serializer = AppUserSerializer(user)
+        serializer2 = ProjectSerializer(user_projects, many=True)
+        user_reported_issues = Issues.objects.filter(reported_by=user.pk)
+        serializer3 = IssueSerializer(user_reported_issues, many=True)
+        return Response({"user_details": serializer.data,
+                         "project": serializer2.data,
+                         "issues_reported": serializer3.data})
 
 class ProjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
@@ -112,7 +133,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def get_team_members(self, request, pk):
         project = Project.objects.get(pk = pk)
         members_list = project.members
-
         ser = AppUserSerializer(members_list, many=True)
         return Response(ser.data)
 
@@ -147,23 +167,22 @@ class IssuesViewSet(viewsets.ModelViewSet):
     queryset = Issues.objects.all()
     serializer_class = IssueSerializer
 
-    @action(methods=['patch','put', 'get'], detail=True, url_path='assign', url_name='assign')
-    @permission_classes([IsTeamMemberOrAdmin, IsAdminOrProjectCreator])
+    @action(methods=['patch', 'get'], detail=True, url_path='assign', url_name='assign')
     def assign_issue(self, request, pk):
+        assign_to = self.request.query_params.get('assign_to')
         issue = Issues.objects.get(pk=pk)
-        print(issue.assigned_to)
-        user = AppUser.objects.get(username=issue.assigned_to)
 
-        if user in issue.project.members.all():
-            ser = IssueSerializer(issue, data={'assigned_to': assign_to}, partial=True)
+        if AppUser.objects.get(pk=assign_to) in issue.project.members.all():
+            serializer = IssueSerializer(issue, data={'assigned_to': assign_to}, partial=True)
 
-            if ser.is_valid():
-                ser.save()
-            return Response({'status': 'Assignment Successful'}, status=status.HTTP_202_ACCEPTED)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'status': 'Assignment Successful'}, status=status.HTTP_202_ACCEPTED)
 
         else:
-            return Response({'Error': 'User not a team member'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response({'Error': 'User not a Team Member'}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+        #if AppUser.objects.get(pk=assign_to) in issue.project.members.all():
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
