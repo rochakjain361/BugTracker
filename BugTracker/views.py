@@ -193,6 +193,13 @@ class IssuesViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(reported_by=self.request.user)
 
+    @action(methods=['get',], detail=True, url_path='comments', url_name='comments')
+    def get_issue_comments(self, request, pk):
+        issue = Issues.objects.get(pk=pk)
+        comments = Comment.objects.filter(issue=issue)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
 class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         try:
@@ -202,6 +209,12 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     #permission_classes = [IsAdminOrReadOnly]
+    @action(methods=['get',], detail=True, url_path='images', url_name='images')
+    def get_comment_images(self, request, pk):
+        comment = Comment.objects.get(pk=pk)
+        images = Image.objects.filter(comment=comment)
+        serializer = UploadImageSerializers(images, many=True)
+        return Response(serializer.data)
 
 class ImageViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
