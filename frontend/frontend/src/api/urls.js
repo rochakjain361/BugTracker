@@ -1,13 +1,28 @@
-export const API_URL = 'http://127.0.0.1:8000/'
+export function API_URL()  {
+    return 'http://127.0.0.1:8000/' }
 //
-export const APP_USERS_URL = API_URL + 'appusers/'
+export function APP_USERS_URL() { 
+    return `${API_URL}appusers/`
+}
 //
-export const CURRENT_APP_USER_URL = APP_USERS_URL + 'current_user/current_user/'
+export function CURRENT_APP_USER_URL() { 
+    return `${APP_USERS_URL}current_user/current_user/`
+}
 //
-export const PROJECTS_URL = API_URL + 'project/'
-export const ISSUES_URL = API_URL + 'issues/'  
-export const COMMENT_URL = API_URL + 'comment/' 
-export const IMAGE_URL = API_URL + 'image/' 
+export function PROJECTS_URL() {
+    return `${API_URL}project/`}
+
+export function ISSUES_URL() {
+    return `${API_URL}issues/`
+}
+
+export function COMMENT_URL() { 
+    return `${API_URL}comment/`
+}
+
+export function IMAGE_URL() { 
+    return `${API_URL}image/`
+} 
 
 export const APP_USER_DETAILS_URL = pk => {
     return APP_USERS_URL + pk + '/';

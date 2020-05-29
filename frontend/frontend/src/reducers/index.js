@@ -13,18 +13,18 @@ import userInfo from './userinfo'
 import users from './users'
 
 const rootReducer = combineReducers({
-    ImagesOfComment: commentImages,
-    UserComments: comment,
-    currentprofile: currentUserProfile,
-    CommentsOfIssue: issueComment,
-    ToatalIssues: issues,
-    CreatorOfProject: projectCreator,
-    DetailsofProjects: projectDetails,
-    issuesOfProject: projectIssues,
-    MembersofProject: projectMembers,
-    ProjectsRegistered: projects,
-    InformationOfUser: userInfo,
-    UsersRegistered: users
+    commentImages,
+    comment,
+    currentProfile: currentUserProfile,
+    issueComment,
+    issues,
+    projectCreator,
+    projectDetails,
+    projectIssues,
+    projectMembers,
+    projects,
+    userInfo,
+    users
 });
 
 export default rootReducer

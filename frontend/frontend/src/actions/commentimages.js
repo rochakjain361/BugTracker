@@ -5,7 +5,10 @@ const requestCommentImages = pk => {
     return dispatch =>{
         getCommentImageApi(pk)
         .then(
-            response => dispatch(getCommentImageSucces(response.data)),
+            response => {
+                dispatch(getCommentImageSucces(response.data))
+                return response.data;
+            },
             error => dispatch(getCommentImageFailure(error())
             )
         )

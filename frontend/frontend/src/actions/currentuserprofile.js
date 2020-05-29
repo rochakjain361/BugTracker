@@ -1,8 +1,8 @@
 import { fetchCurrentUserProfileApi } from '../api/currentuserprofile'
 import {FETCH_CURRENT_USER_PROFILE_SUCCESS, FETCH_CURRENT_USER_PROFILE_FAILURE} from './actiontype'
-const requestCurrentUserProfile = () => {
+function requestCurrentUserProfile() {
     return dispatch =>{
-        fetchCurrentUserProfileApi
+        fetchCurrentUserProfileApi()
         .then(
             response => dispatch(fetchCurrentUserProfileSuccess(response.data)),
             error => dispatch(fetchCurrentUserProfileError(error)
