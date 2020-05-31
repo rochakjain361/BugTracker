@@ -1,37 +1,42 @@
-import React from 'react'
+import React, { Component } from 'react'
 //import { Grid, Placeholder, Segment } from 'semantic-ui-react'
-import {Component} from 'react'
 import { connect } from 'react-redux'
-import { requestCurrentUserProfile } from '../../actions/currentuserprofile'
+import { getCurrentUser } from '../../actions/getCurrentUserProfile'
+import axios from 'axios'
 
 class MyPage extends Component{
+  constructor(props) {
+    super(props);
+
+    this.state = {
+       got_response: false,
+       data: []    
+    };
+  }
+
   componentDidMount() {
-    this.props.requestCurrentUserProfile();
+    axios({
+      method:'post',
+      url: 'http://127.0.0.1:8000/appusers/my_page/',
+      headers:{
+        'Content-Type':'application/json',
+      },
+      withCredentials: true,
+      data:{
+        access_token: this.props.access_token
+      }
+    }).then((response) => {
+      console.log(response)
+    })
   }
 
-  render() {
-    const { requestCurrentUserProfile } = this.props;
-    return (
+  render(){
+    return(
       <div>
-        Hello world
-        {requestCurrentUserProfile.user_data}
+        You are on my page.
       </div>
-    );
-    }
-}
-
-const mapStateToProps = (state) => {
-  return {
-    currentuserprofile: state.requestCurrentUserProfile,
+    )
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    requestCurrentUserProfile: () => {
-      dispatch(requestCurrentUserProfile());
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyPage);
+export default MyPage;

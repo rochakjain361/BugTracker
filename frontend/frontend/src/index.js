@@ -1,10 +1,35 @@
+/*import React, { Component } from 'react';
+import { Route } from 'react-router-dom';
+import { createStore, applyMiddleware} from 'redux'
+import { Provider } from 'react-redux'
+import thunk from 'redux-thunk'
+
+import rootReducers from './reducers/index'
+import MyPage from './components/MyPage/index';
+
+export default class AppRouter extends Component{
+  constructor (props) {
+    super(props)
+    this.store = createStore(rootReducers, applyMiddleware(thunk))
+  }
+
+  render() {
+    const { match } = this.props
+    return (
+      <Provider store={this.store}>
+        <Route path={`${match.path}/`} component={MyPage}/>
+      </Provider>
+    )
+  }
+}
+*/
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-
+import 'semantic-ui-css/semantic.min.css'
 import store from './store'
-
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 

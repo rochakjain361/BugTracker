@@ -19,7 +19,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(methods=['post', 'options', 'get',], detail=False, url_name='onlogin', url_path='onlogin')
     def on_login(self, request):
-        code = self.request.query_params.get('code')
+        code = self.request.data["code"]
         print(code)
         #GETTING THE AUTHORISATION CODE
         url = 'https://internet.channeli.in/open_auth/token/'
@@ -40,8 +40,10 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         user_data = requests.get(url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers)
        # return HttpResponse(user_data)
         #CHECK IF USER EXISTS
+        print(user_data.json())
         try:
-            user = AppUser.objects.get(enrNo=user_data['student']['enrolmentNumber'])
+            user_data = user_data.json()
+            user = AppUser.objects.get(enrNo=user_data["student"]["enrolmentNumber"])
         except AppUser.DoesNotExist:
             # CHECK IMG MEMBER OR NOT
             in_img = False
@@ -70,10 +72,22 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 return Response({'status': 'User Created', 'access_token': acs_token}, status=status.HTTP_202_ACCEPTED)
             else:
                 return Response({'status': 'User not in IMG'}, status=status.HTTP_401_UNAUTHORIZED)
-            return Response({'Status': 'User Exists', 'access_token': acs_token})
-    @action(methods = ['get',], detail=True, url_path='current_user', url_name='current_user')
-    def get_current_user_data(self, request, pk):
+        user.access_token = acs_token
+        user.save()
+        return Response({'Status': 'User Exists', 'access_token': acs_token})
+
+    @action(methods = ['get',], detail=False, url_path='current_user', url_name='current_user')
+    def get_current_user_data(self, request):
         user = request.user
+        if not(user.username == ''):
+            return Response({'Response':'Logged In'})
+        else:
+            return Response({'Response':'No Current User'})
+
+    @action(methods = ['post', 'options', 'get'], detail=False, url_path='my_page', url_name='my_page')
+    def get_my_page(self, request):
+        code = self.request.data["access_token"]
+        user = AppUser.objects.get(access_token = code)
         serializer = AppUserSerializer(user)
         user_projects = Project.objects.filter(members=user.pk)
         serializer2 = ProjectSerializer(user_projects, many=True)
@@ -81,10 +95,10 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         serializer3 = IssueSerializer(user_assigned_issues, many=True)
         user_reported_issues = Issues.objects.filter(reported_by=user.pk)
         serializer4 = IssueSerializer(user_reported_issues, many=True)
-        return Response({"user_data": serializer.data,
-                         "projects": serializer2.data,
-                         "assigned_issues": serializer3.data,
-                         "reported_issues": serializer4.data})
+        return Response({'user_data': serializer.data,
+                         'projects': serializer2.data,
+                         'assigned_issues': serializer3.data,
+                         'reported_issues': serializer4.data})
 
     @action(methods = ['get',], detail=True, url_path='user_info', url_name='user_info')
     def get_user_info(self, request, pk):
@@ -93,7 +107,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = AppUserSerializer(user)
         serializer2 = ProjectSerializer(user_projects, many=True)
         user_reported_issues = Issues.objects.filter(reported_by=user.pk)
-        serializer3 = IssueSerializer(user_reported_issues, many=True)
+        serializer3 = IssueSerializer(user_reported_issuies, many=True)
         return Response({"user_details": serializer.data,
                          "project": serializer2.data,
                          "issues_reported": serializer3.data})
