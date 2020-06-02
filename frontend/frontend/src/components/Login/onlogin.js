@@ -4,6 +4,7 @@ import {Redirect} from 'react-router-dom'
 import queryString from 'query-string';
 import MyPage from "../MyPage/index";
 import './styles.css';
+
 class OnLogin extends Component{
     state = {
         user_found: false,
@@ -19,7 +20,7 @@ class OnLogin extends Component{
         if(!this.state.got_response){
             axios({ 
                 method:'post',
-                url: "http://127.0.0.1:8000/appusers/onlogin/?code={$}",
+                url: "http://127.0.0.1:8000/appusers/onlogin/",
                 headers:{
                     'Content-Type':'application/json',
                 },
@@ -34,8 +35,10 @@ class OnLogin extends Component{
                     this.setState({
                         user_found: true,
                         got_response: true,
-                        access_token: response.data["access_token"]
+                        access_token: response.data["access_token"],
                     });
+                    sessionStorage.clear()
+                    sessionStorage.setItem('access_token', this.state.access_token)
                 }
                 else if(response.data["Status"] === "User not in IMG"){
                     this.setState({
@@ -50,6 +53,8 @@ class OnLogin extends Component{
                         got_response: true,
                         access_token: response.data["access_token"]
                     })
+                    sessionStorage.clear()
+                    sessionStorage.setItem('access_token', this.state.access_token)
                 }
                 console.log(this.state)
             })
@@ -57,10 +62,10 @@ class OnLogin extends Component{
     }
 
     render(){
-
-        if(this.state.got_response){
-            if(this.state.user_found){
-                return(<MyPage access_token = {this.state.access_token}/>)
+        let access_token = this.state.user_found ? this.state.access_token : sessionStorage.getItem('access_token')
+        if(this.state.got_response || !(sessionStorage.length == 0)){
+            if(this.state.user_found || !(sessionStorage.length == 0)){
+                return(<MyPage access_token = {access_token}/>)
             }
             else {
                 alert("You must be an IMG member to use this app");
@@ -69,9 +74,9 @@ class OnLogin extends Component{
         }
         else{
             return(
-                <div class="center-container">
-                        <div class="ui active inverted dimmer">
-                            <div class="ui large text loader">Loading</div>
+                <div className="center-container">
+                        <div className="ui active inverted dimmer">
+                            <div className="ui large text loader">Loading</div>
                         </div>
                 </div>
             )

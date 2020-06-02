@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import axios from 'axios'
 import { Button } from 'semantic-ui-react';
 import './styles.css';
-import logo from '../../mediafiles/BugTrackerLogoBig.png'
+import logo from '../../mediafiles/LogoBig.png'
 class Login extends Component {
     state = {
         logged_in: false,
@@ -44,8 +44,8 @@ class Login extends Component {
         }
         else{
             return(
-                    <div class="center-container">
-                        <div class="ui violet segment">
+                    <div className="center-container">
+                        <div className="ui violet segment">
                         <img src={logo}/>
                         <div class="button">
                             <Button className="ui large primary button" onClick={this.redirect}>
