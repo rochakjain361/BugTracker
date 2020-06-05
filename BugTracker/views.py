@@ -17,6 +17,14 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AppUserSerializer
     #permission_classes = [IsAdminOrReadOnly]
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
     @action(methods=['post', 'options', 'get',], detail=False, url_name='onlogin', url_path='onlogin')
     def on_login(self, request):
         code = self.request.data["code"]
@@ -200,10 +208,7 @@ class IssuesViewSet(viewsets.ModelViewSet):
             return IssueSerializer
         else:
             return IssueEditSerializers
-
-    def perform_create(self, serializer):
-        serializer.save(reported_by=self.request.user)
-
+        
     @action(methods=['get',], detail=True, url_path='comments', url_name='comments')
     def get_issue_comments(self, request, pk):
         issue = Issues.objects.get(pk=pk)

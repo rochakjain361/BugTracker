@@ -3,10 +3,13 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { getCurrentUser } from '../../actions/getCurrentUserProfile'
 import axios from 'axios'
-import { Menu } from 'semantic-ui-react'
 import logo from '../../mediafiles/LogoSmall.png'
 import './styles.css'
 import { Switch, Route, Link } from 'react-router-dom'
+import { Menu, Segment, Header, Container, Grid } from 'semantic-ui-react'
+
+const color = ['violet', 'green']
+
 class MyPage extends Component{
   constructor(props) {
     super(props);
@@ -15,9 +18,17 @@ class MyPage extends Component{
        got_response: false,
        assigned_issues: [],
        projects: [],
-       reported_isssues: [],
-       user_data: []    
+       reported_issues: [],
+       user_data: [],
+       activeItem : 'reportedIssues',
+       isToggleOn: true 
     };
+    this.handleItemClick = this.handleItemClick.bind(this);
+  }
+
+  handleItemClick = (e, { name }) => {
+    e.preventDefault()
+    this.setState({ activeItem : name, isToggleOn: !this.state.isToggleOn})
   }
 
   componentDidMount() {
@@ -38,7 +49,7 @@ class MyPage extends Component{
           got_response: true,
           assigned_issues: response.data["assigned_issues"],
           projects: response.data["projects"],
-          reported_isssues: response.data["reported_issues"],
+          reported_issues: response.data["reported_issues"],
           user_data: response.data["user_data"]
         })
       }
@@ -48,6 +59,67 @@ class MyPage extends Component{
   }
 
   render(){
+    const { activeItem } = this.state
+    let issues;
+
+    if(this.state.activeItem === 'reportedIssues'){
+      issues=(<div>
+        <Segment color='violet' inverted>
+        {this.state.reported_issues.map(issues =>{
+          return(
+            <h3>
+            <Segment key={issues.id}>
+              <Grid columns={2}>
+                <Grid.Row>
+                  <Grid.Column>
+                    Project:{issues.project}
+                  </Grid.Column>
+                  <Grid.Column>
+                    Assigned To: {issues.assigned_to}
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid.Column>
+                    Issues Title: {issues.title}
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Segment>
+            </h3>
+            )})}
+        </Segment>
+        </div>)
+    }
+
+    else if(this.state.activeItem === 'assignedIssues'){
+      issues=(<div>
+        <Segment color='green' inverted>
+        {this.state.assigned_issues.map(issues =>{
+          return(
+            <h3>
+            <Segment key={issues.id}>
+              <Grid columns={2}>
+                <Grid.Row>
+                  <Grid.Column>
+                    Project:{issues.project}
+                  </Grid.Column>
+                  <Grid.Column>
+                    Reported By: {issues.reported_by}
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid.Column>
+                    Issues Title: {issues.title}
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Segment>
+            </h3>
+            )})}
+        </Segment>
+        </div>)
+    }
+
     return(
       <div>
         <div className="ui fixed inverted menu">
@@ -89,12 +161,12 @@ class MyPage extends Component{
                       </h3>
                     </div>
                     </div>
-                    <div className="ui orange segment">
+                    <div className="ui orange inverted segment">
                       <h3>Ongoing Projects</h3>
                       <div className="ui segments">
                         {this.state.projects.map(projects =>{
                           return(
-                          <div className="ui segment">
+                          <div className="ui segment" key={projects.id}>
                             <h4 className="ui content left">
                               <p>{projects.name}</p>
                             </h4>
@@ -111,16 +183,31 @@ class MyPage extends Component{
               </div>
             </div>
             <div className="column">
-              <Switch>
-                <Route path='/' component={}/>
-                <Route path='/' component={}/>
-              </Switch>
+              <div className='page-heading'>
+                <Header as='h1' color='red'>
+                  MY PAGE
+                </Header>
+                </div> 
               <div className="issues-info">
-                <div className="ui pointing menu">
-                  <Link>
-                  </Link>
-
-                </div>
+                <Menu widths={2} inverted>
+                  <Menu.Item
+                    name='reportedIssues'
+                    active={ activeItem === 'reportedIssues'}
+                    onClick={this.handleItemClick}
+                    color = {color[0]}
+                  >
+                    <h4>Reported Issues</h4>
+                  </Menu.Item>
+                  <Menu.Item 
+                    name='assignedIssues'
+                    active={ activeItem === 'assignedIssues'}
+                    onClick={this.handleItemClick}
+                    color = {color[1]}
+                  >
+                    <h4>Assigned Issues</h4>
+                  </Menu.Item>
+                </Menu>
+                  {issues}                  
               </div>  
             </div>
           </div>

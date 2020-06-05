@@ -14,7 +14,6 @@ class OnLogin extends Component{
     
     componentDidMount(){
         let url = this.props.location.search;
-        console.log(url)
         let params = queryString.parse(url)
         
         if(!this.state.got_response){
@@ -56,16 +55,14 @@ class OnLogin extends Component{
                     sessionStorage.clear()
                     sessionStorage.setItem('access_token', this.state.access_token)
                 }
-                console.log(this.state)
             })
         }
     }
 
     render(){
-        let access_token = this.state.user_found ? this.state.access_token : sessionStorage.getItem('access_token')
         if(this.state.got_response || !(sessionStorage.length == 0)){
             if(this.state.user_found || !(sessionStorage.length == 0)){
-                return(<MyPage access_token = {access_token}/>)
+                return(<MyPage access_token = {sessionStorage.getItem('access_token')}/>)
             }
             else {
                 alert("You must be an IMG member to use this app");

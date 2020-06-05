@@ -2,15 +2,15 @@ from BugTracker import models
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
-class ProjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Project
-        fields = '__all__'
-
 class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.AppUser
         fields = ['pk', 'username', 'first_name', 'email', 'enrNo', 'user_role', 'display_picture', 'access_token']
+
+class ProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Project
+        fields = ['name', 'wiki', 'status', 'creator', 'members', 'created_at', 'id']
 
 class IssueSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,7 +22,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
         fields = '__all__'
-
+        
 class IssueEditSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Issues
