@@ -2,11 +2,14 @@ import React, { Component } from 'react'
 //import { Grid, Placeholder, Segment } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { getCurrentUser } from '../../actions/getCurrentUserProfile'
+import Avatar from 'react-avatar';
 import axios from 'axios'
 import logo from '../../mediafiles/LogoSmall.png'
 import './styles.css'
 import { Switch, Route, Link } from 'react-router-dom'
 import { Menu, Segment, Header, Container, Grid } from 'semantic-ui-react'
+import 'moment-timezone';
+import Moment from 'react-moment';
 
 const color = ['violet', 'green']
 
@@ -20,15 +23,14 @@ class MyPage extends Component{
        projects: [],
        reported_issues: [],
        user_data: [],
-       activeItem : 'reportedIssues',
-       isToggleOn: true 
+       activeItem : 'reportedIssues'
     };
     this.handleItemClick = this.handleItemClick.bind(this);
   }
 
   handleItemClick = (e, { name }) => {
     e.preventDefault()
-    this.setState({ activeItem : name, isToggleOn: !this.state.isToggleOn})
+    this.setState({ activeItem : name})
   }
 
   componentDidMount() {
@@ -50,12 +52,11 @@ class MyPage extends Component{
           assigned_issues: response.data["assigned_issues"],
           projects: response.data["projects"],
           reported_issues: response.data["reported_issues"],
-          user_data: response.data["user_data"]
+          user_data: response.data["user_data"],   
         })
       }
-      console.log(this.state)
-      console.log(this.state.user_data["display_picture"])
     })
+    console.log(this.props.access_token)
   }
 
   render(){
@@ -153,6 +154,11 @@ class MyPage extends Component{
             <div className="userinfo">
                 <div className="ui red segments fluid card">
                   <div className="ui red segment">
+                    <Grid columns={2}>
+                      <Grid.Column>
+                        <Avatar name={this.state.user_data.first_name} round={true} color={'crimson'}/>
+                      </Grid.Column>
+                      <Grid.Column>  
                     <div className="content">
                       <h3>
                       Name: {this.state.user_data["username"]}<br></br>
@@ -160,6 +166,8 @@ class MyPage extends Component{
                       User-Role: {this.state.user_data["user_role"]}<br></br>
                       </h3>
                     </div>
+                    </Grid.Column>
+                    </Grid>
                     </div>
                     <div className="ui orange inverted segment">
                       <h3>Ongoing Projects</h3>
@@ -171,7 +179,10 @@ class MyPage extends Component{
                               <p>{projects.name}</p>
                             </h4>
                             <h4 className="ui content right">
-                            <p>{projects.created_at}</p>
+                              Created:
+                              <Moment fromNow>
+                                {projects.created_at}
+                              </Moment>
                             </h4>
                           </div>
                           )

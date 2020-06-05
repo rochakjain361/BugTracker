@@ -15,7 +15,7 @@ class OnLogin extends Component{
     componentDidMount(){
         let url = this.props.location.search;
         let params = queryString.parse(url)
-        
+
         if(!this.state.got_response){
             axios({ 
                 method:'post',

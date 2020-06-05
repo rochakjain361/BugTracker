@@ -1,0 +1,320 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'i', 'axios', '--global' ]
+2 info using npm@3.5.2
+3 info using node@v8.10.0
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readGlobalPackageData
+7 silly fetchPackageMetaData axios
+8 silly fetchNamedPackageData axios
+9 silly mapToRegistry name axios
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry uri https://registry.npmjs.org/axios
+13 verbose request uri https://registry.npmjs.org/axios
+14 verbose request no auth needed
+15 info attempt registry request try #1 at 5:55:54 PM
+16 verbose request id 46b169d5b5980f9e
+17 verbose etag W/"1c9d858ec36a757c0f6a2e9fd733a34f"
+18 verbose lastModified Wed, 15 Apr 2020 10:31:15 GMT
+19 http request GET https://registry.npmjs.org/axios
+20 http 304 https://registry.npmjs.org/axios
+21 verbose headers { date: 'Fri, 05 Jun 2020 12:25:54 GMT',
+21 verbose headers   connection: 'keep-alive',
+21 verbose headers   'set-cookie':
+21 verbose headers    [ '__cfduid=de9865c58a6ed34a0a1129d0395112c291591359954; expires=Sun, 05-Jul-20 12:25:54 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+21 verbose headers   'cf-ray': '59e9e103e9fb6999-BOM',
+21 verbose headers   age: '1958',
+21 verbose headers   'cache-control': 'public, max-age=300',
+21 verbose headers   etag: '"1c9d858ec36a757c0f6a2e9fd733a34f"',
+21 verbose headers   'last-modified': 'Wed, 15 Apr 2020 10:31:15 GMT',
+21 verbose headers   vary: 'Accept-Encoding',
+21 verbose headers   'cf-cache-status': 'HIT',
+21 verbose headers   'cf-request-id': '03260af671000069997816c200000001',
+21 verbose headers   'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+21 verbose headers   server: 'cloudflare' }
+22 silly get cb [ 304,
+22 silly get   { date: 'Fri, 05 Jun 2020 12:25:54 GMT',
+22 silly get     connection: 'keep-alive',
+22 silly get     'set-cookie':
+22 silly get      [ '__cfduid=de9865c58a6ed34a0a1129d0395112c291591359954; expires=Sun, 05-Jul-20 12:25:54 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+22 silly get     'cf-ray': '59e9e103e9fb6999-BOM',
+22 silly get     age: '1958',
+22 silly get     'cache-control': 'public, max-age=300',
+22 silly get     etag: '"1c9d858ec36a757c0f6a2e9fd733a34f"',
+22 silly get     'last-modified': 'Wed, 15 Apr 2020 10:31:15 GMT',
+22 silly get     vary: 'Accept-Encoding',
+22 silly get     'cf-cache-status': 'HIT',
+22 silly get     'cf-request-id': '03260af671000069997816c200000001',
+22 silly get     'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+22 silly get     server: 'cloudflare' } ]
+23 verbose etag https://registry.npmjs.org/axios from cache
+24 verbose get saving axios to /home/rochakjain361/.npm/registry.npmjs.org/axios/.cache.json
+25 silly install normalizeTree
+26 silly loadCurrentTree Finishing
+27 silly loadIdealTree Starting
+28 silly install loadIdealTree
+29 silly cloneCurrentTree Starting
+30 silly install cloneCurrentTreeToIdealTree
+31 silly cloneCurrentTree Finishing
+32 silly loadShrinkwrap Starting
+33 silly install loadShrinkwrap
+34 silly loadShrinkwrap Finishing
+35 silly loadAllDepsIntoIdealTree Starting
+36 silly install loadAllDepsIntoIdealTree
+37 silly resolveWithNewModule axios@0.19.2 checking installable status
+38 silly cache add args [ 'axios', null ]
+39 verbose cache add spec axios
+40 silly cache add parsed spec Result {
+40 silly cache add   raw: 'axios',
+40 silly cache add   scope: null,
+40 silly cache add   name: 'axios',
+40 silly cache add   rawSpec: '',
+40 silly cache add   spec: 'latest',
+40 silly cache add   type: 'tag' }
+41 silly addNamed axios@latest
+42 verbose addNamed "latest" is being treated as a dist-tag for axios
+43 info addNameTag [ 'axios', 'latest' ]
+44 silly mapToRegistry name axios
+45 silly mapToRegistry using default registry
+46 silly mapToRegistry registry https://registry.npmjs.org/
+47 silly mapToRegistry uri https://registry.npmjs.org/axios
+48 verbose addNameTag registry:https://registry.npmjs.org/axios not in flight; fetching
+49 verbose get https://registry.npmjs.org/axios not expired, no request
+50 silly addNameTag next cb for axios with tag latest
+51 silly addNamed axios@0.19.2
+52 verbose addNamed "0.19.2" is a plain semver version for axios
+53 silly cache afterAdd axios@0.19.2
+54 verbose afterAdd /home/rochakjain361/.npm/axios/0.19.2/package/package.json not in flight; writing
+55 verbose afterAdd /home/rochakjain361/.npm/axios/0.19.2/package/package.json written
+56 silly fetchNamedPackageData follow-redirects
+57 silly mapToRegistry name follow-redirects
+58 silly mapToRegistry using default registry
+59 silly mapToRegistry registry https://registry.npmjs.org/
+60 silly mapToRegistry uri https://registry.npmjs.org/follow-redirects
+61 verbose request uri https://registry.npmjs.org/follow-redirects
+62 verbose request no auth needed
+63 info attempt registry request try #1 at 5:55:54 PM
+64 verbose etag W/"9b267010984d15643d7562475cc0daec"
+65 verbose lastModified Sun, 29 Mar 2020 10:54:27 GMT
+66 http request GET https://registry.npmjs.org/follow-redirects
+67 http 304 https://registry.npmjs.org/follow-redirects
+68 verbose headers { date: 'Fri, 05 Jun 2020 12:25:54 GMT',
+68 verbose headers   connection: 'keep-alive',
+68 verbose headers   'set-cookie':
+68 verbose headers    [ '__cfduid=de9865c58a6ed34a0a1129d0395112c291591359954; expires=Sun, 05-Jul-20 12:25:54 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+68 verbose headers   'cf-ray': '59e9e1047b186999-BOM',
+68 verbose headers   age: '2824',
+68 verbose headers   'cache-control': 'public, max-age=300',
+68 verbose headers   etag: '"9b267010984d15643d7562475cc0daec"',
+68 verbose headers   'last-modified': 'Sun, 29 Mar 2020 10:54:27 GMT',
+68 verbose headers   vary: 'Accept-Encoding',
+68 verbose headers   'cf-cache-status': 'HIT',
+68 verbose headers   'cf-request-id': '03260af6ce0000699978170200000001',
+68 verbose headers   'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+68 verbose headers   server: 'cloudflare' }
+69 silly get cb [ 304,
+69 silly get   { date: 'Fri, 05 Jun 2020 12:25:54 GMT',
+69 silly get     connection: 'keep-alive',
+69 silly get     'set-cookie':
+69 silly get      [ '__cfduid=de9865c58a6ed34a0a1129d0395112c291591359954; expires=Sun, 05-Jul-20 12:25:54 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+69 silly get     'cf-ray': '59e9e1047b186999-BOM',
+69 silly get     age: '2824',
+69 silly get     'cache-control': 'public, max-age=300',
+69 silly get     etag: '"9b267010984d15643d7562475cc0daec"',
+69 silly get     'last-modified': 'Sun, 29 Mar 2020 10:54:27 GMT',
+69 silly get     vary: 'Accept-Encoding',
+69 silly get     'cf-cache-status': 'HIT',
+69 silly get     'cf-request-id': '03260af6ce0000699978170200000001',
+69 silly get     'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+69 silly get     server: 'cloudflare' } ]
+70 verbose etag https://registry.npmjs.org/follow-redirects from cache
+71 verbose get saving follow-redirects to /home/rochakjain361/.npm/registry.npmjs.org/follow-redirects/.cache.json
+72 silly resolveWithNewModule follow-redirects@1.5.10 checking installable status
+73 silly cache add args [ 'follow-redirects@1.5.10', null ]
+74 verbose cache add spec follow-redirects@1.5.10
+75 silly cache add parsed spec Result {
+75 silly cache add   raw: 'follow-redirects@1.5.10',
+75 silly cache add   scope: null,
+75 silly cache add   name: 'follow-redirects',
+75 silly cache add   rawSpec: '1.5.10',
+75 silly cache add   spec: '1.5.10',
+75 silly cache add   type: 'version' }
+76 silly addNamed follow-redirects@1.5.10
+77 verbose addNamed "1.5.10" is a plain semver version for follow-redirects
+78 silly mapToRegistry name follow-redirects
+79 silly mapToRegistry using default registry
+80 silly mapToRegistry registry https://registry.npmjs.org/
+81 silly mapToRegistry uri https://registry.npmjs.org/follow-redirects
+82 verbose addNameVersion registry:https://registry.npmjs.org/follow-redirects not in flight; fetching
+83 verbose get https://registry.npmjs.org/follow-redirects not expired, no request
+84 silly cache afterAdd follow-redirects@1.5.10
+85 verbose afterAdd /home/rochakjain361/.npm/follow-redirects/1.5.10/package/package.json not in flight; writing
+86 verbose afterAdd /home/rochakjain361/.npm/follow-redirects/1.5.10/package/package.json written
+87 silly fetchNamedPackageData debug
+88 silly mapToRegistry name debug
+89 silly mapToRegistry using default registry
+90 silly mapToRegistry registry https://registry.npmjs.org/
+91 silly mapToRegistry uri https://registry.npmjs.org/debug
+92 verbose request uri https://registry.npmjs.org/debug
+93 verbose request no auth needed
+94 info attempt registry request try #1 at 5:55:54 PM
+95 verbose etag W/"682ba37cc9406956ab0280ea33284028"
+96 verbose lastModified Tue, 19 May 2020 09:51:31 GMT
+97 http request GET https://registry.npmjs.org/debug
+98 http 304 https://registry.npmjs.org/debug
+99 verbose headers { date: 'Fri, 05 Jun 2020 12:25:54 GMT',
+99 verbose headers   connection: 'keep-alive',
+99 verbose headers   'set-cookie':
+99 verbose headers    [ '__cfduid=de9865c58a6ed34a0a1129d0395112c291591359954; expires=Sun, 05-Jul-20 12:25:54 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+99 verbose headers   'cf-ray': '59e9e104ab706999-BOM',
+99 verbose headers   age: '2973',
+99 verbose headers   'cache-control': 'public, max-age=300',
+99 verbose headers   etag: '"682ba37cc9406956ab0280ea33284028"',
+99 verbose headers   'last-modified': 'Tue, 19 May 2020 09:51:31 GMT',
+99 verbose headers   vary: 'Accept-Encoding',
+99 verbose headers   'cf-cache-status': 'HIT',
+99 verbose headers   'cf-request-id': '03260af6ed0000699978175200000001',
+99 verbose headers   'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+99 verbose headers   server: 'cloudflare' }
+100 silly get cb [ 304,
+100 silly get   { date: 'Fri, 05 Jun 2020 12:25:54 GMT',
+100 silly get     connection: 'keep-alive',
+100 silly get     'set-cookie':
+100 silly get      [ '__cfduid=de9865c58a6ed34a0a1129d0395112c291591359954; expires=Sun, 05-Jul-20 12:25:54 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+100 silly get     'cf-ray': '59e9e104ab706999-BOM',
+100 silly get     age: '2973',
+100 silly get     'cache-control': 'public, max-age=300',
+100 silly get     etag: '"682ba37cc9406956ab0280ea33284028"',
+100 silly get     'last-modified': 'Tue, 19 May 2020 09:51:31 GMT',
+100 silly get     vary: 'Accept-Encoding',
+100 silly get     'cf-cache-status': 'HIT',
+100 silly get     'cf-request-id': '03260af6ed0000699978175200000001',
+100 silly get     'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+100 silly get     server: 'cloudflare' } ]
+101 verbose etag https://registry.npmjs.org/debug from cache
+102 verbose get saving debug to /home/rochakjain361/.npm/registry.npmjs.org/debug/.cache.json
+103 silly resolveWithNewModule debug@3.1.0 checking installable status
+104 silly cache add args [ 'debug@=3.1.0', null ]
+105 verbose cache add spec debug@=3.1.0
+106 silly cache add parsed spec Result {
+106 silly cache add   raw: 'debug@=3.1.0',
+106 silly cache add   scope: null,
+106 silly cache add   name: 'debug',
+106 silly cache add   rawSpec: '=3.1.0',
+106 silly cache add   spec: '3.1.0',
+106 silly cache add   type: 'version' }
+107 silly addNamed debug@3.1.0
+108 verbose addNamed "3.1.0" is a plain semver version for debug
+109 silly mapToRegistry name debug
+110 silly mapToRegistry using default registry
+111 silly mapToRegistry registry https://registry.npmjs.org/
+112 silly mapToRegistry uri https://registry.npmjs.org/debug
+113 verbose addNameVersion registry:https://registry.npmjs.org/debug not in flight; fetching
+114 verbose get https://registry.npmjs.org/debug not expired, no request
+115 silly cache afterAdd debug@3.1.0
+116 verbose afterAdd /home/rochakjain361/.npm/debug/3.1.0/package/package.json not in flight; writing
+117 verbose afterAdd /home/rochakjain361/.npm/debug/3.1.0/package/package.json written
+118 silly fetchNamedPackageData ms
+119 silly mapToRegistry name ms
+120 silly mapToRegistry using default registry
+121 silly mapToRegistry registry https://registry.npmjs.org/
+122 silly mapToRegistry uri https://registry.npmjs.org/ms
+123 verbose request uri https://registry.npmjs.org/ms
+124 verbose request no auth needed
+125 info attempt registry request try #1 at 5:55:54 PM
+126 verbose etag W/"e0b373a310a631c8b865a88c9c34235a"
+127 verbose lastModified Fri, 20 Mar 2020 19:16:21 GMT
+128 http request GET https://registry.npmjs.org/ms
+129 http 304 https://registry.npmjs.org/ms
+130 verbose headers { date: 'Fri, 05 Jun 2020 12:25:54 GMT',
+130 verbose headers   connection: 'keep-alive',
+130 verbose headers   'set-cookie':
+130 verbose headers    [ '__cfduid=de9865c58a6ed34a0a1129d0395112c291591359954; expires=Sun, 05-Jul-20 12:25:54 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+130 verbose headers   'cf-ray': '59e9e1050c146999-BOM',
+130 verbose headers   age: '2638',
+130 verbose headers   'cache-control': 'public, max-age=300',
+130 verbose headers   etag: '"e0b373a310a631c8b865a88c9c34235a"',
+130 verbose headers   'last-modified': 'Fri, 20 Mar 2020 19:16:21 GMT',
+130 verbose headers   vary: 'Accept-Encoding',
+130 verbose headers   'cf-cache-status': 'HIT',
+130 verbose headers   'cf-request-id': '03260af7200000699978179200000001',
+130 verbose headers   'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+130 verbose headers   server: 'cloudflare' }
+131 silly get cb [ 304,
+131 silly get   { date: 'Fri, 05 Jun 2020 12:25:54 GMT',
+131 silly get     connection: 'keep-alive',
+131 silly get     'set-cookie':
+131 silly get      [ '__cfduid=de9865c58a6ed34a0a1129d0395112c291591359954; expires=Sun, 05-Jul-20 12:25:54 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+131 silly get     'cf-ray': '59e9e1050c146999-BOM',
+131 silly get     age: '2638',
+131 silly get     'cache-control': 'public, max-age=300',
+131 silly get     etag: '"e0b373a310a631c8b865a88c9c34235a"',
+131 silly get     'last-modified': 'Fri, 20 Mar 2020 19:16:21 GMT',
+131 silly get     vary: 'Accept-Encoding',
+131 silly get     'cf-cache-status': 'HIT',
+131 silly get     'cf-request-id': '03260af7200000699978179200000001',
+131 silly get     'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+131 silly get     server: 'cloudflare' } ]
+132 verbose etag https://registry.npmjs.org/ms from cache
+133 verbose get saving ms to /home/rochakjain361/.npm/registry.npmjs.org/ms/.cache.json
+134 silly resolveWithNewModule ms@2.0.0 checking installable status
+135 silly cache add args [ 'ms@2.0.0', null ]
+136 verbose cache add spec ms@2.0.0
+137 silly cache add parsed spec Result {
+137 silly cache add   raw: 'ms@2.0.0',
+137 silly cache add   scope: null,
+137 silly cache add   name: 'ms',
+137 silly cache add   rawSpec: '2.0.0',
+137 silly cache add   spec: '2.0.0',
+137 silly cache add   type: 'version' }
+138 silly addNamed ms@2.0.0
+139 verbose addNamed "2.0.0" is a plain semver version for ms
+140 silly mapToRegistry name ms
+141 silly mapToRegistry using default registry
+142 silly mapToRegistry registry https://registry.npmjs.org/
+143 silly mapToRegistry uri https://registry.npmjs.org/ms
+144 verbose addNameVersion registry:https://registry.npmjs.org/ms not in flight; fetching
+145 verbose get https://registry.npmjs.org/ms not expired, no request
+146 silly cache afterAdd ms@2.0.0
+147 verbose afterAdd /home/rochakjain361/.npm/ms/2.0.0/package/package.json not in flight; writing
+148 verbose afterAdd /home/rochakjain361/.npm/ms/2.0.0/package/package.json written
+149 silly loadAllDepsIntoIdealTree Finishing
+150 silly idealTree:prePrune lib
+150 silly idealTree:prePrune `-- axios@0.19.2
+150 silly idealTree:prePrune   +-- debug@3.1.0
+150 silly idealTree:prePrune   +-- follow-redirects@1.5.10
+150 silly idealTree:prePrune   `-- ms@2.0.0
+151 silly loadIdealTree Finishing
+152 silly currentTree lib
+153 silly idealTree lib
+153 silly idealTree `-- axios@0.19.2
+153 silly idealTree   +-- debug@3.1.0
+153 silly idealTree   +-- follow-redirects@1.5.10
+153 silly idealTree   `-- ms@2.0.0
+154 silly generateActionsToTake Starting
+155 silly install generateActionsToTake
+156 warn checkPermissions Missing write access to /usr/local/lib/node_modules
+157 silly rollbackFailedOptional Starting
+158 silly rollbackFailedOptional Finishing
+159 silly runTopLevelLifecycles Starting
+160 silly runTopLevelLifecycles Finishing
+161 silly install printInstalled
+162 verbose stack Error: EACCES: permission denied, access '/usr/local/lib/node_modules'
+163 verbose cwd /home/rochakjain361/IMG_Summer_Project/IMG_Summer_Project/frontend
+164 error Linux 5.3.0-53-generic
+165 error argv "/usr/bin/node" "/usr/bin/npm" "i" "axios" "--global"
+166 error node v8.10.0
+167 error npm  v3.5.2
+168 error path /usr/local/lib/node_modules
+169 error code EACCES
+170 error errno -13
+171 error syscall access
+172 error Error: EACCES: permission denied, access '/usr/local/lib/node_modules'
+172 error  { Error: EACCES: permission denied, access '/usr/local/lib/node_modules'
+172 error   errno: -13,
+172 error   code: 'EACCES',
+172 error   syscall: 'access',
+172 error   path: '/usr/local/lib/node_modules' }
+173 error Please try running this command again as root/Administrator.
+174 verbose exit [ -13, true ]
