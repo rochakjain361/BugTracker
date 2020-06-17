@@ -63,35 +63,35 @@ class Projects extends Component {
         return (
             <div>
                <div className="ui fixed inverted menu">
-                <div className="ui container">
-                    <img src={logo} height="69px" width="69px"/>
-                    <h2 className="header item">
-                        BugTracker 
-                    </h2> 
-                    <div className="right menu">
-                        <div className="item">
-                            <button class="ui primary button">
-                                Back to My Page
-                            </button>
-                        </div>
-                        <div className="item">
-                            <button class="ui primary button">
-                                Add New Project
-                            </button>
-                        </div>
-                        <div className="item">
-                            <button class="ui primary button">
-                                Add New Issue
-                            </button>
+                    <div className="ui container">
+                        <img src={logo} height="69px" width="69px"/>
+                        <h2 className="header item">
+                            BugTracker 
+                        </h2> 
+                        <div className="right menu">
+                            <div className="item">
+                                <button class="ui primary button">
+                                    Back to My Page
+                                </button>
+                            </div>
+                            <div className="item">
+                                <button class="ui primary button">
+                                    Add New Project
+                                </button>
+                            </div>
+                            <div className="item">
+                                <button class="ui primary button">
+                                    Add New Issue
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-             </div> 
-             <div className="userinfo">
+                </div> 
              <Container>
                 <Grid columns={2}>
                  <Grid.Row>
                      <Grid.Column>
+                     <div className="userinfo">
                 <div className="ui red segments fluid card">
                   <div className="ui red segment">
                     <Grid columns={2}>
@@ -132,10 +132,11 @@ class Projects extends Component {
                         )}
                       </div>
                     </div>
+                    </div>
                 </div>
                 </Grid.Column>
                 <Grid.Column>
-                    
+                    <div className='userinfo'>
                     <Header as='h1' color='green'>
                         PROJECTS
                     </Header>
@@ -158,11 +159,11 @@ class Projects extends Component {
                         } 
                         )}
                     </div>
+                    </div>
                 </Grid.Column>
                 </Grid.Row>
             </Grid>
             </Container>
-            </div>
             </div>
         )
     }

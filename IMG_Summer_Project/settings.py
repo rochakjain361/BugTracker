@@ -9,7 +9,10 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
 import pymysql
+
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -25,12 +28,13 @@ SECRET_KEY = 'o%bv+g)ca%(pn2nk#owwin=h$xoqg1vzhqp3f27!6)twvrpg23'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -80,6 +84,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'IMG_Summer_Project.wsgi.application'
+ASGI_APPLICATION = 'IMG_Summer_Project.routing.application'
+
+CHANNEL_LAYERS ={
+        'default' : {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts' : [('127.0.0.1', 6379)],
+                }
+            }
+        }
 
 # Database
 

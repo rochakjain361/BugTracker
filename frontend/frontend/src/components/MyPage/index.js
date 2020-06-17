@@ -1,13 +1,9 @@
 import React, { Component } from 'react'
-//import { Grid, Placeholder, Segment } from 'semantic-ui-react'
-import { connect } from 'react-redux'
-import { getCurrentUser } from '../../actions/getCurrentUserProfile'
 import Avatar from 'react-avatar';
 import axios from 'axios'
 import logo from '../../mediafiles/LogoSmall.png'
 import './styles.css'
-import { Switch, Route, Link } from 'react-router-dom'
-import { Menu, Segment, Header, Container, Grid } from 'semantic-ui-react'
+import { Menu, Segment, Header, Container, Grid, Image} from 'semantic-ui-react'
 import 'moment-timezone';
 import Moment from 'react-moment';
 
@@ -64,19 +60,29 @@ class MyPage extends Component{
     let issues;
 
     if(this.state.activeItem === 'reportedIssues'){
+      var rptd_issues = Array(this.state.reported_issues)[0]
+      console.log(rptd_issues)
       issues=(<div>
-        <Segment color='violet' inverted>
-        {this.state.reported_issues.map(issues =>{
-          return(
-            <h3>
+        <Segment color='violet'>
+          <Segment.Group raised>
+        {rptd_issues.map(issues =>{
+          var assigned_to;
+          if(Array(issues.assigned_to)[0] == null){
+            assigned_to = 'Assigned to no one'
+          }
+          else{
+            assigned_to = Array(issues.assigned_to)[0].username
+          }
+          return(  
             <Segment key={issues.id}>
+              <h4>
               <Grid columns={2}>
                 <Grid.Row>
                   <Grid.Column>
-                    Project:{issues.project}
+                    Project:{issues.project.name}
                   </Grid.Column>
                   <Grid.Column>
-                    Assigned To: {issues.assigned_to}
+                    Assigned To: {assigned_to}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
@@ -85,38 +91,50 @@ class MyPage extends Component{
                   </Grid.Column>
                 </Grid.Row>
               </Grid>
+              </h4>
             </Segment>
-            </h3>
-            )})}
+          )})}
+            </Segment.Group>
         </Segment>
         </div>)
     }
 
     else if(this.state.activeItem === 'assignedIssues'){
+      var asgnd_issues = Array(this.state.assigned_issues)[0]
+      console.log(asgnd_issues)
       issues=(<div>
-        <Segment color='green' inverted>
-        {this.state.assigned_issues.map(issues =>{
+        <Segment color='green'>
+          <Segment.Group raised>
+        {asgnd_issues.map(issue =>{
+          var reported_by;
+          if(Array(issue.reported_by)[0] == null){
+            reported_by = 'No One Reported this'
+          }
+          else{
+            reported_by = Array(issue.reported_by)[0].username
+          }
           return(
-            <h3>
-            <Segment key={issues.id}>
+            <Segment key={issue.pk}>
+              <h4>
               <Grid columns={2}>
                 <Grid.Row>
                   <Grid.Column>
-                    Project:{issues.project}
+                    Project:{issue.project.name}
                   </Grid.Column>
                   <Grid.Column>
-                    Reported By: {issues.reported_by}
+                    Reported By: {reported_by}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
                   <Grid.Column>
-                    Issues Title: {issues.title}
+                    Issues Title: {issue.title}
                   </Grid.Column>
                 </Grid.Row>
               </Grid>
+              </h4>
             </Segment>
-            </h3>
-            )})}
+          )})}
+          </Segment.Group>
         </Segment>
         </div>)
     }
@@ -154,20 +172,18 @@ class MyPage extends Component{
             <div className="userinfo">
                 <div className="ui red segments fluid card">
                   <div className="ui red segment">
-                    <Grid columns={2}>
-                      <Grid.Column>
-                        <Avatar name={this.state.user_data.first_name} round={true} color={'crimson'}/>
-                      </Grid.Column>
-                      <Grid.Column>  
-                    <div className="content">
-                      <h3>
-                      Name: {this.state.user_data["username"]}<br></br>
-                      EnrNo: {this.state.user_data["enrNo"]}<br></br>
-                      User-Role: {this.state.user_data["user_role"]}<br></br>
-                      </h3>
-                    </div>
-                    </Grid.Column>
-                    </Grid>
+                    <Image
+                    floated='left'
+                    circular>
+                          <Avatar name={this.state.user_data.first_name} color='crimson'/>
+                    </Image>
+                    <p>
+                    <Header>
+                    {this.state.user_data["username"]}
+                    </Header>
+                    Enrollment No: {this.state.user_data["enrNo"]}<br></br>
+                    User-Role: {this.state.user_data["user_role"]}
+                    </p>
                     </div>
                     <div className="ui orange inverted segment">
                       <h3>Ongoing Projects</h3>

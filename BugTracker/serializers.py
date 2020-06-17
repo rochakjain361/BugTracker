@@ -1,6 +1,7 @@
 from BugTracker import models
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from .models import Issues, Project
 
 class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,29 +13,24 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = models.Project
         fields = ['name', 'wiki', 'status', 'creator', 'members', 'created_at', 'id']
 
-class IssueSerializer(serializers.ModelSerializer):
+class IssueGETSerializer(serializers.ModelSerializer):
+    project = ProjectSerializer(read_only=True)
+    reported_by = AppUserSerializer(read_only=True)
+    assigned_to = AppUserSerializer(read_only=True)
     class Meta:
         model = models.Issues
-        fields = '__all__'
+        fields = ['title', 'pk', 'description', 'bug_status', 'reported_by', 'assigned_to', 'project', 'created_at', 'tag']
         #read_only_fields = ['title', 'reported_by', 'project', 'created_at']
-        
+
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
         fields = '__all__'
         
-class IssueEditSerializers(serializers.ModelSerializer):
+class IssuePOSTSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Issues
-        fields = ['title', 'description', 'bug_status', 'reported_by', 'assigned_to', 'project', 'created_at', 'tag']
-        read_only_fields = ['title', 'reported_by', 'project', 'created_at', 'description']
-
-class ProjectEditSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = models.Project
-        fields = '__all__'
-        read_only_fields = ['name', 'wiki', 'creator', 'created_at']
-        extra_kwargs = {'issues':{'required':False}, 'members':{'required': False}}
+        fields = ['title', 'pk', 'description', 'bug_status', 'reported_by', 'assigned_to', 'project', 'created_at', 'tag']
 
 class UploadImageSerializers(serializers.ModelSerializer):
     class Meta:

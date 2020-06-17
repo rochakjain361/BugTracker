@@ -52,8 +52,9 @@ class OnLogin extends Component{
                         got_response: true,
                         access_token: response.data["access_token"]
                     })
-                    sessionStorage.clear()
+                    sessionStorage.clear();
                     sessionStorage.setItem('access_token', this.state.access_token)
+                    console.log(this.state)
                 }
             })
         }

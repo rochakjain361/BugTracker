@@ -97,12 +97,16 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         code = self.request.data["access_token"]
         user = AppUser.objects.get(access_token = code)
         serializer = AppUserSerializer(user)
+
         user_projects = Project.objects.filter(members=user.pk)
         serializer2 = ProjectSerializer(user_projects, many=True)
+
         user_assigned_issues = Issues.objects.filter(assigned_to=user.pk)
-        serializer3 = IssueSerializer(user_assigned_issues, many=True)
+        serializer3 = IssueGETSerializer(user_assigned_issues, many=True)
+
         user_reported_issues = Issues.objects.filter(reported_by=user.pk)
-        serializer4 = IssueSerializer(user_reported_issues, many=True)
+        serializer4 = IssueGETSerializer(user_reported_issues, many=True)
+        
         return Response({'user_data': serializer.data,
                          'projects': serializer2.data,
                          'assigned_issues': serializer3.data,
@@ -115,7 +119,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = AppUserSerializer(user)
         serializer2 = ProjectSerializer(user_projects, many=True)
         user_reported_issues = Issues.objects.filter(reported_by=user.pk)
-        serializer3 = IssueSerializer(user_reported_issuies, many=True)
+        serializer3 = IssueGETSerializer(user_reported_issues, many=True)
         return Response({"user_details": serializer.data,
                          "project": serializer2.data,
                          "issues_reported": serializer3.data})
@@ -130,13 +134,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             except KeyError:
                 return Project.objects.all()
     queryset = Project.objects.all()
-    serializer_class = ProjectSerializer 
-
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return ProjectSerializer
-        else:
-            return ProjectEditSerializers
+    serializer_class = ProjectSerializer
 
     @action(methods=['get', ], detail=True, url_path='issues', url_name='issues')
     def get_issues(self, request, pk):
@@ -145,22 +143,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
         except KeyError:
             return Response({'Empty': 'No Issues for this project yet'}, status = status.HTTP_204_NO_CONTENT)
 
-        ser = IssueSerializer(issues_list, many=True)
+        ser = IssueGETSerializer(issues_list, many=True)
         return Response(ser.data)
 
-    @action(methods=['get', ], detail=True, url_path='members', url_name='members')
+    @action(methods=['get', ], detail=True, url_path='team', url_name='team')
     def get_team_members(self, request, pk):
         project = Project.objects.get(pk = pk)
         members_list = project.members
+        creator = project.creator
         ser = AppUserSerializer(members_list, many=True)
-        return Response(ser.data)
-
-    @action(methods=['get', ], detail=True, url_path='creator', url_name='creator')
-    def get_creator(self, request, pk):
-        project = Project.objects.get(pk = pk)
-        creator = AppUser.objects.get(username = project.creator)
-        ser = AppUserSerializer(creator)
-        return Response(ser.data)
+        ser2 = AppUserSerializer(creator)
+        return Response({'members':ser.data,
+                         'creator':ser2.data})
 
     @permission_classes(IsAdminOrProjectCreator)
     def destroy(self, request, *args, **kwargs):
@@ -184,7 +178,6 @@ class IssuesViewSet(viewsets.ModelViewSet):
                 except KeyError:
                     return Issues.objects.all()
     queryset = Issues.objects.all()
-    serializer_class = IssueSerializer
 
     @action(methods=['patch', 'get'], detail=True, url_path='assign', url_name='assign')
     def assign_issue(self, request, pk):
@@ -205,9 +198,9 @@ class IssuesViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
-            return IssueSerializer
+            return IssuePOSTSerializer
         else:
-            return IssueEditSerializers
+            return IssueGETSerializer
         
     @action(methods=['get',], detail=True, url_path='comments', url_name='comments')
     def get_issue_comments(self, request, pk):
