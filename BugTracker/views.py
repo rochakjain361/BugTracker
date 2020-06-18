@@ -99,7 +99,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = AppUserSerializer(user)
 
         user_projects = Project.objects.filter(members=user.pk)
-        serializer2 = ProjectSerializer(user_projects, many=True)
+        serializer2 = ProjectGETSerializer(user_projects, many=True)
 
         user_assigned_issues = Issues.objects.filter(assigned_to=user.pk)
         serializer3 = IssueGETSerializer(user_assigned_issues, many=True)
@@ -117,7 +117,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         user = AppUser.objects.get(pk=pk)
         user_projects = Project.objects.filter(members=user.pk)
         serializer = AppUserSerializer(user)
-        serializer2 = ProjectSerializer(user_projects, many=True)
+        serializer2 = ProjectGETSerializer(user_projects, many=True)
         user_reported_issues = Issues.objects.filter(reported_by=user.pk)
         serializer3 = IssueGETSerializer(user_reported_issues, many=True)
         return Response({"user_details": serializer.data,
@@ -134,7 +134,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
             except KeyError:
                 return Project.objects.all()
     queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ProjectPOSTSerializer
+        else:
+            return ProjectGETSerializer
 
     @action(methods=['get', ], detail=True, url_path='issues', url_name='issues')
     def get_issues(self, request, pk):
