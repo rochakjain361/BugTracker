@@ -52,6 +52,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         try:
             user_data = user_data.json()
             user = AppUser.objects.get(enrNo=user_data["student"]["enrolmentNumber"])
+
         except AppUser.DoesNotExist:
             # CHECK IMG MEMBER OR NOT
             in_img = False

@@ -7,6 +7,7 @@ const onLogin = lazy(() => import('./components/Login/onlogin'))
 const Projects = lazy(() => import('./components/Projects/ongoingprojects'))
 const ProjectDetails = lazy(() => import('./components/Projects/projectdetails'))
 const IssueComments = lazy(() => import('./components/Issues/issues'))
+const newProject = lazy(() => import('./components/Projects/newproject'))
 
 const App = () => (
   <Router>
@@ -18,6 +19,7 @@ const App = () => (
         <Route exact path='/projects' component={Projects}/>
         <Route exact path="/projects/:id" component={ProjectDetails} />
         <Route exact path="/issues/:id" component={IssueComments} />
+        <Route exact path="/project/add" component={newProject} />
       </Switch>
     </Suspense>
   </Router>
