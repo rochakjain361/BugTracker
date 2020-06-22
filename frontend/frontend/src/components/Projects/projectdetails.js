@@ -34,6 +34,7 @@ class ProjectDetails extends Component{
         axios({
             method:'get',
             url: `http://127.0.0.1:8000/project/${id}/`,
+            withCredentials: 'true'
         }).then((response) =>{
             console.log(response)
             if(response.statusText === "OK"){

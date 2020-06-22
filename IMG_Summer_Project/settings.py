@@ -51,6 +51,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,12 +59,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = ()
+CORS_ORIGIN_WHITELIST = (
+        'http://localhost:3000',
+        )
 
 ROOT_URLCONF = 'IMG_Summer_Project.urls'
 
@@ -83,6 +85,8 @@ TEMPLATES = [
     },
 ]
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
 WSGI_APPLICATION = 'IMG_Summer_Project.wsgi.application'
 ASGI_APPLICATION = 'IMG_Summer_Project.routing.application'
 
@@ -98,8 +102,7 @@ CHANNEL_LAYERS ={
 # Database
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication'
+        'rest_framework.authentication.SessionAuthentication',        
     ],
 }
 
@@ -131,8 +134,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 AUTHENTICATION_BACKENDS = {
         'django.contrib.auth.backends.ModelBackend' 
 }
@@ -141,6 +142,8 @@ OAUTH2_PROVIDER = {
     # this is the list of available scopes
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'}
 }
+
+AUTH_USER_MODEL = 'BugTracker.AppUser'
 
 # Internationalization
 
@@ -174,5 +177,3 @@ DJRICHTEXTFIELD_CONFIG = {
         'width': 700
     }
 }
-
-AUTH_USER_MODEL = 'BugTracker.AppUser'

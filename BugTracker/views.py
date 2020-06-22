@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 from rest_framework.decorators import action, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 import requests
 from django.contrib.auth import login, logout
 from django.http import HttpResponse
@@ -15,7 +16,6 @@ from django.http import HttpResponse
 class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AppUser.objects.all()
     serializer_class = AppUserSerializer
-    #permission_classes = [IsAdminOrReadOnly]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -25,11 +25,13 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     def perform_destroy(self, instance):
         instance.delete()
 
-    @action(methods=['post', 'options', 'get',], detail=False, url_name='onlogin', url_path='onlogin')
+    @action(methods=['post', 'options', ], detail=False, url_name='onlogin', url_path='onlogin', permission_classes=[AllowAny])
     def on_login(self, request):
         code = self.request.data["code"]
-        print(code)
+        
+        #print(code)
         #GETTING THE AUTHORISATION CODE
+        
         url = 'https://internet.channeli.in/open_auth/token/'
         data = {
                 'client_id':'gfZHj4O7eZKrzv8Vpgqi1s5kKWgvgyFCf5vt822c',
@@ -38,29 +40,36 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 'redirect_url':'http://127.0.0.1:8000/appusers/onlogin',
                 'code': code
                 } 
+        
         user_data = requests.post(url=url, data=data).json()
         acs_token = user_data['access_token']
-        print(acs_token)
+        #print(acs_token)
+        
         #GET ACCESS TOKEN
+        
         headers={
                 'Authorization':'Bearer ' + acs_token
                 }
         user_data = requests.get(url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers)
-       # return HttpResponse(user_data)
+        #return HttpResponse(user_data)
+        
         #CHECK IF USER EXISTS
-        print(user_data.json())
+        #print(user_data.json())
         try:
             user_data = user_data.json()
             user = AppUser.objects.get(enrNo=user_data["student"]["enrolmentNumber"])
 
         except AppUser.DoesNotExist:
-            # CHECK IMG MEMBER OR NOT
+            #CHECK IMG MEMBER OR NOT
             in_img = False
             for role in user_data["person"]["roles"]:
+                
                 if role["role"] == "Maintainer":
                     in_img = True
                     break
+            
             if in_img:
+                
                 #CREATE USER
                 enrNum = user_data["student"]["enrolmentNumber"]
                 email = user_data["contactInformation"]["instituteWebmailAddress"]
@@ -70,26 +79,31 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 fullName = user_data["person"]["fullName"]
 
                 user_role_assigned = 1
-                if user_data['student']['currentYear'] >= 3:
+                if user_data['student']['currentYear'] >= 2:
                     user_role_assigned = 2
 
                 newUser = AppUser(enrNo = enrNum, email=email, first_name = firstname, username=fullName, user_role = user_role_assigned, access_token = acs_token)
                 newUser.is_staff = True
-                newUser.is_admin = True
                 newUser.save()
+                print(request)
+                print(newUser)
+                login(request=request, user=newUser)
 
                 return Response({'status': 'User Created', 'access_token': acs_token}, status=status.HTTP_202_ACCEPTED)
             else:
                 return Response({'status': 'User not in IMG'}, status=status.HTTP_401_UNAUTHORIZED)
         user.access_token = acs_token
         user.save()
+        print(user)
+        print(request)
+        login(request=request, user=user)
         return Response({'Status': 'User Exists', 'access_token': acs_token})
 
-    @action(methods = ['get',], detail=False, url_path='current_user', url_name='current_user')
+    @action(methods = ['get','options'], detail=False, url_path='current_user', url_name='current_user', permission_classes=[AllowAny])
     def get_current_user_data(self, request):
-        user = request.user
-        if not(user.username == ''):
-            return Response({'Response':'Logged In'})
+        if request.user.is_authenticated:
+            ser = AppUserSerializer(request.user)
+            return Response(ser.data, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'Response':'No Current User'})
 
@@ -113,7 +127,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                          'assigned_issues': serializer3.data,
                          'reported_issues': serializer4.data})
 
-    @action(methods = ['get',], detail=True, url_path='user_info', url_name='user_info')
+    @action(methods = ['get',], detail=True, url_path='user_info', url_name='user_info', permission_classes=[AllowAny])
     def get_user_info(self, request, pk):
         user = AppUser.objects.get(pk=pk)
         user_projects = Project.objects.filter(members=user.pk)
@@ -126,6 +140,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                          "issues_reported": serializer3.data})
 
 class ProjectViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     def get_queryset(self):
         try:
             return Project.objects.filter(members=self.kwargs['members_pk'])
@@ -162,7 +177,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response({'members':ser.data,
                          'creator':ser2.data})
 
-    @permission_classes(IsAdminOrProjectCreator)
+    #@permission_classes(IsAdminOrProjectCreator)
     def destroy(self, request, *args, **kwargs):
         try:
             instance = self.get_object()

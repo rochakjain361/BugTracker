@@ -25,6 +25,7 @@ urlpatterns = [
     path('djrichtextfield/', include('djrichtextfield.urls')),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('rest-auth/', include('rest_auth.urls')),
+    path('api-auth/', include('rest_framework.urls'))
 ]
 
 urlpatterns += url_router.urls 
