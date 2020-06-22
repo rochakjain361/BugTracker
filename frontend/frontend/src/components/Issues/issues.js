@@ -77,7 +77,6 @@ class IssueComments extends Component{
         this.setState({
             comment : event
         });
-        console.log(event)
     }
 
     sendCommentHandler = (e, comment) => {
@@ -241,20 +240,7 @@ class IssueComments extends Component{
                 </Button>
             </form>
         </div>
-            {/*<form 
-                    onSubmit={(e) => this.sendCommentHandler(e, this.state.comment)}
-                    className="form">
-                        <input 
-                        type="text"
-                        onChange={this.commentChangeHandler}
-                        value={this.state.comment}
-                        placeholder="Start Typing"
-                        required />
-                        <button type="submit" className="submit" value="Submit">
-                            Send
-                        </button>
-            </form>*/}
-            </div>
+    </div>
         )
     }
 

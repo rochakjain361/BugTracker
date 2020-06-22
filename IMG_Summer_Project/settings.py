@@ -96,6 +96,12 @@ CHANNEL_LAYERS ={
         }
 
 # Database
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    ],
+}
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 

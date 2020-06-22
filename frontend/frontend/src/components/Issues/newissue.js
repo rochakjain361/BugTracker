@@ -1,92 +1,122 @@
-import React, {Component} from "react";
+import React, {Component} from 'react';
+import axios from 'axios';
 import logo from '../../mediafiles/LogoSmall.png'
-import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button } from "semantic-ui-react";
-import './styles.css'
+import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button, Message } from "semantic-ui-react";
 import { Editor } from "@tinymce/tinymce-react";
-import axios from "axios";
+import './styles.css'
 
-class newProject extends Component{
+class newIssue extends Component{
     constructor(props){
         super(props)
         this.state = { 
-            name: '',
-            wiki: '',
-            status: 1,
-            creator: [],
-            members: [],
-            users_available: [],
+            title: '',
+            description: '',
+            bug_status: 1,
+            reported_by: [],
+            project: [],
+            tag:[],
+            projects_available: [],
         }
-
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
         this.statusChange = this.statusChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.projectNameHandler = this.projectNameHandler.bind(this);
+        this.issueNameHandler = this.issueNameHandler.bind(this);
     }
 
     componentDidMount(){
         axios({
             method: 'get',
-            url: 'http://127.0.0.1:8000/appusers/'
-        }).then((response) => {
-            if(response.statusText === "OK"){
-                this.setState({
-                    ...this.state,
-                    users_available: response.data
-                })
-                console.log(this.state)
-            }
+            url: 'http://127.0.0.1:8000/project/'
+        }).then((response)=> {
+            this.setState({
+                ...this.state,
+                projects_available: response.data
+            })
+            console.log(this.state)
         })
     }
 
     handleSubmit = event => {
         event.preventDefault();
+
+
+
+
+
         console.log(this.state);
         axios({
-            url: 'http://127.0.0.1:8000/project/',
-            method: "post",
+            method: 'post',
+            url: 'http://127.0.0.1:8000/issues/',
             withCredentials: "true",
-            data:{
-                name: this.state.name,
-                wiki: this.state.wiki,
-                status: this.state.status,
-                creator: this.state.creator,
-                members: this.state.members                 
-            }
+            data:{ 
+                title: this.state.title,
+                description: this.state.description,
+                bug_status: this.state.bug_status,
+                reported_by: this.state.reported_by,
+                assigned_to: null,
+                project: this.state.project,
+                tag: this.state.tag
+            } 
         }).then((response) => {
             console.log(response)
         })
     }
 
     handleDropdownChange = (event, data) => {
-        console.log(this.state)
-        console.log(data.value[0])
-        //console.log(data)
-        this.setState(previousState =>({
-            members: [...previousState.members, data.value[0]]
-        }));
-    }
-
-    statusChange = (event, data) => {
-        //console.log(data.value)
-
+        console.log(data.value)
+        console.log(parseInt(sessionStorage.getItem('pk')))
         this.setState({
             ...this.state,
-            status: data.value
+            project: data.value,
+            reported_by: parseInt(sessionStorage.getItem('pk'))
         })
         //console.log(this.state)
     }
 
-    projectNameHandler = (event, data) => {
+    statusChange = (event, data) => {
         console.log(data.value)
         this.setState({
             ...this.state,
-            name: data.value
+            bug_status: data.value
+        })
+        //console.log(this.state)
+    }
+
+    issueNameHandler = (event, data) => {
+
+        axios({
+            url: '',
+            method: 'get'
+        })
+
+
+        console.log(data.value)
+        this.setState({
+            ...this.state,
+            title: data.value
         })
         //console.log(this.state)
     }
 
     render(){
-        const {status} = this.state
+        const {bug_status} = this.state
+        const TagsForDropdown = [
+            {
+                key: 1,
+                text: 'Bug',
+                value: 1
+            },
+            {
+                key: 2,
+                text: 'Enhancement',
+                value: 2
+            },
+            {
+                key: 3,
+                text: 'UI/UX Improvement',
+                value: 3
+            }
+        ]
         return(
             <div>
                 <div className="ui fixed inverted menu">
@@ -103,7 +133,7 @@ class newProject extends Component{
                                 </div>
                                 <div className="item">
                                     <button class="ui primary button">
-                                        Add New Issue
+                                        Add New Project
                                     </button>
                                 </div>
                                 <div className="item">
@@ -118,23 +148,23 @@ class newProject extends Component{
                     <Segment vertical>
                         <div className = 'bodyContent'>
                             <Header as="h2">
-                                ADD NEW PROJECT
+                                ADD NEW ISSUE
                             </Header>
                         </div>
                     </Segment>
                     <Segment vertical>
-                        <Form onSubmit={this.handleSubmit}>
+                        <Form onSubmit={this.handleSubmit} >
                             <Form.Field>
-                                <h3><label>Project Name</label></h3>
+                                <h3><label>Issue Name</label></h3>
                                 <Input
-                                id='project_name' 
+                                id='issue_name' 
                                 fluid
                                 placeholder='Project Name' 
-                                onChange={this.projectNameHandler}
+                                onChange={this.issueNameHandler}
                                 />
                             </Form.Field>
                             <Form.Field>
-                                <h3><label>Project Description</label></h3>
+                                <h3><label>Issue Description</label></h3>
                                 <Editor
                                     init={{
                                         height: 200,
@@ -142,9 +172,10 @@ class newProject extends Component{
                                     }}
                                     value={this.state.wiki}
                                     onEditorChange={(event) => {
+                                        console.log(event)
                                         this.setState({
                                             ...this.state,
-                                            wiki: event
+                                            description: event
                                         })
                                     }
                                     }
@@ -153,66 +184,60 @@ class newProject extends Component{
                             </Form.Field>
                             <h3>
                             <Form.Group inline>
-                                <label>Status</label>
+                                <label>Bug Status</label>
                                     <Form.Field
                                         control={Radio}
-                                        label='Under Development'
+                                        label='Pending'
                                         value={1}
-                                        checked={status == 1} 
+                                        checked={bug_status == 1} 
                                         onChange={this.statusChange}
                                     />
                                     <Form.Field
                                         control={Radio}
-                                        label='Testing'
+                                        label='To be Discussed'
                                         value={2}
-                                        checked={status == 2}
+                                        checked={bug_status == 2}
                                         onChange={this.statusChange}
                                     />
                                     <Form.Field
                                         control={Radio}
-                                        label='Released'
+                                        label='Resolved'
                                         value={3}
-                                        checked={status == 3}
+                                        checked={bug_status == 3}
                                         onChange={this.statusChange}
                                     />
                             </Form.Group>
                             </h3>
-                            <h3>Project Members</h3>
+                            <h3>Project</h3>
                             <Dropdown 
-                            placeholder='Members' 
-                            fluid 
-                            multiple
+                            placeholder='Select the Project in which the Issue is found'  
                             search
-                            selection 
-                            options={this.state.users_available.map(user => {
+                            fluid
+                            selection
+                            options={this.state.projects_available.map(project => {
                                 return{
-                                    "key": user.pk,
-                                    "text": user.username,
-                                    "value": user.pk
+                                    "key": project.id,
+                                    "text": project.name,
+                                    "value": project.id
                                 }
-                            })}
+                            })} 
                             onChange={this.handleDropdownChange}
                             />
                             <br/>
-                            <h3>Project Creator</h3>
+                            <h3>Tag</h3>
                             <Dropdown
-                            placeholder='Select User'
+                            placeholder='Select the Tag'
                             fluid
                             search
                             selection
-                            options={this.state.users_available.map(user => {
-                                return{
-                                    "key": user.pk,
-                                    "text": user.username,
-                                    "value": user.pk
-                                }
-                            })}
+                            options={TagsForDropdown}
                             onChange={(event, data) => {
                                 this.setState({
-                                    creator: data.value
+                                    tag: data.value
                                 })
                                 console.log(this.state)
-                            }}
+                            }
+                            }
                             />
                             <br/>
                             <Button type='submit'>
@@ -226,4 +251,4 @@ class newProject extends Component{
     }
 }
 
-export default newProject;
+export default newIssue;

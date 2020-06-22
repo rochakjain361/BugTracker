@@ -58,7 +58,8 @@ class MyPage extends Component{
   render(){
     const { activeItem } = this.state
     let issues;
-
+    console.log(this.state.user_data.pk)
+    sessionStorage.setItem('pk', this.state.user_data.pk);
     if(this.state.activeItem === 'reportedIssues'){
       var rptd_issues = Array(this.state.reported_issues)[0]
       console.log(rptd_issues)

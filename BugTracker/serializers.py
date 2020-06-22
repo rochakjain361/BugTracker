@@ -19,6 +19,7 @@ class ProjectPOSTSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = ['name', 'wiki', 'status', 'creator', 'members', 'created_at', 'id']
+        read_only_fields = ['id', 'created_at']
 
 class IssueGETSerializer(serializers.ModelSerializer):
     project = ProjectGETSerializer(read_only=True)
