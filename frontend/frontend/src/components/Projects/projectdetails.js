@@ -31,16 +31,19 @@ class ProjectDetails extends Component{
     componentDidMount(){
         let id = this.props.match.params.id
         console.log(id)
-        axios({
+        axios(
+          {
             method:'get',
             url: `http://127.0.0.1:8000/project/${id}/`,
-            withCredentials: 'true'
+            withCredentials: true
         }).then((response) =>{
             console.log(response)
             if(response.statusText === "OK"){
                 this.setState({
                     ...this.state,
                     project: response.data,
+                    project_creator : response.data.creator,
+                    project_members: response.data.members,
                     got_response: true
                 })
             }
@@ -49,22 +52,8 @@ class ProjectDetails extends Component{
 
         axios({
           method:'get',
-          url: `http://127.0.0.1:8000/project/${id}/team/`,
-        }).then((response) => {
-          console.log(response)
-          if(response.statusText === "OK"){  
-              this.setState({
-                ...this.state,
-                project_creator: response.data['creator'],
-                project_members: response.data['members']
-              })
-            }
-            console.log(this.state)
-        })
-
-        axios({
-          method:'get',
           url: `http://127.0.0.1:8000/project/${id}/issues/`,
+          withCredentials: true
         }).then((response) => {
           console.log(response)
           if(response.statusText === "OK"){

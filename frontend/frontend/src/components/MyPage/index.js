@@ -52,7 +52,16 @@ class MyPage extends Component{
         })
       }
     })
+
     console.log(this.props.access_token)
+
+    axios({
+      method:'get',
+      url: 'http://127.0.0.1:8000/appusers/test/',
+      withCredentials: true
+    }).then((response) => {
+      console.log(response.data)
+    })
   }
 
   render(){

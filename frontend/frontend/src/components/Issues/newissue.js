@@ -5,6 +5,9 @@ import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button, Mess
 import { Editor } from "@tinymce/tinymce-react";
 import './styles.css'
 
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 class newIssue extends Component{
     constructor(props){
         super(props)

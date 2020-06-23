@@ -18,7 +18,6 @@ pymysql.install_as_MySQLdb()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -86,6 +85,8 @@ TEMPLATES = [
 ]
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+CSRF_COOKIE_NAME = 'BUGTRACKER_CSRFTOKEN'
+SESSION_COOKIE_NAME = 'BUGTRACKER_SESSIONID'
 
 WSGI_APPLICATION = 'IMG_Summer_Project.wsgi.application'
 ASGI_APPLICATION = 'IMG_Summer_Project.routing.application'
@@ -101,8 +102,13 @@ CHANNEL_LAYERS ={
 
 # Database
 REST_FRAMEWORK = {
+    #'DEFAULT_PERMISSION_CLASSES': [
+    #    'rest_framework.permissions.IsAuthenticated',
+    #],
+
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',        
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
 }
 

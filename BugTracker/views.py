@@ -85,18 +85,20 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 newUser = AppUser(enrNo = enrNum, email=email, first_name = firstname, username=fullName, user_role = user_role_assigned, access_token = acs_token)
                 newUser.is_staff = True
                 newUser.save()
-                print(request)
-                print(newUser)
-                login(request=request, user=newUser)
+                #print(request)
+                #print(newUser)
+                auth.login(request, newUser)
+                #print(login(request=request, user=newUser))
 
                 return Response({'status': 'User Created', 'access_token': acs_token}, status=status.HTTP_202_ACCEPTED)
             else:
                 return Response({'status': 'User not in IMG'}, status=status.HTTP_401_UNAUTHORIZED)
         user.access_token = acs_token
         user.save()
-        print(user)
-        print(request)
-        login(request=request, user=user)
+        #print(user)
+        #print(request)
+        auth.login(request, user)
+        #print(login(request=request, user=user))
         return Response({'Status': 'User Exists', 'access_token': acs_token})
 
     @action(methods = ['get','options'], detail=False, url_path='current_user', url_name='current_user', permission_classes=[AllowAny])
@@ -107,11 +109,32 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             return Response({'Response':'No Current User'})
 
+    '''
+    @action(methods=['get', 'options', ], detail=False, url_name="test", url_path="test", permission_classes=[AllowAny])
+    def test(self, request):
+        if request.user.is_authenticated:
+            ser = AppUserSerializer(request.user)
+            return Response(ser.data, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({"enrolment_number": "Not authenticated"})
+    '''
+
+    @action(methods=['get', 'options',], detail=False, url_name='test', url_path='test', permission_classes=[AllowAny])
+    def test(self, request):
+        if request.user.is_authenticated:
+            ser = AppUserSerializer(request.user)
+            return Response(ser.data, status=status.HTTP_202_ACCEPTED)
+        else:
+            print(request.user)
+            return Response({"enrollment_number": 'Not authenticated'})
+
     @action(methods = ['post', 'options', 'get'], detail=False, url_path='my_page', url_name='my_page')
     def get_my_page(self, request):
         code = self.request.data["access_token"]
         user = AppUser.objects.get(access_token = code)
         serializer = AppUserSerializer(user)
+
+        login(request=request, user=user)
 
         user_projects = Project.objects.filter(members=user.pk)
         serializer2 = ProjectGETSerializer(user_projects, many=True)
@@ -127,6 +150,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                          'assigned_issues': serializer3.data,
                          'reported_issues': serializer4.data})
 
+    
     @action(methods = ['get',], detail=True, url_path='user_info', url_name='user_info', permission_classes=[AllowAny])
     def get_user_info(self, request, pk):
         user = AppUser.objects.get(pk=pk)
@@ -140,16 +164,8 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                          "issues_reported": serializer3.data})
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    def get_queryset(self):
-        try:
-            return Project.objects.filter(members=self.kwargs['members_pk'])
-        except KeyError:
-            try:
-                return Project.objects.filter(creator=self.kwargs['creator_pk'])
-            except KeyError:
-                return Project.objects.all()
     queryset = Project.objects.all()
+    #permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -166,16 +182,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         ser = IssueGETSerializer(issues_list, many=True)
         return Response(ser.data)
-
-    @action(methods=['get', ], detail=True, url_path='team', url_name='team')
-    def get_team_members(self, request, pk):
-        project = Project.objects.get(pk = pk)
-        members_list = project.members
-        creator = project.creator
-        ser = AppUserSerializer(members_list, many=True)
-        ser2 = AppUserSerializer(creator)
-        return Response({'members':ser.data,
-                         'creator':ser2.data})
 
     #@permission_classes(IsAdminOrProjectCreator)
     def destroy(self, request, *args, **kwargs):
@@ -238,6 +244,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             return Comment.objects.all()
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    
     #permission_classes = [IsAdminOrReadOnly]
     @action(methods=['get',], detail=True, url_path='images', url_name='images')
     def get_comment_images(self, request, pk):
