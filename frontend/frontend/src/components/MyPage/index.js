@@ -7,6 +7,9 @@ import { Menu, Segment, Header, Container, Grid, Image} from 'semantic-ui-react'
 import 'moment-timezone';
 import Moment from 'react-moment';
 
+axios.defaults.xsrfCookieName = 'BUGTRACKER_CSRFTOKEN';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 const color = ['violet', 'green']
 
 class MyPage extends Component{
@@ -31,15 +34,9 @@ class MyPage extends Component{
 
   componentDidMount() {
     axios({
-      method:'post',
-      url: 'http://127.0.0.1:8000/appusers/my_page/',
-      headers:{
-        'Content-Type':'application/json',
-      },
+      method:'get',
+      url: `http://127.0.0.1:8000/appusers/my_page/?code=${this.props.access_token}`,
       withCredentials: true,
-      data:{
-        access_token: this.props.access_token
-      }
     }).then((response) => {
       console.log(response)
       if(response.statusText === "OK"){

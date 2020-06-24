@@ -10,6 +10,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 import requests
 from django.contrib.auth import login, logout
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 # View for displaying the AppUser Content
@@ -25,11 +26,12 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     def perform_destroy(self, instance):
         instance.delete()
 
-    @action(methods=['post', 'options', ], detail=False, url_name='onlogin', url_path='onlogin', permission_classes=[AllowAny])
+    @action(methods=['get', ], detail=False, url_name='onlogin', url_path='onlogin', permission_classes=[AllowAny])
     def on_login(self, request):
-        code = self.request.data["code"]
+        code = request.GET.get('code')
+        print(code)
         
-        #print(code)
+        print(code)
         #GETTING THE AUTHORISATION CODE
         
         url = 'https://internet.channeli.in/open_auth/token/'
@@ -42,6 +44,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 } 
         
         user_data = requests.post(url=url, data=data).json()
+        print(user_data)
         acs_token = user_data['access_token']
         #print(acs_token)
         
@@ -87,7 +90,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 newUser.save()
                 #print(request)
                 #print(newUser)
-                auth.login(request, newUser)
+                login(request, newUser)
                 #print(login(request=request, user=newUser))
 
                 return Response({'status': 'User Created', 'access_token': acs_token}, status=status.HTTP_202_ACCEPTED)
@@ -97,7 +100,7 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         user.save()
         #print(user)
         #print(request)
-        auth.login(request, user)
+        login(request, user)
         #print(login(request=request, user=user))
         return Response({'Status': 'User Exists', 'access_token': acs_token})
 
@@ -128,9 +131,9 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
             print(request.user)
             return Response({"enrollment_number": 'Not authenticated'})
 
-    @action(methods = ['post', 'options', 'get'], detail=False, url_path='my_page', url_name='my_page')
+    @action(methods = ['get', 'options',], detail=False, url_path='my_page', url_name='my_page', permission_classes=[AllowAny])
     def get_my_page(self, request):
-        code = self.request.data["access_token"]
+        code = request.GET.get('code')
         user = AppUser.objects.get(access_token = code)
         serializer = AppUserSerializer(user)
 
@@ -163,9 +166,10 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                          "project": serializer2.data,
                          "issues_reported": serializer3.data})
 
+
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -244,7 +248,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             return Comment.objects.all()
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    
+
     #permission_classes = [IsAdminOrReadOnly]
     @action(methods=['get',], detail=True, url_path='images', url_name='images')
     def get_comment_images(self, request, pk):

@@ -5,6 +5,9 @@ import queryString from 'query-string';
 import MyPage from "../MyPage/index";
 import './styles.css';
 
+axios.defaults.xsrfCookieName = 'BUGTRACKER_CSRFTOKEN';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 class OnLogin extends Component{
     state = {
         user_found: false,
@@ -15,18 +18,12 @@ class OnLogin extends Component{
     componentDidMount(){
         let url = this.props.location.search;
         let params = queryString.parse(url)
-
+        console.log(params)
         if(!this.state.got_response){
-            axios({ 
-                method:'post',
-                url: "http://127.0.0.1:8000/appusers/onlogin/",
-                headers:{
-                    'Content-Type':'application/json',
-                },
-                withCredentials: true,
-                data:{
-                    code: params['code']
-                }
+            axios({
+                method:'get',
+                url: `http://127.0.0.1:8000/appusers/onlogin/?code=${params['code']}`,
+                withCredentials: true
             }).then((response) => {
                 console.log(response)
                 

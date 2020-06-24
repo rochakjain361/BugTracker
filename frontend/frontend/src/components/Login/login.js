@@ -4,6 +4,10 @@ import axios from 'axios'
 import { Button } from 'semantic-ui-react';
 import './styles.css';
 import logo from '../../mediafiles/LogoBig.png'
+
+axios.defaults.xsrfCookieName = 'BUGTRACKER_CSRFTOKEN';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 class Login extends Component {
     state = {
         logged_in: false,

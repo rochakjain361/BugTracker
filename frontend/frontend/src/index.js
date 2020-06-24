@@ -6,7 +6,7 @@ import 'semantic-ui-css/semantic.min.css'
 import axios from 'axios';
 import * as serviceWorker from './serviceWorker';
 
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = 'http://127.0.0.1:8000';
 axios.defaults.xsrfCookieName = 'BUGTRACKER_CSRFTOKEN';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
