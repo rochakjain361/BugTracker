@@ -43,10 +43,6 @@ class Login extends Component {
     }
 
     render(){
-        if(this.state.logged_in && this.state.response_recieived){
-            return <Redirect to='/' exact/>
-        }
-        else{
             return(
                     <div className="center-container">
                         <div className="ui violet segment">
@@ -59,7 +55,6 @@ class Login extends Component {
                         </div>
                     </div>    
             )
-        }
     }
 }
 

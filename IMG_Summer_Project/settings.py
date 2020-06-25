@@ -87,9 +87,9 @@ TEMPLATES = [
 SESSION_COOKIE_SAMESITE = None
 CSRF_COOKIE_SAMESITE = None
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-CSRF_COOKIE_NAME = 'BUGTRACKER_CSRFTOKEN'
-SESSION_COOKIE_NAME = 'BUGTRACKER_SESSIONID'
+#SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+#CSRF_COOKIE_NAME = 'BUGTRACKER_CSRFTOKEN'
+#SESSION_COOKIE_NAME = 'BUGTRACKER_SESSIONID'
 
 WSGI_APPLICATION = 'IMG_Summer_Project.wsgi.application'
 ASGI_APPLICATION = 'IMG_Summer_Project.routing.application'
@@ -112,6 +112,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.TokenAuthentication'
     ],
 }
 

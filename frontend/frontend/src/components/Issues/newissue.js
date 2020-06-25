@@ -4,9 +4,7 @@ import logo from '../../mediafiles/LogoSmall.png'
 import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button, Message } from "semantic-ui-react";
 import { Editor } from "@tinymce/tinymce-react";
 import './styles.css'
-
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+import qs from 'qs'
 
 class newIssue extends Component{
     constructor(props){
@@ -41,12 +39,26 @@ class newIssue extends Component{
 
     handleSubmit = event => {
         event.preventDefault();
-
-
-
-
-
         console.log(this.state);
+
+        axios({
+            method: 'get',
+            url: 'http://127.0.0.1:8000/issues/add_issue/',
+            params: {
+                title:this.state.title,
+                description: this.state.description,
+                bug_status: this.state.bug_status,
+                project: this.state.project,
+                tag: this.state.tag 
+            },
+            paramsSerializer: params => {
+                return qs.stringify(params)
+            }
+        }).then((response)=> {
+            console.log(response)
+        })
+
+        /*
         axios({
             method: 'post',
             url: 'http://127.0.0.1:8000/issues/',
@@ -63,6 +75,7 @@ class newIssue extends Component{
         }).then((response) => {
             console.log(response)
         })
+        */
     }
 
     handleDropdownChange = (event, data) => {

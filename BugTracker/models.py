@@ -37,7 +37,6 @@ class Project(models.Model):
     name = models.CharField(max_length = 200)
     wiki = RichTextField()
     status = models.IntegerField(choices = STATUS_CHOICES, default = 1)
-    #leader = models.ManyToMany(AppUser, related_name='mentor')
     creator = models.ForeignKey(AppUser, related_name='creator', on_delete=models.SET_NULL, null=True)
     members = models.ManyToManyField(AppUser, related_name='members_working')
     created_at = models.DateTimeField(auto_now_add = True)

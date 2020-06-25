@@ -11,6 +11,7 @@ import requests
 from django.contrib.auth import login, logout
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+#from django.middleware import csrf;
 # Create your views here.
 
 # View for displaying the AppUser Content
@@ -29,8 +30,6 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     @action(methods=['get', ], detail=False, url_name='onlogin', url_path='onlogin', permission_classes=[AllowAny])
     def on_login(self, request):
         code = request.GET.get('code')
-        print(code)
-        
         print(code)
         #GETTING THE AUTHORISATION CODE
         
@@ -136,7 +135,6 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         code = request.GET.get('code')
         user = AppUser.objects.get(access_token = code)
         serializer = AppUserSerializer(user)
-
         login(request=request, user=user)
 
         user_projects = Project.objects.filter(members=user.pk)
@@ -196,6 +194,36 @@ class ProjectViewSet(viewsets.ModelViewSet):
             pass
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(methods=['get', 'options'], detail=False, url_path='add_project', url_name='add_path')
+    def add_project(self, request):
+        if request.user.is_authenticated:
+            #print(request.user)
+            code = request.GET
+            name = request.GET.get('name')
+            #print(name)
+            wiki = request.GET.get('wiki')
+            #print(wiki)
+            status = request.GET.get('status')
+            #print(status)
+            creator = request.GET.get('creator')
+            #print(creator)
+            members = []
+            for x in range(len(code) - 4):
+                members.append(request.GET.get('members[%d]' % x))
+            #print(members)
+            creator_user = AppUser.objects.get(pk = creator)
+            #print(creator_user)
+            team_members = []
+            for m in members:
+                team_members.append(AppUser.objects.get(pk = m))
+            #print(team_members)
+            newProject = Project(name = name, wiki = wiki, status = status, creator = creator_user)
+            newProject.save()
+            newProject.members.set(team_members)
+            return Response({'Response':'Project Created'})
+        else:
+            return Response({'Response':'User Not Authenticated.'})
+
 class IssuesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         try:
@@ -239,6 +267,25 @@ class IssuesViewSet(viewsets.ModelViewSet):
         comments = Comment.objects.filter(issue=issue)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
+
+    @action(methods=['get',], detail=False, url_path='add_issue', url_name='add_issue')
+    def add_issue(self, request):
+        if request.user.is_authenticated:
+            title = request.GET.get('title')
+            description = request.GET.get('description')
+            bug_status = request.GET.get('bug_status')
+            reported_by = request.user
+            project = request.GET.get('project')
+            tag = request.GET.get('tag')
+            print(title)
+            print(description)
+            print(bug_status)
+            print(reported_by)
+            print(project)
+            print(tag)
+            return Response({'Status':'This is working'})
+        else: 
+            return Response({'Status':'User not Authenticated'})
 
 class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
