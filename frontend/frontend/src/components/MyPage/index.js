@@ -19,7 +19,6 @@ class MyPage extends Component{
        reported_issues: [],
        user_data: [],
        activeItem : 'reportedIssues',
-       disabled: false,
     };
     this.handleItemClick = this.handleItemClick.bind(this);
   }
@@ -43,7 +42,6 @@ class MyPage extends Component{
           projects: response.data["projects"],
           reported_issues: response.data["reported_issues"],
           user_data: response.data["user_data"], 
-          disabled: response.data.user_data['is_disabled']
         })
       }
     })
@@ -153,8 +151,22 @@ class MyPage extends Component{
       User_Role = 'Admin'
     }
 
+    const avatar = (url, firstname) => {
+      if(url === ""){
+          return(
+              <Avatar name={firstname}/>
+          )
+      }
+      else{
+          var dp_url = 'https://internet.channeli.in/' + url;
+          return( 
+              <Avatar src={dp_url} />
+          )
+      }
+    }
+
     return(
-      <div style={this.state.disabled ? {pointerEvents: "none", opacity: "0.2"} : {}}>
+      <div>
         <div className="ui fixed inverted menu">
           <div className="ui container">
           <img src={logo} height="69px" width="69px"/>
@@ -189,14 +201,14 @@ class MyPage extends Component{
                     <Image
                     floated='left'
                     circular>
-                          <Avatar name={this.state.user_data.first_name} color='crimson'/>
+                      {avatar(this.state.user_data['display_picture'], this.state.user_data['first_name'])}
                     </Image>
                     <p>
                     <Header>
                     {this.state.user_data["username"]}
                     </Header>
                     Enrollment No: {this.state.user_data["enrNo"]}<br></br>
-                    User-Role: {User_Role}
+                    {User_Role}
                     </p>
                     </div>
                     <div className="ui orange segment">

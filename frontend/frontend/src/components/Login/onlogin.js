@@ -58,14 +58,18 @@ class OnLogin extends Component{
     }
 
     render(){
-        if(this.state.got_response || !(sessionStorage.length == 0)){
-            if(this.state.user_found || !(sessionStorage.length == 0)){
-                return(<MyPage access_token = {sessionStorage.getItem('access_token')}/>)
+        if(this.state.got_response){
+            if(this.state.user_found){
+                return(<MyPage access_token = {this.state.access_token}/>)
             }
             else {
                 alert("You must be an IMG member to use this app");
                 return (<Redirect to ="/" exact/>)
             }
+        }
+
+        else if(!(sessionStorage.length == 0)){
+            return(<MyPage access_token = {sessionStorage.getItem('access_token')}/>)
         }
         else{
             return(

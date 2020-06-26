@@ -27,7 +27,7 @@ TAG_OPTIONS = (
 
 class AppUser(AbstractUser):
     user_role = models.IntegerField(choices = USER_ROLE, default = 1)
-    display_picture = models.ImageField(upload_to='media/', null=True)
+    display_picture = models.CharField(max_length=500)
     enrNo = models.IntegerField(default=0)
     access_token = models.CharField(max_length=100, default='', blank=True)
     is_disabled = models.BooleanField(default=0)

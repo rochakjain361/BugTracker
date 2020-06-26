@@ -56,11 +56,11 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         #return HttpResponse(user_data)
         
         #CHECK IF USER EXISTS
-        #print(user_data.json())
+        print(user_data.json())
         try:
             user_data = user_data.json()
             user = AppUser.objects.get(enrNo=user_data["student"]["enrolmentNumber"])
-
+            print(user_data['person']['displayPicture'])
         except AppUser.DoesNotExist:
             #CHECK IMG MEMBER OR NOT
             in_img = False
@@ -71,10 +71,9 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                     break
             
             if in_img:
-                
-                #CREATE USER
                 enrNum = user_data["student"]["enrolmentNumber"]
                 email = user_data["contactInformation"]["instituteWebmailAddress"]
+                dp = user_data['person']['displayPicture']
 
                 name = (user_data["person"]["fullName"]).split()
                 firstname = name[0]
@@ -84,23 +83,18 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 if user_data['student']['currentYear'] >= 2:
                     user_role_assigned = 2
 
-                newUser = AppUser(enrNo = enrNum, email=email, first_name = firstname, username=fullName, user_role = user_role_assigned, access_token = acs_token)
+                newUser = AppUser(enrNo = enrNum, email=email, first_name = firstname, username=fullName, user_role = user_role_assigned, access_token = acs_token, display_picture = dp)
                 newUser.is_staff = True
                 newUser.save()
-                #print(request)
-                #print(newUser)
                 login(request, newUser)
-                #print(login(request=request, user=newUser))
 
                 return Response({'status': 'User Created', 'access_token': acs_token}, status=status.HTTP_202_ACCEPTED)
             else:
                 return Response({'status': 'User not in IMG'}, status=status.HTTP_401_UNAUTHORIZED)
         user.access_token = acs_token
+        user.display_picture = user_data['person']['displayPicture']
         user.save()
-        #print(user)
-        #print(request)
         login(request, user)
-        #print(login(request=request, user=user))
         return Response({'Status': 'User Exists', 'access_token': acs_token})
 
     @action(methods = ['get','options'], detail=False, url_path='current_user', url_name='current_user', permission_classes=[AllowAny])
@@ -110,16 +104,6 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(ser.data, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'Response':'No Current User'})
-
-    '''
-    @action(methods=['get', 'options', ], detail=False, url_name="test", url_path="test", permission_classes=[AllowAny])
-    def test(self, request):
-        if request.user.is_authenticated:
-            ser = AppUserSerializer(request.user)
-            return Response(ser.data, status=status.HTTP_202_ACCEPTED)
-        else:
-            return Response({"enrolment_number": "Not authenticated"})
-    '''
 
     @action(methods=['get', 'options',], detail=False, url_name='test', url_path='test', permission_classes=[AllowAny])
     def test(self, request):
@@ -164,6 +148,19 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                          "project": serializer2.data,
                          "issues_reported": serializer3.data})
 
+    @action(methods = ['get',], detail = True, url_path='convert_role', url_name='convert_role')
+    def convert_user_role(self, request, pk):
+        user = AppUser.objects.get(pk=pk)
+        user.user_role = request.GET.get('new_role')
+        user.save()
+        return Response({'status': 'Status Changed'})
+
+    @action(methods = ['get',], detail=True, url_path='disable_user', url_name='disable_user')
+    def disable_user(self, request, pk):
+        user = AppUser.objects.get(pk = pk)
+        user.is_disabled = request.GET.get('is_disabled')
+        user.save()
+        return Response({'status': 'User Status Changed'})
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
@@ -197,26 +194,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(methods=['get', 'options'], detail=False, url_path='add_project', url_name='add_path')
     def add_project(self, request):
         if request.user.is_authenticated:
-            #print(request.user)
             code = request.GET
             name = request.GET.get('name')
-            #print(name)
             wiki = request.GET.get('wiki')
-            #print(wiki)
             status = request.GET.get('status')
-            #print(status)
             creator = request.GET.get('creator')
-            #print(creator)
             members = []
             for x in range(len(code) - 4):
                 members.append(request.GET.get('members[%d]' % x))
-            #print(members)
             creator_user = AppUser.objects.get(pk = creator)
-            #print(creator_user)
             team_members = []
             for m in members:
                 team_members.append(AppUser.objects.get(pk = m))
-            #print(team_members)
             newProject = Project(name = name, wiki = wiki, status = status, creator = creator_user)
             newProject.save()
             newProject.members.set(team_members)
