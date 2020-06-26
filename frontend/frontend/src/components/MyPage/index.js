@@ -3,13 +3,9 @@ import Avatar from 'react-avatar';
 import axios from 'axios'
 import logo from '../../mediafiles/LogoSmall.png'
 import './styles.css'
-import { Menu, Segment, Header, Container, Grid, Image} from 'semantic-ui-react'
+import { Menu, Segment, Header, Container, Grid, Image, Dimmer} from 'semantic-ui-react'
 import 'moment-timezone';
 import Moment from 'react-moment';
-
-axios.defaults.xsrfCookieName = 'BUGTRACKER_CSRFTOKEN';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
 const color = ['violet', 'green']
 
 class MyPage extends Component{
@@ -22,7 +18,8 @@ class MyPage extends Component{
        projects: [],
        reported_issues: [],
        user_data: [],
-       activeItem : 'reportedIssues'
+       activeItem : 'reportedIssues',
+       disabled: false,
     };
     this.handleItemClick = this.handleItemClick.bind(this);
   }
@@ -45,11 +42,11 @@ class MyPage extends Component{
           assigned_issues: response.data["assigned_issues"],
           projects: response.data["projects"],
           reported_issues: response.data["reported_issues"],
-          user_data: response.data["user_data"],   
+          user_data: response.data["user_data"], 
+          disabled: response.data.user_data['is_disabled']
         })
       }
     })
-
     console.log(this.props.access_token)
 
     axios({
@@ -62,6 +59,7 @@ class MyPage extends Component{
   }
 
   render(){
+    console.log(this.state)
     const { activeItem } = this.state
     let issues;
     console.log(this.state.user_data.pk)
@@ -146,8 +144,17 @@ class MyPage extends Component{
         </div>)
     }
 
+    var User_Role;
+    if(this.state.user_data["user_role"] == 1){
+      User_Role = 'Normal User'
+    }
+
+    else if(this.state.user_data["user_role"] == 2){
+      User_Role = 'Admin'
+    }
+
     return(
-      <div>
+      <div style={this.state.disabled ? {pointerEvents: "none", opacity: "0.2"} : {}}>
         <div className="ui fixed inverted menu">
           <div className="ui container">
           <img src={logo} height="69px" width="69px"/>
@@ -189,10 +196,10 @@ class MyPage extends Component{
                     {this.state.user_data["username"]}
                     </Header>
                     Enrollment No: {this.state.user_data["enrNo"]}<br></br>
-                    User-Role: {this.state.user_data["user_role"]}
+                    User-Role: {User_Role}
                     </p>
                     </div>
-                    <div className="ui orange inverted segment">
+                    <div className="ui orange segment">
                       <h3>Ongoing Projects</h3>
                       <div className="ui segments">
                         {this.state.projects.map(projects =>{
@@ -218,8 +225,8 @@ class MyPage extends Component{
             </div>
             <div className="column">
               <div className='page-heading'>
-                <Header as='h1' color='red'>
-                  MY PAGE
+                <Header as='h2'>
+                  MI PÁGINA
                 </Header>
                 </div> 
               <div className="issues-info">

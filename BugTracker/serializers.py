@@ -6,7 +6,7 @@ from .models import Issues, Project
 class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.AppUser
-        fields = ['pk', 'username', 'first_name', 'email', 'enrNo', 'user_role', 'display_picture', 'access_token']
+        fields = ['pk', 'username', 'first_name', 'email', 'enrNo', 'user_role', 'display_picture', 'access_token', 'is_disabled']
 
 class ProjectGETSerializer(serializers.ModelSerializer):
     creator = AppUserSerializer(read_only=True)

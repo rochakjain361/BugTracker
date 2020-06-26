@@ -275,7 +275,8 @@ class IssuesViewSet(viewsets.ModelViewSet):
             description = request.GET.get('description')
             bug_status = request.GET.get('bug_status')
             reported_by = request.user
-            project = request.GET.get('project')
+            project_id = request.GET.get('project')
+            project = Project.objects.get(pk = project_id)
             tag = request.GET.get('tag')
             print(title)
             print(description)
@@ -283,6 +284,8 @@ class IssuesViewSet(viewsets.ModelViewSet):
             print(reported_by)
             print(project)
             print(tag)
+            issue = Issues(title = title,description = description,bug_status = bug_status, reported_by = reported_by, project = project, tag = tag)
+            issue.save()
             return Response({'Status':'This is working'})
         else: 
             return Response({'Status':'User not Authenticated'})

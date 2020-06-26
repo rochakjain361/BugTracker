@@ -30,6 +30,7 @@ class AppUser(AbstractUser):
     display_picture = models.ImageField(upload_to='media/', null=True)
     enrNo = models.IntegerField(default=0)
     access_token = models.CharField(max_length=100, default='', blank=True)
+    is_disabled = models.BooleanField(default=0)
     def __str__(self):
         return self.get_username()
 
