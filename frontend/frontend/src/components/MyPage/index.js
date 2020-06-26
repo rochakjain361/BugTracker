@@ -3,7 +3,7 @@ import Avatar from 'react-avatar';
 import axios from 'axios'
 import logo from '../../mediafiles/LogoSmall.png'
 import './styles.css'
-import { Menu, Segment, Header, Container, Grid, Image, Dimmer} from 'semantic-ui-react'
+import { Menu, Segment, Header, Container, Grid, Image, Dimmer, Label, Button} from 'semantic-ui-react'
 import 'moment-timezone';
 import Moment from 'react-moment';
 const color = ['violet', 'green']
@@ -54,6 +54,55 @@ class MyPage extends Component{
     }).then((response) => {
       console.log(response.data)
     })
+  }
+
+  statusLabel(status){
+    if(status == 1){
+      return(
+        <Label circular color='yellow' empty/> 
+      )
+    }
+    else if(status == 2){
+      return(
+        <Label circular color='olive' empty/> 
+      )
+    }
+    if(status == 1){
+      return(
+        <Label circular color='green' empty/> 
+      )
+    }
+  }
+
+  statusText(status){
+    if(status == 1){
+      return('Under Development')
+    }
+    else if(status == 2){
+      return('Testing')
+    }
+    else if(status == 3){
+      return('Released')
+    }
+  }
+
+  UserPage(userRole){
+    if(userRole == 1){
+      return(
+        <Button size='mini' disabled>
+          Users Page
+        </Button>
+      )
+    }
+    else if(userRole == 2){
+      return(
+        <div>
+        <Button size='mini' href="http://localhost:3000/admin/users">
+          Users Page
+        </Button>
+        </div>
+      )
+    }
   }
 
   render(){
@@ -166,7 +215,7 @@ class MyPage extends Component{
     }
 
     return(
-      <div>
+      <div >
         <div className="ui fixed inverted menu">
           <div className="ui container">
           <img src={logo} height="69px" width="69px"/>
@@ -175,14 +224,14 @@ class MyPage extends Component{
             </h2> 
             <div className="right menu">
               <div className="item">
-                <button class="ui primary button">
+                <Button primary href={"http://localhost:3000/projects"}>
                   Browse Projects
-                </button>
+                </Button>
               </div>
               <div className="item">
-              <button class="ui primary button">
+                <Button primary href={"http://localhost:3000/project/add"}>
                 Add New Projects
-              </button>
+                </Button>
               </div>
               <div className="item">
               <button class="ui primary button">
@@ -208,30 +257,35 @@ class MyPage extends Component{
                     {this.state.user_data["username"]}
                     </Header>
                     Enrollment No: {this.state.user_data["enrNo"]}<br></br>
-                    {User_Role}
+                    {User_Role}<br/><br/>
+                    {this.UserPage(this.state.user_data.user_role)}
                     </p>
                     </div>
                     <div className="ui orange segment">
+                      <Segment vertical>
                       <h3>Ongoing Projects</h3>
-                      <div className="ui segments">
+                      </Segment>
                         {this.state.projects.map(projects =>{
                           return(
-                          <div className="ui segment" key={projects.id}>
-                            <h4 className="ui content left">
-                              <p>{projects.name}</p>
-                            </h4>
-                            <h4 className="ui content right">
-                              Created:
-                              <Moment fromNow>
-                                {projects.created_at}
-                              </Moment>
-                            </h4>
-                          </div>
+                            <Segment vertical key={projects.id}> 
+                            <Header as='a' href={"http://localhost:3000/projects/" + projects.id} color='blue'>
+                              <h3>
+                              {projects.name}
+                              </h3>
+                            </Header>
+                            <br/>
+                            {this.statusLabel(projects.status)}
+                            {this.statusText(projects.status)}
+                              <span style={{marginLeft: 10}}>
+                                Created <Moment fromNow>
+                                  {projects.created_at}
+                                </Moment>
+                              </span>
+                            </Segment>
                           )
                         } 
                         )}
                       </div>
-                    </div>
                 </div>
               </div>
             </div>

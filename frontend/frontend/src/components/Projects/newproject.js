@@ -17,8 +17,6 @@ class newProject extends Component{
             members: [],
             users_available: [],
         }
-
-        this.handleDropdownChange = this.handleDropdownChange.bind(this);
         this.statusChange = this.statusChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.projectNameHandler = this.projectNameHandler.bind(this);
@@ -89,15 +87,6 @@ class newProject extends Component{
         }).then((response) => {
             console.log(response);
         })
-    }
-
-    handleDropdownChange = (event, data) => {
-        console.log(this.state)
-        console.log(data.value[0])
-        //console.log(data)
-        this.setState(previousState =>({
-            members: [...previousState.members, data.value[0]]
-        }));
     }
 
     statusChange = (event, data) => {
@@ -225,7 +214,12 @@ class newProject extends Component{
                                     "value": user.pk
                                 }
                             })}
-                            onChange={this.handleDropdownChange}
+                            onChange={(event, data) => {
+                                console.log(data.value)
+                                this.setState({
+                                    members: data.value
+                                })
+                            }}
                             />
                             <br/>
                             <h3>Project Creator</h3>
@@ -245,7 +239,6 @@ class newProject extends Component{
                                 this.setState({
                                     creator: data.value
                                 })
-                                console.log(this.state)
                             }}
                             />
                             <br/>
