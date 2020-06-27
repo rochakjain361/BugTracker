@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import axios from 'axios'
 import logo from '../../mediafiles/LogoSmall.png'
-import { Container, Header, Segment, Grid, Card, Button, Image, Menu } from "semantic-ui-react";
+import { Container, Header, Segment, Grid, Card, Button, Image, Menu, Label, Popup, Modal, Dropdown, Form, Icon} from "semantic-ui-react";
 import './styles.css'
 import Avatar from "react-avatar"; 
 import Moment from "react-moment";
+import { Editor } from '@tinymce/tinymce-react';
+
 
 const color = ['red', 'green']
 
@@ -20,7 +22,13 @@ class ProjectDetails extends Component{
         project_issues: [],
         activeItem: 'Open',
         wsdata: [],
+        newStatus: '',
+        wiki: '',
+        users_available: [],
         }
+        this.statusUpdateSubmit = this.statusUpdateSubmit.bind(this)
+        this.DescriptionChangeSubmit = this.DescriptionChangeSubmit.bind(this)
+        this.handleCheck = this.handleCheck.bind(this)
     }; 
 
     handleItemClick = (e, { name }) => {
@@ -63,8 +71,109 @@ class ProjectDetails extends Component{
             })
           }
           console.log(this.state)
-        })      
+        }) 
+        
+        axios({
+          method:'get',
+          url: 'http://127.0.0.1:8000/appusers/',
+          withCredentials: true
+        }).then((res) => {
+          if(res.statusText === "OK"){
+            this.setState({
+              ...this.state,
+              users_available: res.data
+            })
+          }
+        })
     }
+    handleCheck(value){
+      return ('')
+    }
+
+    statusLabel(status){
+      if(status == 1){
+        return(
+          <Label circular color='yellow' empty/> 
+        )
+      }
+      else if(status == 2){
+        return(
+          <Label circular color='olive' empty/> 
+        )
+      }
+      if(status == 3){
+        return(
+          <Label circular color='green' empty/> 
+        )
+      }
+    }
+    StatusUpdateMenu(currentStatus){
+      if(currentStatus == 1){
+        return([
+          {
+            key: '2',
+            text: 'Testing',
+            value: '2'
+          },
+          {
+            key: '3',
+            text: 'Released',
+            value: '3'
+          }   
+        ])
+      }
+      else if(currentStatus == 2){
+        return([
+          {
+            key: '3',
+            text: 'Released',
+            value: '3'
+          } 
+        ])
+      }
+      else if(currentStatus == 3){
+        return([])
+      }
+    }
+
+    statusUpdateSubmit(){
+      console.log(this.state)
+      console.log(this.state.newStatus)
+
+      axios({
+        method: 'get',
+        url: `http://127.0.0.1:8000/project/${this.state.project.id}/status_update/`,
+        params : {
+          status : this.state.newStatus
+        }
+      }).then((response) => {
+        console.log(response)
+      })
+
+      this.refreshpage();
+      }
+
+    DescriptionChangeSubmit(){
+      console.log(this.state.wiki)
+
+      axios({
+        method: 'get',
+        url: `http://127.0.0.1:8000/project/${this.state.project.id}/wiki_update/`,
+        params: {
+          wiki: this.state.wiki
+        }
+      }).then((response) => {
+        console.log(response)
+      })
+
+      this.refreshpage();
+
+    }
+
+    refreshpage(){
+      window.location.reload(false);
+    }
+
 
     handleData(data) {
       let result = JSON.parse(data);
@@ -72,34 +181,29 @@ class ProjectDetails extends Component{
     }
 
     render(){
+      const avatar = (url, firstname) => {
+        if(url === ""){
+            return(
+                <Avatar name={firstname}/>
+            )
+        }
+        else{
+            var dp_url = 'https://internet.channeli.in/' + url;
+            return( 
+                <Avatar src={dp_url} />
+            )
+        }
+    }
       const {activeItem} = this.state
       let status;
       if(this.state.project.status == 1){
-        status=(
-          <p>
-            <h3>
-              Status: Under Development
-            </h3> 
-          </p>
-        )
+        status=(' Under Development')
       }
       else if(this.state.project.status == 2){
-        status=(
-          <p>
-            <h3>
-              Status: Testing Phase
-            </h3> 
-          </p>
-        )
+        status=('Testing')
       }
       else{
-        status=(
-          <p>
-            <h3>
-              Status: Released
-            </h3> 
-          </p>
-        )
+        status=('Released')
       }
 
       let issues;
@@ -125,7 +229,7 @@ class ProjectDetails extends Component{
         issues=(<Segment color='green'>
           <Segment.Group raised>
             {this.state.project_issues.map(issues =>{
-              if(issues.bug_status === 2|| issues.bug_status === 3 ){
+              if(issues.bug_status === 2|| issues.bug_status === 3){
               return(
                 <Segment>
                 <h3>
@@ -175,37 +279,126 @@ class ProjectDetails extends Component{
                 </Segment>
                 <Segment vertical>
                   <Container>
+                    <Grid divided='vertically'>
+                      <Grid.Row columns={2}>
+                        <Grid.Column>
+                          <h4>
+                            Creator: {this.state.project_creator.username}
+                          </h4>
+                        </Grid.Column>
+                        <Grid.Column>
+                          <Modal 
+                          trigger={<Header as='h4'
+                          color='blue'
+                          ><Popup
+                            trigger={ <div> Status : {this.statusLabel(this.state.project.status)} {status}</div>}
+                            inverted
+                            >
+                              Update the Status here 
+                            </Popup>
+                          </Header>}
+                          basic
+                          size='small'
+                          >
+                            <Header icon='browser' content='Updating the project status'/>
+                            <Modal.Content>
+                              Update the project status by selecting one of the options from below:
+                              <br/><br/>
+                              <Form onSubmit={this.statusUpdateSubmit}>
+                                <Dropdown
+                                  placeholder='Select the new Project Status'
+                                  selection
+                                  search
+                                  options={this.StatusUpdateMenu(this.state.project.status)}
+                                  onChange={(event, data)=>{
+                                    this.setState({
+                                      ...this.state,
+                                      newStatus : data.value
+                                    })
+                                  }
+                                  }
+                                />
+                                <Button  type='submit' color='green' inverted floated='right'>
+                                  <Icon name='checkmark'/> Submit
+                                </Button>
+                              </Form>
+                            </Modal.Content> 
+                          </Modal>
+                        </Grid.Column>
+                      </Grid.Row>
+                    </Grid>
                     <p>
-                      <h3>Description: {this.state.project.wiki}</h3>
+                      <h4>Description: 
+                        <Modal
+                        trigger={<Button size='mini' icon='info circle' content='Change Description' style={{ marginLeft: 25}}/>}
+                        basic small
+                        >
+
+                          <Header icon='browser' content='Change the Project Description Here'/>
+                          <Form onSubmit={this.DescriptionChangeSubmit}>
+                          <Form.Field>
+                                <Editor
+                                    init={{
+                                        height: 200,
+                                        menubar: false,
+                                    }}
+                                    value={this.state.wiki}
+                                    onEditorChange={(event) => {
+                                        this.setState({
+                                            ...this.state,
+                                            wiki: event
+                                        })
+                                    }
+                                    }
+                                    apiKey="m7w1230xevfu875oarb6yfdxqdy4ltar34fuddlol5mowpde"
+                                    />
+                            </Form.Field>
+                            <Button  type='submit' color='green' inverted floated='right'>
+                                  <Icon name='checkmark'/> Submit
+                                </Button>
+                            </Form>
+                        </Modal>
+                        <div dangerouslySetInnerHTML={{ __html: this.state.project.wiki }} />
+                        </h4>
                     </p>
-                    {status}
                     <p>
-                      <h3>
-                        Creator: {this.state.project_creator.username}
-                      </h3>
-                    </p>
-                    <p>
-                      <h3>
+                      <h4>
                         Team Members:
-                      </h3>
+                        <Modal
+                        trigger={<Button size='mini' icon='add' content='Add More Team Members' style={{ marginLeft: 25}}/>
+                        }>
+
+                        </Modal>
+                      </h4>
                     </p>
                     <Card.Group>
                       {this.state.project_members.map(members => {
-                        return(<Card>
-                        <Card.Content>
-                          <Image
-                          floated='left'
-                          circular
-                          >
-                          <Avatar name={this.state.project_creator.first_name} color='crimson'/>
-                          </Image>
-                          <Card.Header>{members.username}</Card.Header>
-                          <Card.Meta>Enrollment No: {members.enrNo}</Card.Meta>
-                          <Card.Meta>Email: {members.email}</Card.Meta>
-                          </Card.Content>
-                          </Card>)
+                        return(
+                        <Popup 
+                        trigger={<Card>
+                          <Card.Content>
+                            <Image
+                            floated='right'
+                            circular
+                            >
+                               {avatar(members.display_picture, members.username)}
+                            </Image>
+                            {this.handleCheck(members)}
+                            <Card.Header as='h4'>{members.username}</Card.Header>
+                            <Card.Meta>Enrollment No: {members.enrNo}</Card.Meta>
+                            <Card.Meta>Email: {members.email}</Card.Meta>
+                            <div style={{color: '#DC143C' }}>{members.is_disabled ? 'Disabled' : ''}</div>
+                            </Card.Content>
+                            </Card>}
+                            >
+                              {(members.pk == this.state.project_creator.pk) ? 'Creator' : 'Member'}
+                            </Popup>
+                        )
                        })}
                       </Card.Group>
+                      <h4>
+                      Created <Moment fromNow>{this.state.project.created_at}</Moment>
+                      </h4>
                   </Container>
                 </Segment>
                 <Segment vertical>

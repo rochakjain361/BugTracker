@@ -213,6 +213,40 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Response':'User Not Authenticated.'})
 
+    @action(methods=['get',], detail=True, url_path='status_update', url_name='status_update')
+    def update_status(self, request, pk):
+        project = Project.objects.get(pk =pk)
+        creator = project.creator
+        status = request.GET.get('status')
+        print(status)
+        project.status = status
+        project.save()
+        return Response({'Status': 'Status Updated'})
+
+    @action(methods=['get',], detail=True, url_path='wiki_update', url_name='wiki_update')
+    def update_wiki(self, request, pk):
+        project = Project.objects.get(pk =pk)
+        #creator = project.creator
+        wiki = request.GET.get('wiki')
+        print(wiki)
+        project.wiki = wiki
+        project.save()
+        return Response({'Status': 'Wiki Updated'})
+
+    @action(methods=['get',], detail=True, url_path='add_team_members', url_name='add_team_members')
+    def add_team_members(self, request, pk):
+        project = Project.objects.get(pk =pk)
+        #creator = project.creator
+        members = []
+        for x in range(len(code) - 4):
+            members.append(request.GET.get('add_members[%d]' % x))
+        creator_user = AppUser.objects.get(pk = creator)
+        team_members = []
+        for m in members:
+            team_members.append(AppUser.objects.get(pk = m))
+        project.members.set(team_members)
+        return Response({'Status': 'More Team Members Added'})
+
 class IssuesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         try:
