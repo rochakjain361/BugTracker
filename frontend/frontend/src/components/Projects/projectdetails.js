@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import axios from 'axios'
 import logo from '../../mediafiles/LogoSmall.png'
-import { Container, Header, Segment, Grid, Card, Button, Image, Menu, Label, Popup, Modal, Dropdown, Form, Icon, Message} from "semantic-ui-react";
+import { Container, Header, Segment, Grid, Card, Button, Image, Menu, Label, Popup, Modal, Dropdown, Form, Icon, Message, Input} from "semantic-ui-react";
 import './styles.css'
 import Avatar from "react-avatar"; 
 import Moment from "react-moment";
 import { Editor } from '@tinymce/tinymce-react';
 import qs from 'qs';
+import {Redirect} from 'react-router-dom'
 
 const color = ['red', 'green']
 
@@ -26,10 +27,12 @@ class ProjectDetails extends Component{
         wiki: '',
         users_available: [],
         new_members: [],
+        delete_project_name: '',
         }
         this.statusUpdateSubmit = this.statusUpdateSubmit.bind(this)
         this.DescriptionChangeSubmit = this.DescriptionChangeSubmit.bind(this)
-        this.AddMoreTeamMembers = this.AddMoreTeamMembers.bind(this)    
+        this.AddMoreTeamMembers = this.AddMoreTeamMembers.bind(this)
+        this.deleteProjectSubmit = this.deleteProjectSubmit.bind(this)    
     }; 
 
     handleItemClick = (e, { name }) => {
@@ -186,10 +189,59 @@ class ProjectDetails extends Component{
       this.refreshpage();
     }
 
+    deleteProjectSubmit(){
+      console.log(this.state.delete_project_name)
+      if(this.state.delete_project_name === this.state.project.name){
+        axios({
+          method: 'get',
+          url: `http://127.0.0.1:8000/project/${this.state.project.id}/delete_project/`
+        })
+        return(<Redirect to='/onlogin/'/>)
+      }
+    }
+
     refreshpage(){
       window.location.reload(false);
     }
 
+    bugTag(tag){
+      if(tag == 1){
+        return(
+          <Button
+            color='yellow'
+            content='Bug'
+            icon='bug'
+            size='mini'
+            circular
+            style={{marginLeft: 20}}
+            />
+        ) 
+      }
+      else if(tag == 2){
+        return(
+        <Button
+            color='violet'
+            content='Enhancement'
+            icon='hashtag'
+            size='mini'
+            circular
+            style={{marginLeft: 20}}
+            />
+        )
+      }
+      else if(tag == 3){
+        return(
+        <Button
+            color='brown'
+            content='UI/UX'
+            icon='mobile'
+            size='mini'
+            circular
+            style={{marginLeft: 20}}
+            />
+        )
+      }
+    }
 
     handleData(data) {
       let result = JSON.parse(data);
@@ -224,37 +276,79 @@ class ProjectDetails extends Component{
 
       let issues;
 
+      let tag;
+
       if(this.state.activeItem === 'Open'){
         issues=(<Segment color='red'>
-          <Segment.Group raised>
             {this.state.project_issues.map(issues =>{
-              if(issues.bug_status === 1){
+              if(issues.bug_status === 1 || issues.bug_status === 2){
               return(
-                <Segment>
+                <Segment vertical>
                 <h3>
+                  <Icon name='exclamation circle' color='red'/>
+                  <Header as='a' href={"http://localhost:3000/issues/" + issues.pk} >
                   {issues.title}
+                  </Header>
+                  {this.bugTag(issues.tag)}
                 </h3>
+                <div style={{marginLeft: 25}}>
+              #{issues.pk} opened <Moment fromNow>{issues.created_at}</Moment> by <Popup trigger={<span>{issues.reported_by.username}</span>}>
+                <Card>
+                <Card.Content>
+                            <Image
+                            floated='right'
+                            circular
+                            >
+                               {avatar(issues.reported_by.display_picture, issues.reported_by.username)}
+                            </Image>
+                            <Card.Header as='h4'>{issues.reported_by.username}</Card.Header>
+                            <Card.Meta>Enrollment No: {issues.reported_by.enrNo}</Card.Meta>
+                            <Card.Meta>Email: {issues.reported_by.email}</Card.Meta>
+                            <div style={{color: '#DC143C' }}>{issues.reported_by.is_disabled ? 'Disabled' : ''}</div>
+                            </Card.Content> 
+                </Card>
+              </Popup>
+              </div>
                 </Segment>
               )}
             })}
-          </Segment.Group>
         </Segment>)
       }
 
       if(this.state.activeItem === 'Closed'){
         issues=(<Segment color='green'>
-          <Segment.Group raised>
             {this.state.project_issues.map(issues =>{
-              if(issues.bug_status === 2|| issues.bug_status === 3){
+              if(issues.bug_status === 3){
               return(
-                <Segment>
+                <Segment vertical>
                 <h3>
+                <Icon name='check circle' color='green'/>
+                <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
                   {issues.title}
+                  </Header>
+                  {this.bugTag(issues.tag)}
                 </h3>
+                <div style={{marginLeft: 25}}>
+                #{issues.pk} opened <Moment fromNow>{issues.created_at}</Moment> by <Popup trigger={<span>{issues.reported_by.username}</span>}>
+                <Card>
+                <Card.Content>
+                            <Image
+                            floated='right'
+                            circular
+                            >
+                               {avatar(issues.reported_by.display_picture, issues.reported_by.username)}
+                            </Image>
+                            <Card.Header as='h4'>{issues.reported_by.username}</Card.Header>
+                            <Card.Meta>Enrollment No: {issues.reported_by.enrNo}</Card.Meta>
+                            <Card.Meta>Email: {issues.reported_by.email}</Card.Meta>
+                            <div style={{color: '#DC143C' }}>{issues.reported_by.is_disabled ? 'Disabled' : ''}</div>
+                            </Card.Content> 
+                </Card>
+              </Popup>
+              </div>
                 </Segment>
               )}
             })}
-          </Segment.Group>
         </Segment>)
       }
       return(
@@ -289,6 +383,39 @@ class ProjectDetails extends Component{
                   <div className = 'bodyContent'>
                 <Header as='h1'>
                   Project: {this.state.project.name}
+                <Modal
+                trigger={<Button floated='right' inverted color='red'>
+                    <Icon name='delete'/> Delete Project
+                  </Button>}
+                  basic small
+                >
+                  <Header icon='browser' content='Do you really want to this Project?'/>
+                  <Modal.Content>
+                    <h4>
+                  Once you delete a project, there is no going back. Please be certain.
+                  This action <i><u>cannot</u></i> be undone. This will permanently delete the <i><u>{this.state.project.name}</u></i> project, 
+                  wiki, issues, comments and will remove the members. Please type <i><u>{this.state.project.name}</u></i> to confirm.
+                  </h4>
+                  </Modal.Content>
+                  <br/>
+                  <Form onSubmit={this.deleteProjectSubmit}>
+                  <Input 
+                    fluid
+                    placeholder='Project Name' 
+                    onChange={(event, data) =>{
+                      this.setState({
+                        ...this.state,
+                        delete_project_name: data.value,
+                      })
+                      console.log(this.state)
+                    }}
+                  />
+                  <br/><br/>
+                  <Button type='submit' color='red' inverted floated='right'>
+                    <Icon name='checkmark'/> Submit and Delete the Project
+                  </Button>
+                  </Form>
+                </Modal>
                 </Header>
                 </div>
                 </Segment>
@@ -380,12 +507,12 @@ class ProjectDetails extends Component{
                       <h4>
                         Team Members:
                         <Modal
-                        trigger={<Button size='mini' icon='add' content='Add More Team Members' style={{ marginLeft: 25}}
+                        trigger={<Button size='mini' icon='add' content='Alter the Team Members' style={{ marginLeft: 25}}
                         />
                         }
                         basic small
                         >
-                          <Header icon='browser' content='Add New Team Members here'/>
+                          <Header icon='browser' content='Alter the Team Members here'/>
                           <Form onSubmit={this.AddMoreTeamMembers}>
                             <Dropdown 
                               placeholder='Members' 
@@ -418,9 +545,9 @@ class ProjectDetails extends Component{
                               basic
                               inverted
                               warning
-                              header='Note: The Team of previous members will be reseted'
+                              header='Note: The team of previous members will be reseted'
                               list={[
-                                'Note that the team of previous members will be erased, so in order to have them retained re-add them here',
+                                'Note that the team of previous members will be erased, so make sure that you re-add them too in order to have them retained or if you want to kick them out of the project you can neglect them.',
                               ]}
                             />
                           </Modal.Content>

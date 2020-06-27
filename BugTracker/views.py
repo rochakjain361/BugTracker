@@ -245,6 +245,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
             team_members.append(AppUser.objects.get(pk = m))
         project.members.set(team_members)
         return Response({'Status': 'More Team Members Added'})
+    
+    @action(methods=['get',], detail=True, url_path='delete_project', url_name='delete_project')
+    def delete_project(self, request, pk):
+        project = Project.objects.get(pk= pk)
+        project.delete()
+        return Response({'Response': 'Project Deleted'})
 
 class IssuesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):

@@ -51,25 +51,6 @@ class newProject extends Component{
     handleSubmit = event => {
         event.preventDefault();
         console.log(this.state);
-        /*
-        axios({
-            url: 'http://127.0.0.1:8000/project/',
-            method: "post",
-            withCredentials: "true",
-            data:{
-                name: this.state.name,
-                wiki: this.state.wiki,
-                status: this.state.status,
-                creator: this.state.creator,
-                members: this.state.members                 
-            },
-            headers: {'Content-Type': 'application/json',
-                      'X-CSRFToken': 'rcxDnQW5f1R3j6szjnRVirpzHOHHJQg9tA90ia6TzylArmg8SLoUGsKScKDmgWxP'   
-                    },
-        }).then((response) => {
-            console.log(response)
-        })
-        */
         axios({
             method: 'get',
             url: 'http://127.0.0.1:8000/project/add_project',
