@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import axios from 'axios'
 import logo from '../../mediafiles/LogoSmall.png'
-import { Container, Header, Segment, Grid, Card, Button, Image, Menu, Label, Popup, Modal, Dropdown, Form, Icon} from "semantic-ui-react";
+import { Container, Header, Segment, Grid, Card, Button, Image, Menu, Label, Popup, Modal, Dropdown, Form, Icon, Message} from "semantic-ui-react";
 import './styles.css'
 import Avatar from "react-avatar"; 
 import Moment from "react-moment";
 import { Editor } from '@tinymce/tinymce-react';
-
+import qs from 'qs';
 
 const color = ['red', 'green']
 
@@ -25,10 +25,11 @@ class ProjectDetails extends Component{
         newStatus: '',
         wiki: '',
         users_available: [],
+        new_members: [],
         }
         this.statusUpdateSubmit = this.statusUpdateSubmit.bind(this)
         this.DescriptionChangeSubmit = this.DescriptionChangeSubmit.bind(this)
-        this.handleCheck = this.handleCheck.bind(this)
+        this.AddMoreTeamMembers = this.AddMoreTeamMembers.bind(this)    
     }; 
 
     handleItemClick = (e, { name }) => {
@@ -86,10 +87,6 @@ class ProjectDetails extends Component{
           }
         })
     }
-    handleCheck(value){
-      return ('')
-    }
-
     statusLabel(status){
       if(status == 1){
         return(
@@ -170,6 +167,25 @@ class ProjectDetails extends Component{
 
     }
 
+    AddMoreTeamMembers(){
+      console.log(this.state.new_members)
+      console.log(this.state.project.id)
+      axios({
+        method: 'get',
+        url: `http://127.0.0.1:8000/project/${this.state.project.id}/add_team_members/`,
+        params: {
+          add_members: this.state.new_members
+        },
+        paramsSerializer: params => {
+          return qs.stringify(params)
+      } 
+      }).then((res) => {
+        console.log(res)
+      })
+
+      this.refreshpage();
+    }
+
     refreshpage(){
       window.location.reload(false);
     }
@@ -241,7 +257,6 @@ class ProjectDetails extends Component{
           </Segment.Group>
         </Segment>)
       }
-
       return(
             <div>
               <div className="ui fixed inverted menu">
@@ -365,9 +380,50 @@ class ProjectDetails extends Component{
                       <h4>
                         Team Members:
                         <Modal
-                        trigger={<Button size='mini' icon='add' content='Add More Team Members' style={{ marginLeft: 25}}/>
-                        }>
-
+                        trigger={<Button size='mini' icon='add' content='Add More Team Members' style={{ marginLeft: 25}}
+                        />
+                        }
+                        basic small
+                        >
+                          <Header icon='browser' content='Add New Team Members here'/>
+                          <Form onSubmit={this.AddMoreTeamMembers}>
+                            <Dropdown 
+                              placeholder='Members' 
+                              fluid 
+                              multiple
+                              search
+                              selection 
+                              options={this.state.users_available.map(user => {
+                                return{
+                                    "key": user.pk,
+                                    "text": user.username,
+                                    "value": user.pk
+                                }
+                              })}
+                              onChange={(event, data) => {
+                                console.log(data.value)
+                                this.setState({
+                                    new_members: data.value
+                                })
+                              }}
+                            />
+                            <br/><br/>
+                            <Button  type='submit' color='green' inverted floated='right'>
+                                  <Icon name='checkmark'/> Submit
+                                </Button>
+                          </Form>
+                          <br/><br/>
+                          <Modal.Content>
+                          <Message
+                              basic
+                              inverted
+                              warning
+                              header='Note: The Team of previous members will be reseted'
+                              list={[
+                                'Note that the team of previous members will be erased, so in order to have them retained re-add them here',
+                              ]}
+                            />
+                          </Modal.Content>
                         </Modal>
                       </h4>
                     </p>
@@ -383,7 +439,6 @@ class ProjectDetails extends Component{
                             >
                                {avatar(members.display_picture, members.username)}
                             </Image>
-                            {this.handleCheck(members)}
                             <Card.Header as='h4'>{members.username}</Card.Header>
                             <Card.Meta>Enrollment No: {members.enrNo}</Card.Meta>
                             <Card.Meta>Email: {members.email}</Card.Meta>

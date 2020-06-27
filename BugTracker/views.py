@@ -238,9 +238,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = Project.objects.get(pk =pk)
         #creator = project.creator
         members = []
-        for x in range(len(code) - 4):
+        for x in range(len(request.GET)):
             members.append(request.GET.get('add_members[%d]' % x))
-        creator_user = AppUser.objects.get(pk = creator)
         team_members = []
         for m in members:
             team_members.append(AppUser.objects.get(pk = m))
