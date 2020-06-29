@@ -3,7 +3,7 @@ import Avatar from 'react-avatar';
 import axios from 'axios'
 import logo from '../../mediafiles/LogoSmall.png'
 import './styles.css'
-import { Menu, Segment, Header, Container, Grid, Image, Dimmer, Label, Button} from 'semantic-ui-react'
+import { Menu, Segment, Header, Icon, Grid, Image, Dimmer, Label, Button} from 'semantic-ui-react'
 import 'moment-timezone';
 import Moment from 'react-moment';
 const color = ['violet', 'green']
@@ -21,6 +21,7 @@ class MyPage extends Component{
        activeItem : 'reportedIssues',
     };
     this.handleItemClick = this.handleItemClick.bind(this);
+    this.bugTag = this.bugTag.bind(this);
   }
 
   handleItemClick = (e, { name }) => {
@@ -54,6 +55,41 @@ class MyPage extends Component{
     }).then((response) => {
       console.log(response.data)
     })
+  }
+  bugTag(tag){
+    if(tag == 1){
+      return(
+        <Label
+          color='yellow'
+          icon='bug'
+          size='small'
+          corner='right'
+          style={{marginLeft: 20}}
+          />
+      ) 
+    }
+    else if(tag == 2){
+      return(
+      <Label
+          color='violet'
+          icon='hashtag'
+          size='small'
+          corner='right'
+          style={{marginLeft: 20}}
+          />
+      )
+    }
+    else if(tag == 3){
+      return(
+      <Label
+          color='brown'
+          icon='mobile'
+          size='small'
+          corner='right'
+          style={{marginLeft: 20}}
+          />
+      )
+    }
   }
 
   statusLabel(status){
@@ -116,7 +152,6 @@ class MyPage extends Component{
       console.log(rptd_issues)
       issues=(<div>
         <Segment color='violet'>
-          <Segment.Group raised>
         {rptd_issues.map(issues =>{
           var assigned_to;
           if(Array(issues.assigned_to)[0] == null){
@@ -126,27 +161,16 @@ class MyPage extends Component{
             assigned_to = Array(issues.assigned_to)[0].username
           }
           return(  
-            <Segment key={issues.id}>
-              <h4>
-              <Grid columns={2}>
-                <Grid.Row>
-                  <Grid.Column>
-                    Project:{issues.project.name}
-                  </Grid.Column>
-                  <Grid.Column>
-                    Assigned To: {assigned_to}
-                  </Grid.Column>
-                </Grid.Row>
-                <Grid.Row>
-                  <Grid.Column>
-                    Issues Title: {issues.title}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-              </h4>
+            <Segment vertical key={issues.id}>
+             <h3>
+                <Icon name='check circle' color='green'/>
+                <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
+                  {issues.title}
+                  </Header>
+                  {this.bugTag(issues.tag)}
+                </h3>
             </Segment>
           )})}
-            </Segment.Group>
         </Segment>
         </div>)
     }
@@ -156,7 +180,6 @@ class MyPage extends Component{
       console.log(asgnd_issues)
       issues=(<div>
         <Segment color='green'>
-          <Segment.Group raised>
         {asgnd_issues.map(issue =>{
           var reported_by;
           if(Array(issue.reported_by)[0] == null){
@@ -166,7 +189,7 @@ class MyPage extends Component{
             reported_by = Array(issue.reported_by)[0].username
           }
           return(
-            <Segment key={issue.pk}>
+            <Segment vertical key={issue.pk}>
               <h4>
               <Grid columns={2}>
                 <Grid.Row>
@@ -186,7 +209,6 @@ class MyPage extends Component{
               </h4>
             </Segment>
           )})}
-          </Segment.Group>
         </Segment>
         </div>)
     }
@@ -230,13 +252,13 @@ class MyPage extends Component{
               </div>
               <div className="item">
                 <Button primary href={"http://localhost:3000/project/add"}>
-                Add New Projects
+                Add New Project
                 </Button>
               </div>
               <div className="item">
-              <button class="ui primary button">
-                Add New Issues
-              </button>
+              <Button primary href={"http://localhost:3000/issue/add"}>
+                Add New Issue
+                </Button>
               </div>
               </div>
             </div>

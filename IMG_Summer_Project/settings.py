@@ -87,10 +87,6 @@ TEMPLATES = [
 SESSION_COOKIE_SAMESITE = None
 CSRF_COOKIE_SAMESITE = None
 
-#SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-#CSRF_COOKIE_NAME = 'BUGTRACKER_CSRFTOKEN'
-#SESSION_COOKIE_NAME = 'BUGTRACKER_SESSIONID'
-
 WSGI_APPLICATION = 'IMG_Summer_Project.wsgi.application'
 ASGI_APPLICATION = 'IMG_Summer_Project.routing.application'
 
@@ -177,11 +173,15 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+MEDIA_URL = '/media/'
+
 DJRICHTEXTFIELD_CONFIG = {
     'js': ['//tinymce.cachefly.net/4.1/tinymce.min.js'],
     'init_template': 'djrichtextfield/init/tinymce.js',
     'settings': {
-        'menubar': False,
+        'menubar': True,
         'plugins': 'link image',
         'toolbar': 'bold italic | link image | removeformat',
         'width': 700

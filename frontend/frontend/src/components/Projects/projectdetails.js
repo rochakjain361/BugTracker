@@ -292,7 +292,9 @@ class ProjectDetails extends Component{
                   {this.bugTag(issues.tag)}
                 </h3>
                 <div style={{marginLeft: 25}}>
-              #{issues.pk} opened <Moment fromNow>{issues.created_at}</Moment> by <Popup trigger={<span>{issues.reported_by.username}</span>}>
+                <Grid columns={2}>
+                    <Grid.Column>
+                    #{issues.pk} opened <Moment fromNow>{issues.created_at}</Moment> by <Popup trigger={<span><b>{issues.reported_by.username}</b></span>}>
                 <Card>
                 <Card.Content>
                             <Image
@@ -307,7 +309,27 @@ class ProjectDetails extends Component{
                             <div style={{color: '#DC143C' }}>{issues.reported_by.is_disabled ? 'Disabled' : ''}</div>
                             </Card.Content> 
                 </Card>
-              </Popup>
+              </Popup> 
+                    </Grid.Column>
+                    <Grid.Column>
+                    Assigned To: <Popup trigger={<span><b>{issues.assigned_to ? issues.assigned_to : 'Not assigned till now'}</b></span>}>
+                        {issues.assigned_to? <Card>
+                          <Card.Content>
+                            <Image
+                            floated='right'
+                            circular
+                            >
+                               {avatar(issues.assigned_to.display_picture, issues.assigned_to.username)}
+                            </Image>
+                            <Card.Header as='h4'>{issues.assigned_to.username}</Card.Header>
+                            <Card.Meta>Enrollment No: {issues.assigned_to.enrNo}</Card.Meta>
+                            <Card.Meta>Email: {issues.assigned_to.email}</Card.Meta>
+                            <div style={{color: '#DC143C' }}>{issues.assigned_to.is_disabled ? 'Disabled' : ''}</div>
+                            </Card.Content> 
+                        </Card> : 'Nothing to see here'}
+                        </Popup>
+                    </Grid.Column>
+                  </Grid>
               </div>
                 </Segment>
               )}
@@ -320,7 +342,7 @@ class ProjectDetails extends Component{
             {this.state.project_issues.map(issues =>{
               if(issues.bug_status === 3){
               return(
-                <Segment vertical>
+                <Segment vertical >
                 <h3>
                 <Icon name='check circle' color='green'/>
                 <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
@@ -329,7 +351,9 @@ class ProjectDetails extends Component{
                   {this.bugTag(issues.tag)}
                 </h3>
                 <div style={{marginLeft: 25}}>
-                #{issues.pk} opened <Moment fromNow>{issues.created_at}</Moment> by <Popup trigger={<span>{issues.reported_by.username}</span>}>
+                  <Grid columns={2}>
+                    <Grid.Column>
+                    #{issues.pk} opened <Moment fromNow>{issues.created_at}</Moment> by <Popup trigger={<span><b>{issues.reported_by.username}</b></span>}>
                 <Card>
                 <Card.Content>
                             <Image
@@ -344,7 +368,27 @@ class ProjectDetails extends Component{
                             <div style={{color: '#DC143C' }}>{issues.reported_by.is_disabled ? 'Disabled' : ''}</div>
                             </Card.Content> 
                 </Card>
-              </Popup>
+              </Popup> 
+                    </Grid.Column>
+                    <Grid.Column>
+                    Assigned To: <Popup trigger={<span><b>{issues.assigned_to ? issues.assigned_to : 'Not assigned till now'}</b></span>}>
+                        {issues.assigned_to? <Card>
+                          <Card.Content>
+                            <Image
+                            floated='right'
+                            circular
+                            >
+                               {avatar(issues.assigned_to.display_picture, issues.assigned_to.username)}
+                            </Image>
+                            <Card.Header as='h4'>{issues.assigned_to.username}</Card.Header>
+                            <Card.Meta>Enrollment No: {issues.assigned_to.enrNo}</Card.Meta>
+                            <Card.Meta>Email: {issues.assigned_to.email}</Card.Meta>
+                            <div style={{color: '#DC143C' }}>{issues.assigned_to.is_disabled ? 'Disabled' : ''}</div>
+                            </Card.Content> 
+                        </Card> : 'Nothing to see here'}
+                        </Popup>
+                    </Grid.Column>
+                  </Grid>
               </div>
                 </Segment>
               )}
@@ -361,19 +405,19 @@ class ProjectDetails extends Component{
                   </h2> 
                   <div className="right menu">
                     <div className="item">
-                      <button class="ui primary button">
-                        Browse Projects
-                      </button>
+                    <Button primary href={"http://localhost:3000/projects"}>
+                  Browse Projects
+                </Button>
                     </div>
                     <div className="item">
-                      <button class="ui primary button">
-                        Add New Projects
-                      </button>
+                    <Button primary href={"http://localhost:3000/project/add"}>
+                    Add New Project
+                </Button>
                     </div>
                     <div className="item">
-                      <button class="ui primary button">
-                        Add New Issues
-                      </button>
+                    <Button primary href={"http://localhost:3000/issue/add"}>
+                    Add New Issue
+                </Button>
                     </div>
                   </div>
                 </div>

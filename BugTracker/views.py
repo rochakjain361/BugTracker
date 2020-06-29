@@ -10,7 +10,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 import requests
 from django.contrib.auth import login, logout
 from django.http import HttpResponse
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 #from django.middleware import csrf;
 # Create your views here.
 
@@ -314,7 +316,7 @@ class IssuesViewSet(viewsets.ModelViewSet):
             print(tag)
             issue = Issues(title = title,description = description,bug_status = bug_status, reported_by = reported_by, project = project, tag = tag)
             issue.save()
-            return Response({'Status':'This is working'})
+            return Response({'Status':'This is working', 'Id': issue.pk})
         else: 
             return Response({'Status':'User not Authenticated'})
 
@@ -327,20 +329,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
-    #permission_classes = [IsAdminOrReadOnly]
-    @action(methods=['get',], detail=True, url_path='images', url_name='images')
-    def get_comment_images(self, request, pk):
-        comment = Comment.objects.get(pk=pk)
-        images = Image.objects.filter(comment=comment)
-        serializer = UploadImageSerializers(images, many=True)
-        return Response(serializer.data)
-
 class ImageViewSet(viewsets.ModelViewSet):
-    def get_queryset(self):
-        try:
-            return Image.objects.filter(comment=self.kwargs['comment_pk'])
-        except KeyError:
-            return Image.objects.all()
+    parser_classes = (MultiPartParser, FormParser)
     queryset = Image.objects.all()
     serializer_class = UploadImageSerializers
+
+    @method_decorator(csrf_exempt)
+    @action(methods=['post',], detail=False,url_path='upload', url_name='upload')
+    def image_upload(self, request):
+        image = request.POST.get('Image')
+        issue = request.POST.get('Issue')
 

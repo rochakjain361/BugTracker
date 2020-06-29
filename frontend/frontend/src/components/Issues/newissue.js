@@ -18,11 +18,14 @@ class newIssue extends Component{
             project: [],
             tag:[],
             projects_available: [],
+            files: [],
+            issueId: '',
         }
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
         this.statusChange = this.statusChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.issueNameHandler = this.issueNameHandler.bind(this);
+        this.uploadFile = this.uploadFile.bind(this);
     }
 
     componentDidMount(){
@@ -37,10 +40,11 @@ class newIssue extends Component{
             console.log(this.state)
         })
     }
-
     handleSubmit = event => {
         event.preventDefault();
         console.log(this.state);
+
+        var pk;
 
         axios({
             method: 'get',
@@ -56,6 +60,32 @@ class newIssue extends Component{
                 return qs.stringify(params)
             }
         }).then((response)=> {
+            console.log(response.data.Id)
+            this.setState({
+                issueId: response.data.Id   
+            })
+        })
+
+        const formData = new FormData();
+
+        formData.append(
+            'Image', this.state.files 
+        );
+
+        axios({
+            method: 'post',
+            url: 'http://127.0.0.1:8000/images/upload',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true 
+            },
+            withCredentials: true,
+            data: {
+                formData,
+                'Issue': this.state.issueId
+            },
+        }).then((response) => {
             console.log(response)
         })
 
@@ -113,6 +143,14 @@ class newIssue extends Component{
             title: data.value
         })
         //console.log(this.state)
+    }
+
+    uploadFile = event => {
+        alert('Image added')
+        this.setState({
+            ...this.state,
+            files: [event.target.files[0]]
+        })
     }
 
     render(){
@@ -184,8 +222,19 @@ class newIssue extends Component{
                                 <h3><label>Issue Description</label></h3>
                                 <Editor
                                     init={{
+                                        selector: 'textarea',
+                                        menubar: true,
+                                        width: 700,
                                         height: 200,
-                                        menubar: false,
+                                        plugins: [
+                                          'advlist autolink lists charmap print preview anchor',
+                                          'searchreplace visualblocks code fullscreen',
+                                          'insertdatetime table paste code help wordcount'
+                                        ],
+                                        toolbar:
+                                          'undo redo | formatselect | bold italic backcolor | \
+                                          alignleft aligncenter alignright alignjustify |\
+                                          bullist numlist outdent indent | removeformat | help',
                                     }}
                                     value={this.state.wiki}
                                     onEditorChange={(event) => {
@@ -198,6 +247,10 @@ class newIssue extends Component{
                                     }
                                     apiKey="m7w1230xevfu875oarb6yfdxqdy4ltar34fuddlol5mowpde"
                                     />
+                            </Form.Field>
+                            <Form.Field>
+                                <h3>Upload Images for this issue</h3>
+                            <input type="file" id="file" name="filename" onChange={this.uploadFile} />
                             </Form.Field>
                             <h3>
                             <Form.Group inline>
