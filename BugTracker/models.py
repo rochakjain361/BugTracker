@@ -69,7 +69,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.comment
+        
+def upload_path(instance, filename):
+        return '/'.join(['issue', filename])
 
-class Image(models.Model):
-    issues = models.ForeignKey(Issues, on_delete = models.CASCADE)
-    image = models.ImageField(null=True, upload_to='./media')
+class IssueImages(models.Model):
+        issue = models.ForeignKey(Issues, on_delete = models.CASCADE)
+        image = models.ImageField(blank = True, null = True, upload_to = upload_path)

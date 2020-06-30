@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from rest_framework.authentication import BasicAuthentication
 #from django.middleware import csrf;
 # Create your views here.
 
@@ -308,12 +309,6 @@ class IssuesViewSet(viewsets.ModelViewSet):
             project_id = request.GET.get('project')
             project = Project.objects.get(pk = project_id)
             tag = request.GET.get('tag')
-            print(title)
-            print(description)
-            print(bug_status)
-            print(reported_by)
-            print(project)
-            print(tag)
             issue = Issues(title = title,description = description,bug_status = bug_status, reported_by = reported_by, project = project, tag = tag)
             issue.save()
             return Response({'Status':'This is working', 'Id': issue.pk})
@@ -329,14 +324,17 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
-class ImageViewSet(viewsets.ModelViewSet):
-    parser_classes = (MultiPartParser, FormParser)
-    queryset = Image.objects.all()
-    serializer_class = UploadImageSerializers
+class IssueImageViewSet(viewsets.ModelViewSet):
+    queryset = IssueImages.objects.all()
+    serializer_class = IssueImageSerializer
+    authentication_classes = [BasicAuthentication]
 
-    @method_decorator(csrf_exempt)
-    @action(methods=['post',], detail=False,url_path='upload', url_name='upload')
-    def image_upload(self, request):
-        image = request.POST.get('Image')
-        issue = request.POST.get('Issue')
-
+    @action(methods=['get',], detail=False, url_path='get_image_url', url_name='get_image_url')
+    def get_images(self, request):
+        issue_id = request.GET.get('issue')
+        issue = Issues.objects.get(pk = issue_id)
+        print(issue)
+        images = IssueImages.objects.filter(issue = issue)
+        print(images)
+        serializer = IssueImageSerializer(images, many=True)
+        return Response({'data': serializer.data})

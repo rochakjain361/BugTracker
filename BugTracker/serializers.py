@@ -40,7 +40,7 @@ class IssuePOSTSerializer(serializers.ModelSerializer):
         model = models.Issues
         fields = ['title', 'pk', 'description', 'bug_status', 'reported_by', 'assigned_to', 'project', 'created_at', 'tag']
 
-class UploadImageSerializers(serializers.ModelSerializer):
+class IssueImageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Image
+        model = models.IssueImages
         fields = '__all__'

@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import WebSocketInstance from '../../WebSocket'
 import logo from '../../mediafiles/LogoSmall.png'
-import { Segment, Header, Button, Container, Grid, GridColumn, Label, Icon } from "semantic-ui-react";
+import { Redirect } from 'react-router-dom';
+import { Segment, Header, Button, Label, Card, Popup, Modal, Dropdown, Form, Icon } from "semantic-ui-react";
 import axios from 'axios';
 import 'moment-timezone';
 import Moment from 'react-moment';
@@ -16,6 +17,9 @@ class IssueComments extends Component{
             comment : '',
             comments : [],
             issue : [],
+            images: [],
+            project_members: [],
+            assignee: '',
         } 
 
         this.waitForSocketConnection(() => {
@@ -23,25 +27,43 @@ class IssueComments extends Component{
             WebSocketInstance.addCallbacks(this.setComments.bind(this), this.addComment.bind(this));
             WebSocketInstance.fetchComments()
         })
+
+        this.AssignIssueSubmit = this.AssignIssueSubmit.bind(this)
     }
     
     componentDidMount(){
         let id = this.props.match.params.id
-        console.log(id)
+        //console.log(id)
         WebSocketInstance.connect(id) 
         axios({
             method:'get',
             url: `http://127.0.0.1:8000/issues/${id}/`
         }).then((response) => {
-            console.log(response)
+            //console.log(response)
             if(response.statusText == 'OK'){
                 this.setState({
                     ...this.state,
                     issue: response.data,
+                    project_members: response.data.project.members
                 })
             }
         })
-               
+
+        axios({
+            method:'get',
+            url: `http://127.0.0.1:8000/issue_images/get_image_url/?issue=${id}`,
+        }).then((response) => {
+            //console.log(response.data.data)
+            if(response.statusText == 'OK'){
+                for(var i = 0; i < response.data.data.length; i++){
+                    this.setState({
+                        ...this.state,
+                        images: [ ...this.state.images, response.data.data[i].image]   
+                    })
+                }
+            }
+        })
+        
     }
 
     waitForSocketConnection(callback) {
@@ -49,12 +71,12 @@ class IssueComments extends Component{
         setTimeout(
             function(){
                 if(WebSocketInstance.state() === 1){
-                    console.log('Connection is made');
+                    //console.log('Connection is made');
                     callback();
                     return;
                 }
                 else{
-                    console.log("Waiting for connection..");
+                    //console.log("Waiting for connection..");
                     component.waitForSocketConnection(callback);
                 }
             }, 100);
@@ -70,7 +92,7 @@ class IssueComments extends Component{
         this.setState({
             comments : comments.reverse()
         });
-        console.log('Set Comments')
+        //console.log('Set Comments')
     }
 
     commentChangeHandler = (event) => {
@@ -86,6 +108,10 @@ class IssueComments extends Component{
         }
         WebSocketInstance.newComment(messageObject, this.props.match.params.id)
         e.preventDefault();
+    }
+    
+    AssignIssueSubmit(){
+        console.log(this.state.assignee)
     }
 
     render(){
@@ -159,7 +185,7 @@ class IssueComments extends Component{
             )
         }
 
-        console.log(this.state)
+        //console.log(this.state)
         return(<div>
             <div className="ui fixed inverted menu">
           <div className="ui container">
@@ -200,7 +226,52 @@ class IssueComments extends Component{
                 {rep_user_name} opened this issue <Moment fromNow>{this.state.issue.created_at}</Moment> 
                 </Header>
                 <Header floated='right'>
-                Assigned To: {asgn_user_name}
+                Assigned To: {(asgn_user_name == null) ?
+                <Modal
+                trigger={
+                    <span>
+                        <Popup
+                        trigger={<span>Assigned to No One</span>}
+                        inverted>
+                            Assign this Issue to a Team Member
+                        </Popup>
+                    </span>
+                }
+                basic
+                size='small'
+                >
+                    <Header icon='browser' content='Assigning the Issue to a Team Member'/>
+                    <Modal.Content>
+                        Assign this Issue to a team Member of the project by selecting one of them from the list below:
+                        <br/><br/>
+                        <Form onSubmit={this.AssignIssueSubmit}>
+                            <Dropdown
+                            placeholder='Select the assignee of the issue'
+                            selection
+                            search
+                            options={this.state.project_members.map(user => {
+                                return{
+                                    "key": user.pk,
+                                    "text": user.username,
+                                    "value": user.pk  
+                                }
+                            })}
+                            onChange={(event, data) => {
+                                console.log(data.value)
+                                this.setState({
+                                    ...this.state,
+                                    assignee: data.value 
+                                })
+                                console.log(this.state.assignee)
+                            }}
+                            />
+                             <Button  type='submit' color='green' inverted floated='right'>
+                                  <Icon name='checkmark'/> Submit
+                                </Button>
+                        </Form>
+                    </Modal.Content>
+                </Modal>
+                 : asgn_user_name}
                 </Header>
                 </Segment>
                 </div>
@@ -212,7 +283,12 @@ class IssueComments extends Component{
                 <Label color='orange' ribbon>
                     <h4>{rep_user_name} commented on this issue <Moment fromNow>{this.state.issue.created_at}</Moment></h4>
                 </Label>
-                    <h4>{this.state.issue.description}</h4>
+                    <h4> <div dangerouslySetInnerHTML={{ __html: this.state.issue.description }} /></h4>
+                    <Card.Group>
+                    {this.state.images.map(image => {
+                        return(<Card color='red' image={'http://127.0.0.1:8000' + image} header='A Snap of the Issue'/>)
+                    })}
+                    </Card.Group>
             </Segment>
             {this.state.comments.map(comment => {
                 return(<Segment raised>
@@ -224,18 +300,27 @@ class IssueComments extends Component{
                 )
             })}
             </div>
-            <form onSubmit={(e) => this.sendCommentHandler(e, this.state.comment)}>
+            <form onSubmit={(e) => this.sendCommentHandler(e, this.state.comment)} style={{marginBottom : 30}}>
                 <Editor
                 value={this.state.comment}
                 init={{
-                    height: 500,
-                    menubar: false,
+                    height: 300,
+                    menubar: true,
+                    plugins: [
+                        'autolink lists charmap print preview anchor',
+                        'searchreplace visualblocks code fullscreen ',
+                        'insertdatetime table paste code help wordcount'
+                      ],
+                      toolbar:
+                        'undo redo | formatselect | bold italic backcolor | \
+                        alignleft aligncenter alignright alignjustify | \
+                        bullist numlist | removeformat | help'
                 }}
                 onEditorChange={this.commentChangeHandler}
                 apiKey="m7w1230xevfu875oarb6yfdxqdy4ltar34fuddlol5mowpde"
                 />
                 <br/>
-                <Button type="submit" className="submit" value="Submit">
+                <Button type="submit" className="submit" value="Submit" >
                     Send
                 </Button>
             </form>

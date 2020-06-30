@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from channels.consumer import AsyncConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Comment, Image, Issues, AppUser
+from .models import Comment, Issues, AppUser
 from asgiref.sync import sync_to_async
 
 class CommentConsumer(AsyncWebsocketConsumer):

@@ -86,6 +86,7 @@ TEMPLATES = [
 
 SESSION_COOKIE_SAMESITE = None
 CSRF_COOKIE_SAMESITE = None
+CSRF_COOKIE_NAME = "csrftoken"
 
 WSGI_APPLICATION = 'IMG_Summer_Project.wsgi.application'
 ASGI_APPLICATION = 'IMG_Summer_Project.routing.application'

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import axios from 'axios';
 import logo from '../../mediafiles/LogoSmall.png'
 import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button, Message } from "semantic-ui-react";
@@ -18,14 +18,13 @@ class newIssue extends Component{
             project: [],
             tag:[],
             projects_available: [],
-            files: [],
+            file: [],
             issueId: '',
         }
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
         this.statusChange = this.statusChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.issueNameHandler = this.issueNameHandler.bind(this);
-        this.uploadFile = this.uploadFile.bind(this);
+        this.issueNameHandler = this.issueNameHandler.bind(this); 
     }
 
     componentDidMount(){
@@ -43,9 +42,6 @@ class newIssue extends Component{
     handleSubmit = event => {
         event.preventDefault();
         console.log(this.state);
-
-        var pk;
-
         axios({
             method: 'get',
             url: 'http://127.0.0.1:8000/issues/add_issue/',
@@ -61,52 +57,17 @@ class newIssue extends Component{
             }
         }).then((response)=> {
             console.log(response.data.Id)
-            this.setState({
-                issueId: response.data.Id   
-            })
+            for (var i = 0; i < this.state.file.length; i++){
+                const uploadData = new FormData();
+            uploadData.append('issue', response.data.Id  )
+            uploadData.append('image', this.state.file[i], this.state.file[i].name)
+    
+            fetch('http://127.0.0.1:8000/issue_images/', {
+                method: 'POST',
+                body: uploadData
+            }).then(res => console.log(res))
+            }
         })
-
-        const formData = new FormData();
-
-        formData.append(
-            'Image', this.state.files 
-        );
-
-        axios({
-            method: 'post',
-            url: 'http://127.0.0.1:8000/images/upload',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': true 
-            },
-            withCredentials: true,
-            data: {
-                formData,
-                'Issue': this.state.issueId
-            },
-        }).then((response) => {
-            console.log(response)
-        })
-
-        /*
-        axios({
-            method: 'post',
-            url: 'http://127.0.0.1:8000/issues/',
-            withCredentials: "true",
-            data:{ 
-                title: this.state.title,
-                description: this.state.description,
-                bug_status: this.state.bug_status,
-                reported_by: this.state.reported_by,
-                assigned_to: null,
-                project: this.state.project,
-                tag: this.state.tag
-            } 
-        }).then((response) => {
-            console.log(response)
-        })
-        */
     }
 
     handleDropdownChange = (event, data) => {
@@ -131,26 +92,12 @@ class newIssue extends Component{
 
     issueNameHandler = (event, data) => {
 
-        axios({
-            url: '',
-            method: 'get'
-        })
-
-
         console.log(data.value)
         this.setState({
             ...this.state,
             title: data.value
         })
         //console.log(this.state)
-    }
-
-    uploadFile = event => {
-        alert('Image added')
-        this.setState({
-            ...this.state,
-            files: [event.target.files[0]]
-        })
     }
 
     render(){
@@ -224,17 +171,17 @@ class newIssue extends Component{
                                     init={{
                                         selector: 'textarea',
                                         menubar: true,
-                                        width: 700,
+                                        width: '100%',
                                         height: 200,
                                         plugins: [
                                           'advlist autolink lists charmap print preview anchor',
-                                          'searchreplace visualblocks code fullscreen',
+                                          'searchreplace visualblocks code fullscreen ',
                                           'insertdatetime table paste code help wordcount'
                                         ],
                                         toolbar:
                                           'undo redo | formatselect | bold italic backcolor | \
-                                          alignleft aligncenter alignright alignjustify |\
-                                          bullist numlist outdent indent | removeformat | help',
+                                          alignleft aligncenter alignright alignjustify | \
+                                          bullist numlist | removeformat | help',
                                     }}
                                     value={this.state.wiki}
                                     onEditorChange={(event) => {
@@ -250,7 +197,14 @@ class newIssue extends Component{
                             </Form.Field>
                             <Form.Field>
                                 <h3>Upload Images for this issue</h3>
-                            <input type="file" id="file" name="filename" onChange={this.uploadFile} />
+                            <input type="file" name="filename" onChange={(event) => {
+                                this.setState({
+                                ...this.state,
+                                file: [...this.state.file, event.target.files[0]] 
+                            })
+                            console.log(this.state.file)
+                            alert( this.state.file.length + 1 + ' Image/s Uploaded till now ')
+                            }} accept="image/png, image/jpeg"/>
                             </Form.Field>
                             <h3>
                             <Form.Group inline>

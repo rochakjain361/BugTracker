@@ -27,7 +27,7 @@ class WebSocketService{
           };
 
         this.socketRef.onopen = () => {
-            console.log("WebSocket open");
+            //console.log("WebSocket open");
         };
         
         this.socketRef.onerror = e => {
@@ -42,7 +42,7 @@ class WebSocketService{
 
     socketNewMessage(data){
         const parsedData = JSON.parse(data);
-        console.log('Message:',parsedData)
+        //console.log('Message:',parsedData)
         const command = parsedData.command;
         if(Object.keys(this.callbacks).length === 0){
             return;
@@ -75,7 +75,7 @@ class WebSocketService{
 
     sendComment(data){
         try{
-            console.log({...data})
+            //console.log({...data})
             this.socketRef.send(JSON.stringify({...data}))
         }
         catch(err){
