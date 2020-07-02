@@ -7,8 +7,7 @@ import Avatar from "react-avatar";
 import Moment from "react-moment";
 import { Editor } from '@tinymce/tinymce-react';
 import qs from 'qs';
-import {Redirect} from 'react-router-dom'
-
+import { Redirect } from "react-router-dom";
 const color = ['red', 'green']
 
 class ProjectDetails extends Component{
@@ -190,13 +189,13 @@ class ProjectDetails extends Component{
     }
 
     deleteProjectSubmit(){
-      console.log(this.state.delete_project_name)
+      //console.log(this.state.delete_project_name)
       if(this.state.delete_project_name === this.state.project.name){
         axios({
           method: 'get',
           url: `http://127.0.0.1:8000/project/${this.state.project.id}/delete_project/`
         })
-        return(<Redirect to='/onlogin/'/>)
+        window.location = "http://localhost:3000/onlogin"
       }
     }
 
@@ -204,48 +203,51 @@ class ProjectDetails extends Component{
       window.location.reload(false);
     }
 
-    bugTag(tag){
-      if(tag == 1){
-        return(
-          <Button
-            color='yellow'
-            content='Bug'
-            icon='bug'
-            size='mini'
-            circular
-            style={{marginLeft: 20}}
-            />
-        ) 
-      }
-      else if(tag == 2){
-        return(
-        <Button
-            color='violet'
-            content='Enhancement'
-            icon='hashtag'
-            size='mini'
-            circular
-            style={{marginLeft: 20}}
-            />
-        )
-      }
-      else if(tag == 3){
-        return(
-        <Button
-            color='brown'
-            content='UI/UX'
-            icon='mobile'
-            size='mini'
-            circular
-            style={{marginLeft: 20}}
-            />
-        )
-      }
-    }
-
     handleData(data) {
       let result = JSON.parse(data);
       console.log(result);
+    }
+
+    tagColor(color){
+      if(color == 1){
+        return('red')
+      }
+      else if(color == 2){
+        return('orange')
+      }
+      else if(color == 3){
+        return('yellow')
+      }
+      else if(color == 4){
+        return('olive')
+      }
+      else if(color == 5){
+        return('green')
+      }
+      else if(color == 6){
+        return('teal')
+      }
+      else if(color == 7){
+        return('blue')
+      }
+      else if(color == 8){
+        return('violet')
+      }
+      else if(color == 9){
+        return('purple')
+      }
+      else if(color == 10){
+        return('pink')
+      }
+      else if(color == 11){
+        return('brown')
+      }
+      else if(color == 12){
+        return('grey')
+      }
+      else if(color == 13){
+        return('black')
+      }
     }
 
     render(){
@@ -286,10 +288,18 @@ class ProjectDetails extends Component{
                 <Segment vertical>
                 <h3>
                   <Icon name='exclamation circle' color='red'/>
-                  <Header as='a' href={"http://localhost:3000/issues/" + issues.pk} >
+                  <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
                   {issues.title}
+                  <span style={{marginLeft: 5}}/>
+                  {issues.tags.map(tag =>{
+                    return(
+                      <span>
+                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href='http://localhost:3000/projects'/>
+                    </span>)
+                  })}
                   </Header>
-                  {this.bugTag(issues.tag)}
+                  <span/>
+
                 </h3>
                 <div style={{marginLeft: 25}}>
                 <Grid columns={2}>
@@ -312,8 +322,10 @@ class ProjectDetails extends Component{
               </Popup> 
                     </Grid.Column>
                     <Grid.Column>
-                    Assigned To: <Popup trigger={<span><b>{issues.assigned_to ? issues.assigned_to : 'Not assigned till now'}</b></span>}>
-                        {issues.assigned_to? <Card>
+                      Assigned To: {issues.assigned_to.username == null ? 'Not assigned till now' :<Popup
+                      trigger ={<b>{issues.assigned_to.username}</b>}
+                      >
+                        <Card>
                           <Card.Content>
                             <Image
                             floated='right'
@@ -326,8 +338,8 @@ class ProjectDetails extends Component{
                             <Card.Meta>Email: {issues.assigned_to.email}</Card.Meta>
                             <div style={{color: '#DC143C' }}>{issues.assigned_to.is_disabled ? 'Disabled' : ''}</div>
                             </Card.Content> 
-                        </Card> : 'Nothing to see here'}
-                        </Popup>
+                </Card>
+                        </Popup>}
                     </Grid.Column>
                   </Grid>
               </div>
@@ -348,7 +360,15 @@ class ProjectDetails extends Component{
                 <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
                   {issues.title}
                   </Header>
-                  {this.bugTag(issues.tag)}
+                  <span>
+                  <span style={{marginLeft:20}}/>
+                  {issues.tags.map(tag =>{
+                    return(
+                      <span>
+                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href='http://localhost:3000/projects'/>
+                    </span>)
+                  })}
+                  </span>
                 </h3>
                 <div style={{marginLeft: 25}}>
                   <Grid columns={2}>
@@ -399,7 +419,7 @@ class ProjectDetails extends Component{
             <div>
               <div className="ui fixed inverted menu">
                 <div className="ui container">
-                  <img src={logo} height="69px" width="69px"/>
+                <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
                   <h2 className="header item">
                     BugTracker 
                   </h2> 

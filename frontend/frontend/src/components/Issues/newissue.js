@@ -20,6 +20,7 @@ class newIssue extends Component{
             projects_available: [],
             file: [],
             issueId: '',
+            tagsAvailable: [],
         }
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
         this.statusChange = this.statusChange.bind(this);
@@ -38,6 +39,16 @@ class newIssue extends Component{
             })
             console.log(this.state)
         })
+
+        axios({
+            method: 'get',
+            url: 'http://127.0.0.1:8000/tags/'
+        }).then((res) => {
+            this.setState({
+                ...this.state,
+                tagsAvailable : res.data
+            })
+        })
     }
     handleSubmit = event => {
         event.preventDefault();
@@ -46,11 +57,11 @@ class newIssue extends Component{
             method: 'get',
             url: 'http://127.0.0.1:8000/issues/add_issue/',
             params: {
-                title:this.state.title,
+                title: this.state.title,
                 description: this.state.description,
                 bug_status: this.state.bug_status,
                 project: this.state.project,
-                tag: this.state.tag 
+                tags: this.state.tag 
             },
             paramsSerializer: params => {
                 return qs.stringify(params)
@@ -102,50 +113,37 @@ class newIssue extends Component{
 
     render(){
         const {bug_status} = this.state
-        const TagsForDropdown = [
-            {
-                key: 1,
-                text: 'Bug',
-                value: 1
-            },
-            {
-                key: 2,
-                text: 'Enhancement',
-                value: 2
-            },
-            {
-                key: 3,
-                text: 'UI/UX Improvement',
-                value: 3
-            }
-        ]
         return(
             <div>
                 <div className="ui fixed inverted menu">
-                    <div className="ui container">
-                        <img src={logo} height="69px" width="69px"/>
-                        <h2 className="header item">
-                                BugTracker 
-                        </h2> 
-                            <div className="right menu">
-                                <div className="item">
-                                    <button class="ui primary button">
-                                        Browse Projects
-                                    </button>
-                                </div>
-                                <div className="item">
-                                    <button class="ui primary button">
-                                        Add New Project
-                                    </button>
-                                </div>
-                                <div className="item">
-                                    <button class="ui primary button">
-                                        Back to My Page
-                                    </button>
-                                </div>
-                            </div>
-                    </div>
-                </div>
+          <div className="ui container">
+          <a href="http://localhost:3000/onlogin">
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
+           </a> 
+            <h2 className="header item">
+            <a href="http://localhost:3000/onlogin">
+                BugTracker
+                </a>
+            </h2>
+            <div className="right menu">
+              <div className="item">
+                <Button primary href={"http://localhost:3000/projects"}>
+                  Browse Projects
+                </Button>
+              </div>
+              <div className="item">
+                <Button primary href={"http://localhost:3000/project/add"}>
+                Add New Project
+                </Button>
+              </div>
+              <div className="item">
+              <Button primary href={"http://localhost:3000/onlogin"}>
+              Back to My Page
+                </Button>
+              </div>
+              </div>
+            </div>
+        </div>
                 <Container>
                     <Segment vertical>
                         <div className = 'bodyContent'>
@@ -252,9 +250,17 @@ class newIssue extends Component{
                             <Dropdown
                             placeholder='Select the Tag'
                             fluid
+                            multiple
                             search
                             selection
-                            options={TagsForDropdown}
+                            options={this.state.tagsAvailable.map(tag => {
+                                return{
+                                    "key": tag.id,
+                                    "icon": tag.icon,
+                                    "text": tag.tagName,
+                                    "value": tag.id
+                                }
+                            })}
                             onChange={(event, data) => {
                                 this.setState({
                                     tag: data.value

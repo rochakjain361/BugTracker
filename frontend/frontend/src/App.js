@@ -9,8 +9,8 @@ const ProjectDetails = lazy(() => import('./components/Projects/projectdetails')
 const IssueComments = lazy(() => import('./components/Issues/issues'))
 const newProject = lazy(() => import('./components/Projects/newproject'))
 const newIssue = lazy(() => import('./components/Issues/newissue'))
-const Test = lazy(() => import ('./components/test'))
 const Users = lazy(() => import('./components/MyPage/users'))
+const Tags = lazy(() => import('./components/Issues/tags'))
 const App = () => (
   <Router>
     <Suspense fallback={<div>Loading ...</div>}>
@@ -23,8 +23,8 @@ const App = () => (
         <Route exact path="/issues/:id" component={IssueComments} />
         <Route exact path="/project/add" component={newProject} />
         <Route exact path="/issue/add" component={newIssue}/>
-        <Route exact path="/test" component={Test}/>
         <Route exact path='/admin/users' component={Users}/>
+        <Route exact path='/tags/:id' component={Tags}/>
       </Switch>
     </Suspense>
   </Router>

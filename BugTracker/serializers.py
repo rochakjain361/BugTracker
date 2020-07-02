@@ -21,13 +21,19 @@ class ProjectPOSTSerializer(serializers.ModelSerializer):
         fields = ['name', 'wiki', 'status', 'creator', 'members', 'created_at', 'id']
         read_only_fields = ['id', 'created_at']
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Tags
+        fields = '__all__'
+
 class IssueGETSerializer(serializers.ModelSerializer):
     project = ProjectGETSerializer(read_only=True)
     reported_by = AppUserSerializer(read_only=True)
     assigned_to = AppUserSerializer(read_only=True)
+    tags = TagSerializer(read_only=True, many=True)
     class Meta:
         model = models.Issues
-        fields = ['title', 'pk', 'description', 'bug_status', 'reported_by', 'assigned_to', 'project', 'created_at', 'tag']
+        fields = ['title', 'pk', 'description', 'bug_status', 'reported_by', 'assigned_to', 'project', 'created_at', 'tags']
         #read_only_fields = ['title', 'reported_by', 'project', 'created_at']
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -38,7 +44,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class IssuePOSTSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Issues
-        fields = ['title', 'pk', 'description', 'bug_status', 'reported_by', 'assigned_to', 'project', 'created_at', 'tag']
+        fields = ['title', 'pk', 'description', 'bug_status', 'reported_by', 'assigned_to', 'project', 'created_at', 'tags']
 
 class IssueImageSerializer(serializers.ModelSerializer):
     class Meta:

@@ -19,10 +19,21 @@ USER_ROLE = (
         (1, 'Normal User'),
         (2, 'Admin')
 )
-TAG_OPTIONS = (
-        (1, 'Bug'),
-        (2, 'Enhancement'),
-        (3, 'UI/UX Improvement')
+
+COLORS = (
+        (1, 'red'),
+        (2, 'orange'),
+        (3, 'yellow'),
+        (4, 'olive'),
+        (5, 'green'),
+        (6, 'teal'),
+        (7, 'blue'),
+        (8, 'violet'),
+        (9, 'purple'),
+        (10, 'pink'),
+        (11, 'brown'),
+        (12, 'grey'),
+        (13, 'black')
 )
 
 class AppUser(AbstractUser):
@@ -47,17 +58,22 @@ class Project(models.Model):
     def remove_members(self, member):
         member_to_remove = AppUser.objects.filter(AppUser = self.member)
         
+class Tags(models.Model):
+        tagName = models.CharField(max_length=50, default='Bug')
+        icon = models.CharField(max_length=50, default='tag')
+        color = models.IntegerField(choices = COLORS, default = 1)
+        def __str__(self):
+                return self.tagName
 
 class Issues(models.Model):
     title = models.CharField(max_length=200)
     description = RichTextField()
     bug_status = models.IntegerField(choices = BUG_STATUS, default = 1)
-    reported_by = models.ForeignKey(AppUser, on_delete=models.SET_NULL, related_name='reported_by', null=True)
+    reported_by = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='reported_by', null=True)
     assigned_to = models.ForeignKey(AppUser, on_delete=models.SET_NULL, blank=True, null=True, related_name='assigned_to')
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
-    tag = models.IntegerField(choices = TAG_OPTIONS, default = 1)
-
+    tags = models.ManyToManyField(Tags, related_name='tags')
     def __str__(self):
         return self.title
 
@@ -66,7 +82,6 @@ class Comment(models.Model):
     comment = RichTextField()
     created_at = models.DateTimeField(auto_now_add = True) 
     commented_by = models.ForeignKey(AppUser, related_name='commented_by', on_delete=models.SET_NULL, null=True)
-
     def __str__(self):
         return self.comment
         

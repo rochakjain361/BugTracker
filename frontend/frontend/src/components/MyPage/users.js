@@ -195,7 +195,7 @@ class Users extends Component{
             <div>
                 <div className="ui fixed inverted menu">
                     <div className="ui container">
-                        <img src={logo} height="69px" width="69px"/>
+                    <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
                         <h2 className="header item">
                                 BugTracker 
                         </h2> 

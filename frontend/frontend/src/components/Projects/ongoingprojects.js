@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import axios from 'axios';
 import logo from '../../mediafiles/LogoSmall.png'
-import {Grid, Container, Header} from 'semantic-ui-react'
+import {Grid, Container, Header, Image, Segment, Label, Card, Popup, Button} from 'semantic-ui-react'
 import Avatar from 'react-avatar'
 import './styles.css'
 import 'moment-timezone';
@@ -13,36 +13,26 @@ class Projects extends Component {
 
         this.state = {
             user_data: [],
-            user_projects: [],
+            projects: [],
             ongoing_projects: [],
-            got_response_1: false,
-            got_response_2: false
         }
     };   
     
     componentDidMount(){
         axios({
-            method:'post',
-            url: 'http://127.0.0.1:8000/appusers/my_page/',
-            headers:{
-                'Content-Type':'application/json',
-            },
+            method:'get',
+            url: `http://127.0.0.1:8000/appusers/my_page/?code=${sessionStorage.getItem('access_token')}`,
             withCredentials: true,
-            data:{
-                access_token: sessionStorage.getItem('access_token')
-            }
-        }).then((response) =>{
+          }).then((response) => {
             console.log(response)
             if(response.statusText === "OK"){
-                this.setState({
-                    ...this.state,
-                    got_response_1: true,
-                    user_data: response.data["user_data"],
-                    user_projects: response.data["projects"]
-                })
+              this.setState({
+                ...this.state,
+                projects: response.data["projects"],
+                user_data: response.data["user_data"], 
+              })
             }
-            console.log(this.state)
-        })
+          })
 
         axios({
             method:'get',
@@ -52,37 +42,93 @@ class Projects extends Component {
             if(response.statusText === "OK"){
                 this.setState({
                     ...this.state,
-                    got_response_2: true,
                     ongoing_projects: response.data
                 })
             }
             console.log(this.state)
         })
     }
+
+    statusLabel(status){
+        if(status == 1){
+          return(
+            <Label circular color='yellow' empty/> 
+          )
+        }
+        else if(status == 2){
+          return(
+            <Label circular color='olive' empty/> 
+          )
+        }
+        if(status == 1){
+          return(
+            <Label circular color='green' empty/> 
+          )
+        }
+      }
+    
+      statusText(status){
+        if(status == 1){
+          return('Under Development')
+        }
+        else if(status == 2){
+          return('Testing')
+        }
+        else if(status == 3){
+          return('Released')
+        }
+      }
+
     render() {
+        const avatar = (url, firstname) => {
+            if(url === ""){
+                return(
+                    <Avatar name={firstname}/>
+                )
+            }
+            else{
+                var dp_url = 'https://internet.channeli.in/' + url;
+                return( 
+                    <Avatar src={dp_url} />
+                )
+            }
+          }
+        
+          var User_Role;
+          if(this.state.user_data["user_role"] == 1){
+            User_Role = 'Normal User'
+          }
+      
+          else if(this.state.user_data["user_role"] == 2){
+            User_Role = 'Admin'
+          }
         return (
             <div>
                <div className="ui fixed inverted menu">
                     <div className="ui container">
-                        <img src={logo} height="69px" width="69px"/>
-                        <h2 className="header item">
-                            BugTracker 
-                        </h2> 
-                        <div className="right menu">
-                            <div className="item">
-                                <button class="ui primary button">
-                                    Back to My Page
-                                </button>
-                            </div>
-                            <div className="item">
-                                <button class="ui primary button">
-                                    Add New Project
-                                </button>
-                            </div>
-                            <div className="item">
-                                <button class="ui primary button">
-                                    Add New Issue
-                                </button>
+                    <a href="http://localhost:3000/onlogin">
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
+           </a> 
+            <h2 className="header item">
+            <a href="http://localhost:3000/onlogin">
+                BugTracker
+                </a>
+            </h2>
+            <div className="right menu">
+              <div className="item">
+                <Button primary href={"http://localhost:3000/onlogin"}>
+                  Back To My Page
+                </Button>
+              </div>
+              <div className="item">
+                <Button primary href={"http://localhost:3000/project/add"}>
+                Add New Project
+                </Button>
+              </div>
+              <div className="item">
+              <Button primary href={"http://localhost:3000/issue/add"}>
+                Add New Issue
+                </Button>
                             </div>
                         </div>
                     </div>
@@ -92,73 +138,90 @@ class Projects extends Component {
                  <Grid.Row>
                      <Grid.Column>
                      <div className="userinfo">
-                <div className="ui red segments fluid card">
+                     <div className="ui red segments fluid card">
                   <div className="ui red segment">
-                    <Grid columns={2}>
-                      <Grid.Column>
-                        <Avatar name={this.state.user_data.first_name} round={true} color={'crimson'}/>
-                      </Grid.Column>
-                      <Grid.Column>  
-                    <div className="content">
-                      <h3>
-                      Name: {this.state.user_data["username"]}<br></br>
-                      EnrNo: {this.state.user_data["enrNo"]}<br></br>
-                      User-Role: {this.state.user_data["user_role"]}<br></br>
-                      </h3>
+                    <Image
+                    floated='left'
+                    circular>
+                      {avatar(this.state.user_data['display_picture'], this.state.user_data['first_name'])}
+                    </Image>
+                    <p>
+                    <Header>
+                    {this.state.user_data["username"]}
+                    </Header>
+                    Enrollment No: {this.state.user_data["enrNo"]}<br></br>
+                    {User_Role}<br/><br/>
+                    </p>
                     </div>
-                    </Grid.Column>
-                    </Grid>
-                    </div>
-                    <div className="ui orange inverted segment">
+                    <div className="ui orange segment">
+                      <Segment vertical>
                       <h3>Ongoing Projects</h3>
-                      <div className="ui segments">
-                        {this.state.ongoing_projects.map(projects =>{
+                      </Segment>
+                        {this.state.projects.map(projects =>{
                           return(
-                          <div className="ui segment" key={projects.id}>
-                            <h4 className="ui content left">
-                              <p>{projects.name}</p>
-                            </h4>
-                            <h4 className="ui content right">
-                            <p>
-                                Created:
-                                <Moment fromNow>
-                                {projects.created_at}
+                            <Segment vertical key={projects.id}> 
+                            <Header as='a' href={"http://localhost:3000/projects/" + projects.id} color='blue'>
+                              <h3>
+                              {projects.name}
+                              </h3>
+                            </Header>
+                            <br/>
+                            {this.statusLabel(projects.status)}
+                            {this.statusText(projects.status)}
+                              <span style={{marginLeft: 10}}>
+                                Created <Moment fromNow>
+                                  {projects.created_at}
                                 </Moment>
-                            </p>
-                            </h4>
-                          </div>
+                              </span>
+                            </Segment>
                           )
                         } 
                         )}
                       </div>
-                    </div>
-                    </div>
                 </div>
+                    </div>
                 </Grid.Column>
                 <Grid.Column>
                     <div className='userinfo'>
-                    <Header as='h1' color='green'>
+                    <Header as='h1'>
                         PROJECTS
                     </Header>
-                    
-                    <div className="ui segment inverted green">
-                        {this.state.ongoing_projects.map(projects =>{
+                    <Segment color='green'>
+                    {this.state.ongoing_projects.map(projects =>{
                           return(
-                          <div className="ui segment" key={projects.id}>
-                            <h4 className="ui content left">
-                              <p>{projects.name}</p>
-                            </h4>
-                            <h4 className="ui content right">
-                              Created:
-                              <Moment fromNow>
-                                {projects.created_at}
-                              </Moment>
-                            </h4>
-                          </div>
+                            <Segment vertical key={projects.id}> 
+                            <Header as='a' href={"http://localhost:3000/projects/" + projects.id} color='blue'>
+                              <h3>
+                              {projects.name}
+                              </h3>
+                            </Header>
+                            <Popup
+                    trigger={<b>{projects.creator.username}</b>}>
+                      <Card>
+                          <Card.Content>
+                            <Image
+                            floated='right'
+                            circular
+                            >
+                               {avatar(projects.creator.display_picture, projects.creator.username)}
+                            </Image>
+                            <Card.Header as='h4'>{projects.creator.username}</Card.Header>
+                            <Card.Meta>Enrollment No: {projects.creator.enrNo}</Card.Meta>
+                            <Card.Meta>Email: {projects.creator.email}</Card.Meta>
+                            <div style={{color: '#DC143C' }}>{projects.creator.is_disabled ? 'Disabled' : ''}</div>
+                            </Card.Content> 
+                        </Card>
+                    </Popup> started this project <Moment fromNow>
+                                  {projects.created_at}
+                                </Moment>
+                            <br/>
+                            {this.statusLabel(projects.status)}
+                            {this.statusText(projects.status)}
+                            </Segment>
                           )
                         } 
                         )}
-                    </div>
+                    </Segment>
                     </div>
                 </Grid.Column>
                 </Grid.Row>

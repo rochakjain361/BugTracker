@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import WebSocketInstance from '../../WebSocket'
 import logo from '../../mediafiles/LogoSmall.png'
 import { Redirect } from 'react-router-dom';
-import { Segment, Header, Button, Label, Card, Popup, Modal, Dropdown, Form, Icon } from "semantic-ui-react";
+import { Segment, Header, Button, Label, Card, Popup, Modal, Dropdown, Form, Icon, Input} from "semantic-ui-react";
 import axios from 'axios';
 import 'moment-timezone';
 import Moment from 'react-moment';
@@ -20,6 +20,8 @@ class IssueComments extends Component{
             images: [],
             project_members: [],
             assignee: '',
+            tags: [],
+            delete_issue_name: '',
         } 
 
         this.waitForSocketConnection(() => {
@@ -29,6 +31,8 @@ class IssueComments extends Component{
         })
 
         this.AssignIssueSubmit = this.AssignIssueSubmit.bind(this)
+        this.closeIssue = this.closeIssue.bind(this)
+        this.deleteIssueSubmit = this.deleteIssueSubmit.bind(this)
     }
     
     componentDidMount(){
@@ -44,7 +48,8 @@ class IssueComments extends Component{
                 this.setState({
                     ...this.state,
                     issue: response.data,
-                    project_members: response.data.project.members
+                    project_members: response.data.project.members,
+                    tags: response.data.tags
                 })
             }
         })
@@ -112,7 +117,91 @@ class IssueComments extends Component{
     
     AssignIssueSubmit(){
         console.log(this.state.assignee)
+
+        let id = this.props.match.params.id
+
+        axios({
+            method: 'get',
+            url: `http://127.0.0.1:8000/issues/${id}/assign/?memberId=${this.state.assignee}`
+        }).then((res) =>{
+            console.log(res)
+        })
+        this.refreshpage();
     }
+
+    closeIssue(){
+
+        let id = this.props.match.params.id
+
+        axios({
+            method: 'get',
+            url: `http://127.0.0.1:8000/issues/${id}/close_issue/`
+        }).then((res) => {
+            console.log(res)
+        })
+
+        this.refreshpage();
+    }
+
+    deleteIssueSubmit(){
+
+        let id = this.props.match.params.id
+
+        console.log(this.state.delete_issue_name == this.state.issue.title)
+        if(this.state.delete_issue_name == this.state.issue.title){
+            axios({
+                method: 'get',
+                url: `http://127.0.0.1:8000/issues/${id}/delete_issue/`
+            })
+            window.location = "http://localhost:3000/onlogin"
+        }
+    }
+
+    refreshpage(){
+        window.location.reload(false);
+    }
+
+    tagColor(color){
+        if(color == 1){
+          return('red')
+        }
+        else if(color == 2){
+          return('orange')
+        }
+        else if(color == 3){
+          return('yellow')
+        }
+        else if(color == 4){
+          return('olive')
+        }
+        else if(color == 5){
+          return('green')
+        }
+        else if(color == 6){
+          return('teal')
+        }
+        else if(color == 7){
+          return('blue')
+        }
+        else if(color == 8){
+          return('violet')
+        }
+        else if(color == 9){
+          return('purple')
+        }
+        else if(color == 10){
+          return('pink')
+        }
+        else if(color == 11){
+          return('brown')
+        }
+        else if(color == 12){
+          return('grey')
+        }
+        else if(color == 13){
+          return('black')
+        }
+      }
 
     render(){
         var project_name;
@@ -127,13 +216,14 @@ class IssueComments extends Component{
         if(Array(this.state.issue.assigned_to)[0] != null){
             asgn_user_name = Array(this.state.issue.assigned_to)[0].username
         }
-        console.log(this.state.issue)
         var bug_status;
         if(this.state.issue.bug_status == 1){
             bug_status = (
                 <Button
                 color='red'
                 content='Bug Status'
+                size='mini'
+                style={{marginLeft: 12}}
                 label={{ basic: true, color: 'red', pointing: 'left', content: 'Pending' }}
               />
             )
@@ -143,6 +233,8 @@ class IssueComments extends Component{
                 <Button
                 color='orange'
                 content='Bug Status'
+                size='mini'
+                style={{marginLeft: 12}}
                 label={{ basic: true, color: 'orange', pointing: 'left', content: 'To be discussed' }}
               />
             )
@@ -152,62 +244,38 @@ class IssueComments extends Component{
                 <Button
                 color='green'
                 content='Bug Status'
+                size='mini'
+                style={{marginLeft: 12}}
                 label={{ basic: true, color: 'green', pointing: 'left', content: 'Resolved' }}
               />
             )
         }
-        var tag;
-
-        if(this.state.issue.tag == 1){
-            tag = (
-                <Button
-                color='yellow'
-                content='Bug'
-                icon='bug'/>
-            )
-        }
-
-        if(this.state.issue.tag == 2){
-            tag = (
-                <Button
-                color='violet'
-                content='Enhancement'
-                icon='hashtag'/>
-            )
-        }
-
-        if(this.state.issue.tag == 3){
-            tag = (
-                <Button
-                color='brown'
-                content='UI/UX'
-                icon='mobile'/>
-            )
-        }
-
-        //console.log(this.state)
         return(<div>
             <div className="ui fixed inverted menu">
           <div className="ui container">
-          <img src={logo} height="69px" width="69px"/>
+          <a href="http://localhost:3000/onlogin">
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
+           </a> 
             <h2 className="header item">
-              BugTracker 
-            </h2> 
+            <a href="http://localhost:3000/onlogin">
+                BugTracker
+                </a>
+            </h2>
             <div className="right menu">
               <div className="item">
-                <button class="ui primary button">
+                <Button primary href={"http://localhost:3000/projects"}>
                   Browse Projects
-                </button>
+                </Button>
               </div>
               <div className="item">
-              <button class="ui primary button">
-                Add New Projects
-              </button>
+                <Button primary href={"http://localhost:3000/project/add"}>
+                Add New Project
+                </Button>
               </div>
               <div className="item">
-              <button class="ui primary button">
-                Add New Issues
-              </button>
+              <Button primary href={"http://localhost:3000/issue/add"}>
+                Add New Issue
+                </Button>
               </div>
               </div>
             </div>
@@ -215,12 +283,70 @@ class IssueComments extends Component{
         <div className="ui container">
             <Segment vertical>
             <div className="bodyContent">
+                <Segment vertical> 
                 <Header as="h2">Project: {project_name} </Header>
-                <Header as="h1">Issue: {this.state.issue.title}</Header>
-                <div>
-                {bug_status}        
-                {tag}
-                </div>
+                </Segment>
+                <Header as="h1">Issue: {this.state.issue.title}
+                <Modal
+                trigger={<Button floated='right' inverted color='red'>
+                    <Icon name='delete'/> Delete Issue
+                </Button>}
+                basic small>
+                    <Header icon='browser' content='Do you really want to this Issue?'/>
+                    <Modal.Content>
+                    <h4>
+                    Once you delete this issue, there's no going back. Please be certain.
+                    This action <i><u>cannot</u></i> be undone.This will permanently delete the <i><u>{this.state.issue.title}</u></i> issue,
+                    comments and media related with it. Please type <i><u>{this.state.issue.title}</u></i> to confirm.
+                    </h4>
+                    </Modal.Content>
+                    <br/>
+                    <Form onSubmit={this.deleteIssueSubmit}>
+                    <Input
+                    fluid
+                    placeholder='Issue Name'
+                    onChange={(event, data) =>{
+                        this.setState({
+                            ...this.state,
+                            delete_issue_name: data.value
+                        })
+                    }}/>
+                    <br/><br/>
+                        <Button type='submit' color='red' inverted floated='right'>
+                            <Icon name='checkmark'/> Submit and Delete the Issue
+                        </Button>
+                    </Form>
+                </Modal>
+                </Header>
+                <Header as="h2" style={{marginTop: 0}}>
+                {this.state.issue.bug_status == 3 ? bug_status : <Modal
+                trigger={<span>
+                    <Popup
+                    trigger={bug_status}
+                    inverted>
+                        Close this Issue
+                    </Popup>
+                </span>}
+                basic
+                size='small'>
+                    <Header icon='browser' content='Closing the Issue'/>
+                    <Modal.Content>
+                        Are you sure you want to close this Issue? 
+                        <br/><br/>
+                        <Button color='green' inverted floated='right' onClick={this.closeIssue}>
+                            <Icon name='checkmark'/> Close the Issue
+                        </Button>
+                    </Modal.Content>
+                </Modal>}
+                {this.state.tags.map(tag => {
+                    return(
+                        <span style={{margin: 5}}>
+                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`http://localhost:3000/tags/${tag.id}`}/>
+                    </span>
+                    )
+                })}
+
+                </Header>
                 <Segment vertical>
                 <Header floated='left'>
                 {rep_user_name} opened this issue <Moment fromNow>{this.state.issue.created_at}</Moment> 
@@ -243,6 +369,7 @@ class IssueComments extends Component{
                     <Header icon='browser' content='Assigning the Issue to a Team Member'/>
                     <Modal.Content>
                         Assign this Issue to a team Member of the project by selecting one of them from the list below:
+
                         <br/><br/>
                         <Form onSubmit={this.AssignIssueSubmit}>
                             <Dropdown
@@ -280,10 +407,11 @@ class IssueComments extends Component{
             </Segment>
             <div className='comments'>
             <Segment raised>
-                <Label color='orange' ribbon>
+                <Label color='purple' ribbon>
                     <h4>{rep_user_name} commented on this issue <Moment fromNow>{this.state.issue.created_at}</Moment></h4>
                 </Label>
                     <h4> <div dangerouslySetInnerHTML={{ __html: this.state.issue.description }} /></h4>
+                    <br/>
                     <Card.Group>
                     {this.state.images.map(image => {
                         return(<Card color='red' image={'http://127.0.0.1:8000' + image} header='A Snap of the Issue'/>)

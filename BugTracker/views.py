@@ -269,23 +269,6 @@ class IssuesViewSet(viewsets.ModelViewSet):
                     return Issues.objects.all()
     queryset = Issues.objects.all()
 
-    @action(methods=['patch', 'get'], detail=True, url_path='assign', url_name='assign')
-    def assign_issue(self, request, pk):
-        assign_to = self.request.query_params.get('assign_to')
-        issue = Issues.objects.get(pk=pk)
-
-        if AppUser.objects.get(pk=assign_to) in issue.project.members.all():
-            serializer = IssueSerializer(issue, data={'assigned_to': assign_to}, partial=True)
-
-            if serializer.is_valid():
-                serializer.save()
-                return Response({'status': 'Assignment Successful'}, status=status.HTTP_202_ACCEPTED)
-
-        else:
-            return Response({'Error': 'User not a Team Member'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
-        #if AppUser.objects.get(pk=assign_to) in issue.project.members.all():
-
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return IssuePOSTSerializer
@@ -302,25 +285,55 @@ class IssuesViewSet(viewsets.ModelViewSet):
     @action(methods=['get',], detail=False, url_path='add_issue', url_name='add_issue')
     def add_issue(self, request):
         if request.user.is_authenticated:
+            code = request.GET
             title = request.GET.get('title')
             description = request.GET.get('description')
             bug_status = request.GET.get('bug_status')
             reported_by = request.user
             project_id = request.GET.get('project')
             project = Project.objects.get(pk = project_id)
-            tag = request.GET.get('tag')
-            issue = Issues(title = title,description = description,bug_status = bug_status, reported_by = reported_by, project = project, tag = tag)
+            print(code)
+            tags = []
+            for x in range(len(code) - 4):
+                tags.append(request.GET.get('tags[%d]' % x))
+            new_tags = []
+            for m in tags:
+                new_tags.append(Tags.objects.get(pk = m))
+            print(new_tags)
+            issue = Issues(title = title,description = description,bug_status = bug_status, reported_by = reported_by, project = project)
             issue.save()
+            issue.tags.set(new_tags)
             return Response({'Status':'This is working', 'Id': issue.pk})
         else: 
             return Response({'Status':'User not Authenticated'})
 
+    @action(methods=['get',], detail=True, url_path='assign', url_name='assign')
+    def assign_issue(self, request, pk):
+        member_id = request.GET.get('memberId')
+        issue = Issues.objects.get(pk=pk)
+        if AppUser.objects.get(pk=member_id) in issue.project.members.all():
+            issue.assigned_to = AppUser.objects.get(pk=member_id)
+            issue.bug_status = 2
+            issue.save()
+            return Response({'Response' : 'User Assigned'})
+        else: 
+            return Response({'Response' : 'User not a team Member'})
+        #if AppUser.objects.get(pk=assign_to) in issue.project.members.all()
+    
+    @action(methods=['get',], detail=True, url_path='close_issue', url_name='close_issue')
+    def close_issue(self, request, pk):
+        issue = Issues.objects.get(pk = pk)
+        issue.bug_status = 3
+        issue.save()
+        return Response({'Response': 'Issue Closed'})
+
+    @action(methods=['get',], detail=True, url_path='delete_issue', url_name='delete_issue')
+    def delete_issue(self, request, pk):
+        issue = Issues.objects.get(pk =pk)
+        issue.delete()
+        return Response({'Response': 'Issue Deleted'})
+
 class CommentViewSet(viewsets.ModelViewSet):
-    def get_queryset(self):
-        try:
-            return Comment.objects.filter(issue=self.kwargs['issue_pk'])
-        except KeyError:
-            return Comment.objects.all()
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
@@ -338,3 +351,24 @@ class IssueImageViewSet(viewsets.ModelViewSet):
         print(images)
         serializer = IssueImageSerializer(images, many=True)
         return Response({'data': serializer.data})
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tags.objects.all()
+    serializer_class = TagSerializer
+
+    @action(methods=['get',], detail=False, url_path='new_tag', url_name='new_tag')
+    def new_tag(self, request):
+        tagName = request.GET.get('tagName')
+        icon = request.GET.get('icon')
+        color = request.GET.get('color')
+        tag = Tags(tagName=tagName, icon=icon, color=color)
+        tag.save()
+        return Response({'Response': 'This is working'})
+    
+    @action(methods=['get',], detail=True, url_path='tag_issues', url_name='tag_issues')
+    def tag_issues(self, request, pk):
+        tag = Tags.objects.get(pk = pk)
+        issues = Issues.objects.filter(tags = tag)
+        serializer = IssueGETSerializer(issues, many=True)
+        print(issues)
+        return Response({'Response': serializer.data})
