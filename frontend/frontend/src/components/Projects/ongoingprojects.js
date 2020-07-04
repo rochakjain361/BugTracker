@@ -60,7 +60,7 @@ class Projects extends Component {
             <Label circular color='olive' empty/> 
           )
         }
-        if(status == 1){
+        if(status == 3){
           return(
             <Label circular color='green' empty/> 
           )
@@ -195,6 +195,9 @@ class Projects extends Component {
                               {projects.name}
                               </h3>
                             </Header>
+                            <br/>
+                            {this.statusLabel(projects.status)}
+                            {this.statusText(projects.status)}<br/>
                             <Popup
                     trigger={<b>{projects.creator.username}</b>}>
                       <Card>
@@ -214,9 +217,6 @@ class Projects extends Component {
                     </Popup> started this project <Moment fromNow>
                                   {projects.created_at}
                                 </Moment>
-                            <br/>
-                            {this.statusLabel(projects.status)}
-                            {this.statusText(projects.status)}
                             </Segment>
                           )
                         } 

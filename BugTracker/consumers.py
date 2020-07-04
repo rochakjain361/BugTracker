@@ -5,6 +5,7 @@ from channels.consumer import AsyncConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Comment, Issues, AppUser
+from .mailer import Mailer
 from asgiref.sync import sync_to_async
 
 class CommentConsumer(AsyncWebsocketConsumer):
@@ -77,6 +78,8 @@ class CommentConsumer(AsyncWebsocketConsumer):
         comment_user = AppUser.objects.get(access_token = comment_by)
         comment_issue = Issues.objects.get(pk=issue)
         comment = Comment.objects.create(commented_by = comment_user, issue = comment_issue, comment=comment_text)
+        instance = Mailer()
+        instance.newComment(issue= comment_issue, project_name= comment_issue.project.name, reported_by= comment_issue.reported_by, commented_by= comment_user, team_members= comment_issue.project.members.all())
         content = {
                 'command': 'new_comment',
                 'comment': {

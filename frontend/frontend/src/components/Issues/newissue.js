@@ -1,7 +1,7 @@
 import React, {Component, useState} from 'react';
 import axios from 'axios';
 import logo from '../../mediafiles/LogoSmall.png'
-import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button, Message } from "semantic-ui-react";
+import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button, Message, Menu } from "semantic-ui-react";
 import { Editor } from "@tinymce/tinymce-react";
 
 import './styles.css'
@@ -205,8 +205,10 @@ class newIssue extends Component{
                             }} accept="image/png, image/jpeg"/>
                             </Form.Field>
                             <h3>
-                            <Form.Group inline>
+                            <Form.Group inline style={{marginTop: -10}}>
                                 <label>Bug Status</label>
+                                <Menu stackable text>
+                                    <Menu.Item>
                                     <Form.Field
                                         control={Radio}
                                         label='Pending'
@@ -214,6 +216,8 @@ class newIssue extends Component{
                                         checked={bug_status == 1} 
                                         onChange={this.statusChange}
                                     />
+                                    </Menu.Item>
+                                    <Menu.Item>
                                     <Form.Field
                                         control={Radio}
                                         label='To be Discussed'
@@ -221,6 +225,8 @@ class newIssue extends Component{
                                         checked={bug_status == 2}
                                         onChange={this.statusChange}
                                     />
+                                    </Menu.Item>
+                                    <Menu.Item>
                                     <Form.Field
                                         control={Radio}
                                         label='Resolved'
@@ -228,6 +234,8 @@ class newIssue extends Component{
                                         checked={bug_status == 3}
                                         onChange={this.statusChange}
                                     />
+                                    </Menu.Item>
+                                </Menu>
                             </Form.Group>
                             </h3>
                             <h3>Project</h3>

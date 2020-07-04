@@ -152,6 +152,13 @@ OAUTH2_PROVIDER = {
 
 AUTH_USER_MODEL = 'BugTracker.AppUser'
 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'bugtracker274@gmail.com'
+EMAIL_HOST_PASSWORD = '@Bugtracker53'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
 # Internationalization
 
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

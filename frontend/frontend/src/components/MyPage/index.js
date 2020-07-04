@@ -3,7 +3,7 @@ import Avatar from 'react-avatar';
 import axios from 'axios'
 import logo from '../../mediafiles/LogoSmall.png'
 import './styles.css'
-import { Menu, Segment, Header, Icon, Grid, Image, Dimmer, Label, Button, Popup, Card, CardContent, Modal, Form, Dropdown, Input, Message} from 'semantic-ui-react'
+import { Menu, Segment, Header, Icon, Grid, Image, Dimmer, Label, Button, Popup, Card, CardContent, Modal, Form, Dropdown, Input, Message, Responsive, Container, Sidebar} from 'semantic-ui-react'
 import 'moment-timezone';
 import Moment from 'react-moment';
 const color = ['violet', 'green']
@@ -23,6 +23,7 @@ class MyPage extends Component{
        icon: '',
        tagName: '',
        tagsMade: [],
+       sidebar_Toggle: true,
     };
     this.handleItemClick = this.handleItemClick.bind(this);
     this.tagFormSubmit = this.tagFormSubmit.bind(this);
@@ -83,7 +84,7 @@ class MyPage extends Component{
         <Label circular color='olive' empty/> 
       )
     }
-    if(status == 1){
+    if(status == 3){
       return(
         <Label circular color='green' empty/> 
       )
@@ -830,17 +831,18 @@ class MyPage extends Component{
 
     return(
       <div >
+        <Responsive minWidth={768}>
         <div className="ui fixed inverted menu">
           <div className="ui container">
           <a href="http://localhost:3000/onlogin">
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
-            <h2 className="header item">
+           <h2 className="header item">
             <a href="http://localhost:3000/onlogin">
                 BugTracker
                 </a>
             </h2>
-            <div className="right menu">
+              <div className="right menu">
               <div className="item">
                 <Button primary href={"http://localhost:3000/projects"}>
                   Browse Projects
@@ -859,10 +861,72 @@ class MyPage extends Component{
               </div>
             </div>
         </div>
+        </Responsive>
+        <Responsive maxWidth={768}>
+          <Menu fixed inverted>
+            <Container>
+            <a href="http://localhost:3000/onlogin">
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
+           </a> 
+           <h2 className="header item">
+            <a href="http://localhost:3000/onlogin">
+                BugTracker
+                </a>
+            </h2>
+            </Container>
+            <Sidebar.Pushable>
+              <Sidebar
+              as={Menu}
+              animation="overlay"
+              inverted
+              vertical
+              direction="right"
+              onHide={() => {this.setState({
+                ...this.state,
+                sidebar_Toggle: false,
+              })}}
+              visible={this.state.sidebar_Toggle}>
+                <Menu.Item>
+                  Hey Man this is working.
+                </Menu.Item>
+              </Sidebar>
+            </Sidebar.Pushable>
+            <Menu.Menu>
+              <Menu.Item>
+              <Icon name='sidebar' size='big' onClick={() => {
+                this.setState({
+                  ...this.state,
+                  sidebar_Toggle: true,
+                })
+              }}/>
+              </Menu.Item>
+            </Menu.Menu>
+          </Menu>
+              <div className="right menu">
+              <div className="item" >
+                {/*<Button primary href={"http://localhost:3000/projects"}>
+                  Browse Projects
+                </Button>
+              </div>
+              <div className="item">
+                <Button primary href={"http://localhost:3000/project/add"}>
+                Add New Project
+                </Button>
+              </div>
+              <div className="item">
+              <Button primary href={"http://localhost:3000/issue/add"}>
+                Add New Issue
+                </Button>*/}
+              </div>
+              </div>
+        </Responsive>
         <div className="ui container">
-          <div className="ui two column grid">
+          <div className="ui two column stackable grid">
             <div className="column">
             <div className="userinfo">
+            <Responsive as={Header} maxWidth={768}>
+                  <h2>MI PÁGINA</h2>
+                </Responsive>
                 <div className="ui red segments fluid card">
                   <div className="ui red segment">
                     <Image
@@ -909,9 +973,9 @@ class MyPage extends Component{
             </div>
             <div className="column">
               <div className='page-heading'>
-                <Header as='h2'>
-                  MI PÁGINA
-                </Header>
+                <Responsive as={Header} minWidth={768}>
+                  <h2>MI PÁGINA</h2>
+                </Responsive>
                 </div> 
               <div className="issues-info">
                 <Menu widths={2} inverted>

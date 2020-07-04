@@ -3,6 +3,7 @@ from BugTracker.serializers import *
 from BugTracker.models import *
 from BugTracker.permissions import *
 from rest_framework.response import Response
+from .mailer import Mailer
 from rest_framework import status
 from django.http import Http404
 from rest_framework.decorators import action, permission_classes
@@ -185,15 +186,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         ser = IssueGETSerializer(issues_list, many=True)
         return Response(ser.data)
 
-    #@permission_classes(IsAdminOrProjectCreator)
-    def destroy(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            self.perform_destroy(instance)
-        except Http404:
-            pass
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
     @action(methods=['get', 'options'], detail=False, url_path='add_project', url_name='add_path')
     def add_project(self, request):
         if request.user.is_authenticated:
@@ -212,6 +204,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             newProject = Project(name = name, wiki = wiki, status = status, creator = creator_user)
             newProject.save()
             newProject.members.set(team_members)
+            instance = Mailer()
+            instance.newProjectStarted(project_name=name, project_creator=creator_user, team_members=team_members)
             return Response({'Response':'Project Created'})
         else:
             return Response({'Response':'User Not Authenticated.'})
@@ -224,6 +218,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         print(status)
         project.status = status
         project.save()
+        if status == '2':
+            new_status = 'Testing'
+        if status == '3':
+            new_status = 'Released'
+        instance = Mailer()
+        instance.updateProjectStatus(project_name=project.name, status=new_status, team_members=project.members.all())
         return Response({'Status': 'Status Updated'})
 
     @action(methods=['get',], detail=True, url_path='wiki_update', url_name='wiki_update')
@@ -234,6 +234,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         print(wiki)
         project.wiki = wiki
         project.save()
+        instance = Mailer()
+        instance.updateProjectWiki(project_name= project.name, wiki= wiki, team_members=project.members.all())
         return Response({'Status': 'Wiki Updated'})
 
     @action(methods=['get',], detail=True, url_path='add_team_members', url_name='add_team_members')
@@ -246,12 +248,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         team_members = []
         for m in members:
             team_members.append(AppUser.objects.get(pk = m))
+        instance = Mailer()
+        instance.updateProjectTeam(project_name= project.name, team_members=team_members)
         project.members.set(team_members)
         return Response({'Status': 'More Team Members Added'})
     
     @action(methods=['get',], detail=True, url_path='delete_project', url_name='delete_project')
     def delete_project(self, request, pk):
         project = Project.objects.get(pk= pk)
+        instance = Mailer()
+        instance.deleteProject(project_name= project.name, team_members= project.members.all())
         project.delete()
         return Response({'Response': 'Project Deleted'})
 
@@ -303,7 +309,10 @@ class IssuesViewSet(viewsets.ModelViewSet):
             issue = Issues(title = title,description = description,bug_status = bug_status, reported_by = reported_by, project = project)
             issue.save()
             issue.tags.set(new_tags)
-            return Response({'Status':'This is working', 'Id': issue.pk})
+            instance = Mailer()
+            instance.newIssueOpened(project_name=project.name, issue_title= title, reported_by=reported_by, team_members=project.members.all())
+
+            return Response({'Status':'This is working'})
         else: 
             return Response({'Status':'User not Authenticated'})
 
@@ -314,22 +323,27 @@ class IssuesViewSet(viewsets.ModelViewSet):
         if AppUser.objects.get(pk=member_id) in issue.project.members.all():
             issue.assigned_to = AppUser.objects.get(pk=member_id)
             issue.bug_status = 2
+            instance = Mailer()
+            instance.assignIssue(issue= issue, project_name= issue.project.name, assignee= issue.assigned_to, reported_by=issue.reported_by, team_members= issue.project.members.all())
             issue.save()
             return Response({'Response' : 'User Assigned'})
         else: 
             return Response({'Response' : 'User not a team Member'})
-        #if AppUser.objects.get(pk=assign_to) in issue.project.members.all()
     
     @action(methods=['get',], detail=True, url_path='close_issue', url_name='close_issue')
     def close_issue(self, request, pk):
         issue = Issues.objects.get(pk = pk)
         issue.bug_status = 3
+        instance = Mailer()
+        instance.closeIssue(issue= issue, project_name= issue.project, reported_by= issue.reported_by, team_members= issue.project.members.all())
         issue.save()
         return Response({'Response': 'Issue Closed'})
 
     @action(methods=['get',], detail=True, url_path='delete_issue', url_name='delete_issue')
     def delete_issue(self, request, pk):
         issue = Issues.objects.get(pk =pk)
+        instance = Mailer()
+        instance.deleteIssue(issue= issue, project_name= issue.project, reported_by= issue.reported_by, team_members= issue.project.members.all())
         issue.delete()
         return Response({'Response': 'Issue Deleted'})
 

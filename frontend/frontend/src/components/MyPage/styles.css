@@ -10,3 +10,8 @@
 .bodyContent{
     margin-top: 90px;
 }
+@media only screen and (max-width: 768px){
+    .page-heading{
+        margin-top: 0px;
+    }
+}
