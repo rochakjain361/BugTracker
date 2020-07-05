@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import axios from "axios";
 import logo from '../../mediafiles/LogoSmall.png'
-import { Container, Segment, Header, Card, Image, CardContent, Button, Modal, Icon } from "semantic-ui-react";
+import { Container, Segment, Header, Card, Image, CardContent, Button, Modal, Icon, Responsive, Menu, Sidebar } from "semantic-ui-react";
 import './styles.css'
 import Avatar from "react-avatar";
 
@@ -41,6 +41,23 @@ class Users extends Component{
             params: {
                 new_role: new_role
             }            
+        }).then((res) => {
+            if(res.data.Status == 'Role Upgraded'){
+                alert('Role Upgraded')
+                this.refreshpage()
+            }
+            else if(res.data.Status == 'User is not an Admin'){
+                alert('Invalid Request user is not an admin.')
+                window.location = 'http://localhost:3000/onlogin/'
+            }
+            else if(res.data.Status == 'User is disabled'){
+                alert('Admins disabled you :`(')
+                window.location = 'http://localhost:3000/'
+            }
+            else if(res.data.Status == 'User not Authenticated'){
+                alert('You are not authenticated. Re-Login')
+                window.location = 'http://localhost:3000/'
+            }
         })
     }
 
@@ -53,6 +70,15 @@ class Users extends Component{
             url: `http://127.0.0.1:8000/appusers/${id}/disable_user/`,
             params: {
                 is_disabled: new_status 
+            }
+        }).then((res) => {
+            if(res.data.status == 'User Status Changed'){
+                alert('User Status Changed')
+                this.refreshpage()
+            }
+            else{
+                alert('User not eligible to perform this action')
+                window.location = 'http://localhost:3000/onlogin/'
             }
         })
     }
@@ -103,7 +129,6 @@ class Users extends Component{
                         <Modal.Actions>
                             <Button color='green' basic inverted onClick={() => {
                                 this.RoleUpgrade(id, role);
-                                this.refreshpage()
                                 }}>
                                 <Icon name='checkmark' />Yes!    
                             </Button>
@@ -128,7 +153,6 @@ class Users extends Component{
                         <Modal.Actions>
                             <Button basic color='green' onClick={() => {
                                 this.RoleUpgrade(id, role);
-                                this.refreshpage();
                             }}>
                                 <Icon name='checkmark' />Yes!    
                             </Button>
@@ -155,7 +179,6 @@ class Users extends Component{
                 <Modal.Actions>
                     <Button basic color='green' inverted onClick={() => {
                         this.Enable_DisableUser_Upgrade(id, is_disabled);
-                        this.refreshpage();
                     }}>
                         <Icon name='checkmark'/>Yes!    
                     </Button>
@@ -179,7 +202,6 @@ class Users extends Component{
                 <Modal.Actions>
                     <Button basic color='green' inverted onClick={() => {
                         this.Enable_DisableUser_Upgrade(id, is_disabled);
-                        this.refreshpage();
                     }}>
                         <Icon name='checkmark'/>Yes!    
                     </Button>
@@ -193,31 +215,132 @@ class Users extends Component{
 
         return(
             <div>
-                <div className="ui fixed inverted menu">
-                    <div className="ui container">
-                    <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
-                        <h2 className="header item">
-                                BugTracker 
-                        </h2> 
-                            <div className="right menu">
-                                <div className="item">
-                                    <button class="ui primary button">
-                                        Browse Projects
-                                    </button>
-                                </div>
-                                <div className="item">
-                                    <button class="ui primary button">
-                                        Add New Issue
-                                    </button>
-                                </div>
-                                <div className="item">
-                                    <button class="ui primary button">
-                                        Back to My Page
-                                    </button>
-                                </div>
-                            </div>
-                    </div>
-                </div>
+                 <Responsive minWidth={768}>
+        <div className="ui fixed inverted menu">
+          <div className="ui container">
+          <a href="http://localhost:3000/onlogin">
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
+           </a> 
+           <h2 className="header item">
+            <a href="http://localhost:3000/onlogin">
+                BugTracker
+                </a>
+            </h2>
+              <div className="right menu">
+              <div className="item">
+                <Button primary href={"http://localhost:3000/projects"}>
+                  Browse Projects
+                </Button>
+              </div>
+              <div className="item">
+                <Button primary href={"http://localhost:3000/project/add"}>
+                Add New Project
+                </Button>
+              </div>
+              <div className="item">
+              <Button primary href={"http://localhost:3000/issue/add"}>
+                Add New Issue
+                </Button>
+              </div>
+              </div>
+            </div>
+        </div>
+        </Responsive>
+        <Responsive maxWidth={768}>
+          <Menu fixed inverted>
+            <Container>
+            <a href="http://localhost:3000/onlogin">
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
+           </a> 
+           <h2 className="header item">
+            <a href="http://localhost:3000/onlogin">
+                BugTracker
+                </a>
+            </h2>
+            </Container>
+            <Menu.Item onClick={() =>{
+              this.setState({
+                right_menu_visible: !this.state.right_menu_visible
+              })
+            }}><Icon name="sidebar" size='large'/></Menu.Item>
+          </Menu>
+          <Sidebar.Pushable style={{marginTop : -14}}>
+            <Sidebar
+            as={Menu}
+            animation='scale down'
+            icon='labeled'
+            inverted
+            direction = 'top'
+            onHide={() => this.setState({
+              right_menu_visible: false
+            })}
+            vertical
+            visible={this.state.right_menu_visible}
+            width='thin'>
+              <Menu.Item as='a' href={"http://localhost:3000/projects"}>
+                Browse Projects
+              </Menu.Item>
+              <Menu.Item as='a' href={"http://localhost:3000/project/add"}>
+                Add New Project
+              </Menu.Item>
+              <Menu.Item as='a' href={"http://localhost:3000/issue/add"}>
+                Add New Issue
+              </Menu.Item>
+            </Sidebar>
+            <Sidebar.Pusher>
+                <Container>
+                    <Segment vertical>
+                        <div style={{marginTop: 20}}>
+                        <Header as="h3">
+                            MODO ADMINISTRADOR
+                        </Header>
+                        <Header as="h2">
+                            APP USERS
+                        </Header>
+                        </div>
+                    </Segment>
+                    <Segment vertical style={{marginBottom: 50}}>
+                        <Card.Group>
+                            {this.state.users.map(user => {
+                                return(
+                                   <Card>
+                                       <Card.Content>
+                                            <Image
+                                            floated='right'
+                                            circular>
+                                                {avatar(user['display_picture'], user['username'])}
+                                            </Image>
+                                            <Card.Header>
+                                                {user.username}
+                                            </Card.Header>
+                                            <Card.Meta>
+                                                {UserRole(user.user_role)} <br/>
+                                                {user.is_disabled ? 'Disabled' : ''}
+                                            </Card.Meta> 
+                                            <Card.Description>
+                                                <h4>
+                                               Enrollment No:- {user.enrNo} <br/>
+                                               Email Id:- {user.email} <br/> 
+                                               {console.log(user.is_disabled)}
+                                               </h4>
+                                            </Card.Description>
+                                       </Card.Content>
+                                       <CardContent extra>
+                                           <div className='ui two buttons'>
+                                               {UserRoleUpgrade(user.pk, user.user_role)}
+                                               {Enable_Disable_User(user.pk, user.is_disabled)}
+                                           </div>
+                                       </CardContent>
+                                   </Card> 
+                                )
+                            })}
+                        </Card.Group>
+                    </Segment>
+                </Container>
+                </Sidebar.Pusher>
+                </Sidebar.Pushable>
+                </Responsive>
+                <Responsive minWidth={768}>
                 <Container>
                     <Segment vertical>
                         <div className = 'bodyContent'>
@@ -267,6 +390,7 @@ class Users extends Component{
                         </Card.Group>
                     </Segment>
                 </Container>
+                </Responsive>
             </div>
         )
     }

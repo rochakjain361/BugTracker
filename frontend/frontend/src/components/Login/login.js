@@ -16,31 +16,7 @@ class Login extends Component {
     redirect() {
         window.location ='https://internet.channeli.in/oauth/authorise/?client_id=gfZHj4O7eZKrzv8Vpgqi1s5kKWgvgyFCf5vt822c&redirect_url=http://localhost:3000/onlogin/&state=Success'
     }
-
-    componentDidMount() {
-        axios({
-            url: 'http://127.0.0.1:8000/appusers/current_user/',
-            method: 'get',
-            withCredentials: true,
-        }).then((response) => {
-            console.log(response.data['Response'])
-            if(response.data['Response'] === "No Current User"){
-                this.setState({
-                    logged_in: false,
-                    response_recieived: true
-                })
-            }
-            else{
-                this.setState({
-                    logged_in: true,
-                    response_recieived: true
-                })
-            }
-
-            console.log(this.state)
-        });
-    }
-
+    
     render(){
             return(
                     <div className="center-container">

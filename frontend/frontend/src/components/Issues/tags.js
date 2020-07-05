@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Button, Segment, Label, Header, Popup, Card, Icon, Image, Grid} from "semantic-ui-react";
+import { Button, Segment, Label, Header, Popup, Card, Icon, Image, Grid, Responsive, Menu, Container, Sidebar} from "semantic-ui-react";
 import logo from '../../mediafiles/LogoSmall.png'
 import "./styles.css";
 import Moment from 'react-moment';
@@ -134,7 +134,8 @@ class Tags extends Component{
           }
         console.log(this.state)
         return(<div>
-            <div className="ui fixed inverted menu">
+          <Responsive minWidth={768}>
+          <div className="ui fixed inverted menu">
           <div className="ui container">
           <a href="http://localhost:3000/onlogin">
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
@@ -163,7 +164,136 @@ class Tags extends Component{
               </div>
             </div>
         </div>
-        <div className='ui container'>
+          </Responsive>
+          <Responsive maxWidth={768}>
+          <Menu fixed inverted>
+            <Container>
+            <a href="http://localhost:3000/onlogin">
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
+           </a> 
+           <h2 className="header item">
+            <a href="http://localhost:3000/onlogin">
+                BugTracker
+                </a>
+            </h2>
+            </Container>
+            <Menu.Item onClick={() =>{
+              this.setState({
+                right_menu_visible: !this.state.right_menu_visible
+              })
+            }}><Icon name="sidebar" size='large'/></Menu.Item>
+          </Menu>
+          <Sidebar.Pushable style={{marginTop : -14}}>
+            <Sidebar
+            as={Menu}
+            animation='scale down'
+            icon='labeled'
+            inverted
+            direction = 'top'
+            onHide={() => this.setState({
+              right_menu_visible: false
+            })}
+            vertical
+            visible={this.state.right_menu_visible}
+            width='thin'>
+              <Menu.Item as='a' href={"http://localhost:3000/onlogin"}>
+              Back To My Page
+              </Menu.Item>
+              <Menu.Item as='a' href={"http://localhost:3000/project/add"}>
+                Add New Project
+              </Menu.Item>
+              <Menu.Item as='a' href={"http://localhost:3000/issue/add"}>
+                Add New Issue
+              </Menu.Item>
+            </Sidebar>
+            <Sidebar.Pusher>
+            <div className='ui container'>
+            <Segment vertical>
+                <div style={{marginTop: 20, marginBottom: 50}}>
+                    <Header as='h2'>
+                        TAG: <span>
+                            <Label color={this.tagColor(this.state.tag.color)} content={this.state.tag.tagName} icon={this.state.tag.icon}/>
+                        </span>
+                        <Segment color={this.tagColor(this.state.tag.color)}>
+                            {this.state.issues.map(issue => {
+                                return(<Segment vertical key={issue.id}>
+                                    <h3>
+                                       {issue.bug_status == 3 ? <Icon name='check circle' color='green' /> : <Icon name='exclamation circle' color='red' />}
+                                       <Header as='a' href={"http://localhost:3000/issues/" + issue.pk}>
+                                         {issue.title}
+                                         <span style={{marginLeft:20}}/>
+                                         {issue.tags.map(tag =>{
+                                           return(
+                                             <span>
+                                               <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`http://localhost:3000/tags/${tag.id}`}/>
+                                           </span>)
+                                         })}
+                                         </Header>
+                                       </h3>
+                                         <div style={{marginLeft: 20}}>
+                                           This Issue is assigned to: {issue.assigned_to == null ? 'No one till now ': <Popup
+                                           trigger={<b>{issue.assigned_to.username}</b>}>
+                                             <Card>
+                                                 <Card.Content>
+                                                   <Image
+                                                   floated='right'
+                                                   circular
+                                                   >
+                                                      {avatar(issue.assigned_to.display_picture, issue.assigned_to.username)}
+                                                   </Image>
+                                                   <Card.Header as='h4'>{issue.assigned_to.username}</Card.Header>
+                                                   <Card.Meta>Enrollment No: {issue.assigned_to.enrNo}</Card.Meta>
+                                                   <Card.Meta>Email: {issue.assigned_to.email}</Card.Meta>
+                                                   <div style={{color: '#DC143C' }}>{issue.assigned_to.is_disabled ? 'Disabled' : ''}</div>
+                                                   </Card.Content> 
+                                               </Card>
+                                           </Popup> }
+                                           <br/>
+                                           This Issue is reported by: <Popup
+                    trigger={<b>{issue.reported_by.username}</b>}>
+                      <Card>
+                          <Card.Content>
+                            <Image
+                            floated='right'
+                            circular
+                            >
+                               {avatar(issue.reported_by.display_picture, issue.reported_by.username)}
+                            </Image>
+                            <Card.Header as='h4'>{issue.reported_by.username}</Card.Header>
+                            <Card.Meta>Enrollment No: {issue.reported_by.enrNo}</Card.Meta>
+                            <Card.Meta>Email: {issue.reported_by.email}</Card.Meta>
+                            <div style={{color: '#DC143C' }}>{issue.reported_by.is_disabled ? 'Disabled' : ''}</div>
+                            </Card.Content> 
+                        </Card>
+                    </Popup>
+                                           <br/>
+                                             The Issue was found in {<Popup
+                                           trigger={<b><a href={'http://localhost:3000/projects/' + issue.project.id}>{issue.project.name}</a></b>}
+                                           >
+                                             <Card>
+                                               <Card.Content>
+                                               <Card.Header as='h3'>
+                                                 {issue.project.name}
+                                               </Card.Header>
+                                           <Card.Meta>{this.statusLabel(issue.project.status)} {this.statusText(issue.project.status)}</Card.Meta>
+                                           <Card.Meta>{issue.project.creator.username} created this project <Moment fromNow>{issue.project.created_at}</Moment></Card.Meta>
+                                               </Card.Content>
+                                             </Card>
+                                           </Popup>} <Moment fromNow>{issue.created_at}</Moment>
+                                           <br/>
+                                         </div>
+                                   </Segment>)
+                            })}
+                        </Segment>
+                    </Header>
+                </div>
+            </Segment>
+        </div>
+              </Sidebar.Pusher>
+              </Sidebar.Pushable>
+          </Responsive>
+          <Responsive minWidth={768}>
+          <div className='ui container'>
             <Segment vertical>
                 <div className='bodyContent'>
                     <Header as='h2'>
@@ -250,6 +380,7 @@ class Tags extends Component{
                 </div>
             </Segment>
         </div>
+          </Responsive>
         </div>)
     }
 }

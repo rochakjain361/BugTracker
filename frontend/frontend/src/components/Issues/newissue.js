@@ -1,7 +1,7 @@
 import React, {Component, useState} from 'react';
 import axios from 'axios';
 import logo from '../../mediafiles/LogoSmall.png'
-import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button, Message, Menu } from "semantic-ui-react";
+import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button, Message, Menu, Responsive, Icon, Sidebar } from "semantic-ui-react";
 import { Editor } from "@tinymce/tinymce-react";
 
 import './styles.css'
@@ -68,15 +68,23 @@ class newIssue extends Component{
             }
         }).then((response)=> {
             console.log(response.data.Id)
-            for (var i = 0; i < this.state.file.length; i++){
-                const uploadData = new FormData();
-            uploadData.append('issue', response.data.Id  )
-            uploadData.append('image', this.state.file[i], this.state.file[i].name)
-    
-            fetch('http://127.0.0.1:8000/issue_images/', {
-                method: 'POST',
-                body: uploadData
-            }).then(res => console.log(res))
+            if(response.data.Status == 'New Issue Added'){
+                for (var i = 0; i < this.state.file.length; i++){
+                    const uploadData = new FormData();
+                uploadData.append('issue', response.data.Id)
+                uploadData.append('image', this.state.file[i], this.state.file[i].name)
+        
+                fetch('http://127.0.0.1:8000/issue_images/', {
+                    method: 'POST',
+                    body: uploadData
+                }).then(res => console.log(res))
+                }
+                alert('New Issue Added')
+                window.location = 'http://localhost:3000/onlogin'
+            }
+            else{
+                alert('User not Authenticated or is disabled')
+                window.location = 'http://localhost:3000/'
             }
         })
     }
@@ -115,6 +123,7 @@ class newIssue extends Component{
         const {bug_status} = this.state
         return(
             <div>
+                <Responsive minWidth={768}>
                 <div className="ui fixed inverted menu">
           <div className="ui container">
           <a href="http://localhost:3000/onlogin">
@@ -144,6 +153,193 @@ class newIssue extends Component{
               </div>
             </div>
         </div>
+                </Responsive>
+                <Responsive maxWidth={768}>
+                <Menu fixed inverted>
+            <Container>
+            <a href="http://localhost:3000/onlogin">
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
+           </a> 
+           <h2 className="header item">
+            <a href="http://localhost:3000/onlogin">
+                BugTracker
+                </a>
+            </h2>
+            </Container>
+            <Menu.Item onClick={() =>{
+              this.setState({
+                right_menu_visible: !this.state.right_menu_visible
+              })
+            }}><Icon name="sidebar" size='large'/></Menu.Item>
+          </Menu>
+          <Sidebar.Pushable style={{marginTop : -14}}>
+            <Sidebar
+            as={Menu}
+            animation='scale down'
+            icon='labeled'
+            inverted
+            direction = 'top'
+            onHide={() => this.setState({
+              right_menu_visible: false
+            })}
+            vertical
+            visible={this.state.right_menu_visible}
+            width='thin'>
+              <Menu.Item as='a' href={"http://localhost:3000/projects"}>
+                Browse Projects
+              </Menu.Item>
+              <Menu.Item as='a' href={"http://localhost:3000/project/add"}>
+                Add New Project
+              </Menu.Item>
+              <Menu.Item as='a' href={"http://localhost:3000/onlogin"}>
+              Back To My Page
+              </Menu.Item>
+            </Sidebar>
+            <Sidebar.Pusher>
+            <Container>
+                    <Segment vertical>
+                        <div style={{marginTop: 20}}>
+                            <Header as="h2">
+                                ADD NEW ISSUE
+                            </Header>
+                        </div>
+                    </Segment>
+                    <Segment vertical>
+                        <Form onSubmit={this.handleSubmit} >
+                            <Form.Field>
+                                <h3><label>Issue Name</label></h3>
+                                <Input
+                                id='issue_name' 
+                                fluid
+                                placeholder='Project Name' 
+                                onChange={this.issueNameHandler}
+                                />
+                            </Form.Field>
+                            <Form.Field>
+                                <h3><label>Issue Description</label></h3>
+                                <Editor
+                                    init={{
+                                        selector: 'textarea',
+                                        menubar: true,
+                                        width: '100%',
+                                        height: 200,
+                                        plugins: [
+                                          'advlist autolink lists charmap print preview anchor',
+                                          'searchreplace visualblocks code fullscreen ',
+                                          'insertdatetime table paste code help wordcount'
+                                        ],
+                                        toolbar:
+                                          'undo redo | formatselect | bold italic backcolor | \
+                                          alignleft aligncenter alignright alignjustify | \
+                                          bullist numlist | removeformat | help',
+                                    }}
+                                    value={this.state.wiki}
+                                    onEditorChange={(event) => {
+                                        console.log(event)
+                                        this.setState({
+                                            ...this.state,
+                                            description: event
+                                        })
+                                    }
+                                    }
+                                    apiKey="m7w1230xevfu875oarb6yfdxqdy4ltar34fuddlol5mowpde"
+                                    />
+                            </Form.Field>
+                            <Form.Field>
+                                <h3>Upload Images for this issue</h3>
+                            <input type="file" name="filename" onChange={(event) => {
+                                this.setState({
+                                ...this.state,
+                                file: [...this.state.file, event.target.files[0]] 
+                            })
+                            console.log(this.state.file)
+                            alert( this.state.file.length + 1 + ' Image/s Uploaded till now ')
+                            }} accept="image/png, image/jpeg"/>
+                            </Form.Field>
+                            <h3>
+                            <Form.Group inline style={{marginTop: -10}}>
+                                <label>Bug Status</label>
+                                <Menu stackable text>
+                                    <Menu.Item>
+                                    <Form.Field
+                                        control={Radio}
+                                        label='Pending'
+                                        value={1}
+                                        checked={bug_status == 1} 
+                                        onChange={this.statusChange}
+                                    />
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                    <Form.Field
+                                        control={Radio}
+                                        label='To be Discussed'
+                                        value={2}
+                                        checked={bug_status == 2}
+                                        onChange={this.statusChange}
+                                    />
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                    <Form.Field
+                                        control={Radio}
+                                        label='Resolved'
+                                        value={3}
+                                        checked={bug_status == 3}
+                                        onChange={this.statusChange}
+                                    />
+                                    </Menu.Item>
+                                </Menu>
+                            </Form.Group>
+                            </h3>
+                            <h3>Project</h3>
+                            <Dropdown 
+                            placeholder='Select the Project in which the Issue is found'  
+                            search
+                            fluid
+                            selection
+                            options={this.state.projects_available.map(project => {
+                                return{
+                                    "key": project.id,
+                                    "text": project.name,
+                                    "value": project.id
+                                }
+                            })} 
+                            onChange={this.handleDropdownChange}
+                            />
+                            <br/>
+                            <h3>Tag</h3>
+                            <Dropdown
+                            placeholder='Select the Tag'
+                            fluid
+                            multiple
+                            search
+                            selection
+                            options={this.state.tagsAvailable.map(tag => {
+                                return{
+                                    "key": tag.id,
+                                    "icon": tag.icon,
+                                    "text": tag.tagName,
+                                    "value": tag.id
+                                }
+                            })}
+                            onChange={(event, data) => {
+                                this.setState({
+                                    tag: data.value
+                                })
+                                console.log(this.state)
+                            }
+                            }
+                            />
+                            <br/>
+                            <Button type='submit'>
+                                Submit
+                            </Button>
+                        </Form>
+                    </Segment>
+                </Container>
+            </Sidebar.Pusher>
+            </Sidebar.Pushable>
+                </Responsive>
+                <Responsive minWidth={768}>
                 <Container>
                     <Segment vertical>
                         <div className = 'bodyContent'>
@@ -283,7 +479,8 @@ class newIssue extends Component{
                             </Button>
                         </Form>
                     </Segment>
-                </Container>
+                </Container>  
+                </Responsive>
             </div>
         )
     }

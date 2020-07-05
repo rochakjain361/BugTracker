@@ -24,6 +24,7 @@ class MyPage extends Component{
        tagName: '',
        tagsMade: [],
        sidebar_Toggle: true,
+       right_menu_visible: false,
     };
     this.handleItemClick = this.handleItemClick.bind(this);
     this.tagFormSubmit = this.tagFormSubmit.bind(this);
@@ -42,24 +43,20 @@ class MyPage extends Component{
     }).then((response) => {
       console.log(response)
       if(response.statusText === "OK"){
-        this.setState({
+        if(response.data.Status == 'User is disabled' || response.data.Status == 'User not Authenticated'){
+          alert('You are either not authenticated or disabled by the Admins. Retry Logging in again if not prossible then contact the admins.')
+          window.location = 'http://localhost:3000/'
+        }
+        else{this.setState({
           got_response: true,
           assigned_issues: response.data["assigned_issues"],
           projects: response.data["projects"],
           reported_issues: response.data["reported_issues"],
           user_data: response.data["user_data"], 
-        })
+        })}
       }
     })
     console.log(this.props.access_token)
-
-    axios({
-      method:'get',
-      url: 'http://127.0.0.1:8000/appusers/test/',
-      withCredentials: true
-    }).then((response) => {
-      console.log(response.data)
-    })
 
     axios({
       method: 'get',
@@ -601,6 +598,12 @@ class MyPage extends Component{
                   })
                     if(sorted.includes(data.value.toLowerCase())){
                       document.getElementById("Error").innerHTML = "This Tag Name is already being taken"
+                      this.setState({
+                        ...this.setState({
+                          ...this.state,
+                          tagName: ""
+                        })
+                      })
                     }
                     else{
                       document.getElementById("Error").innerHTML = ""
@@ -628,7 +631,7 @@ class MyPage extends Component{
   }
 
   tagFormSubmit(){
-    if(this.state.color !== "" || this.state.icon !== "" || this.state.projects !== ""|| this.state.user_data.user_role === 2){
+    if(this.state.color !== "" && this.state.icon !== "" && this.state.tagName !== "" && this.state.user_data.user_role === 2){
       axios({
         method: 'get',
         url : 'http://127.0.0.1:8000/tags/new_tag/',
@@ -638,7 +641,18 @@ class MyPage extends Component{
           color : this.state.color
         }
       }).then(res => {
-        console.log(res.data)
+        if(res.data.Response == 'New Tag Created'){
+          alert(res.data.Response)
+          window.location.reload(false);
+        }
+        else if(res.data.Response == 'User not Admin'){
+          alert(res.data.Response)
+          window.location.reload(false);
+        }
+        else{
+          alert(res.data.Response)
+          window.location = "http://localhost:3000/"
+        }
       })
     }
   }
@@ -701,6 +715,75 @@ class MyPage extends Component{
       }
     }
     const { activeItem } = this.state
+
+    const colors =[
+      {
+        key: 1,
+        text: 'red',
+        value: 1,
+      },
+      {
+        key: 2,
+        text: 'orange',
+        value: 2,
+      },
+      {
+        key: 3,
+        text: 'yellow',
+        value: 3,
+      },
+      {
+        key: 4,
+        text: 'olive',
+        value: 4,
+      },
+      {
+        key: 5,
+        text: 'green',
+        value: 5,
+      },
+      {
+        key: 6,
+        text: 'teal',
+        value: 6,
+      },
+      {
+        key: 7,
+        text: 'blue',
+        value: 7,
+      },
+      {
+        key: 8,
+        text: 'violet',
+        value: 8,
+      },
+      {
+        key: 9,
+        text: 'purple',
+        value: 9,
+      },
+      {
+        key: 10,
+        text: 'pink',
+        value: 10,
+      },
+      {
+        key: 11,
+        text: 'brown',
+        value: 11,
+      },
+      {
+        key: 12,
+        text: 'grey',
+        value: 12,
+      },
+      {
+        key: 13,
+        text: 'black',
+        value: 13,
+      },
+    ]
+
     let issues;
     sessionStorage.setItem('pk', this.state.user_data.pk);
     if(this.state.activeItem === 'reportedIssues'){
@@ -866,7 +949,7 @@ class MyPage extends Component{
           <Menu fixed inverted>
             <Container>
             <a href="http://localhost:3000/onlogin">
-          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
            </a> 
            <h2 className="header item">
             <a href="http://localhost:3000/onlogin">
@@ -874,59 +957,122 @@ class MyPage extends Component{
                 </a>
             </h2>
             </Container>
-            <Sidebar.Pushable>
-              <Sidebar
-              as={Menu}
-              animation="overlay"
-              inverted
-              vertical
-              direction="right"
-              onHide={() => {this.setState({
-                ...this.state,
-                sidebar_Toggle: false,
-              })}}
-              visible={this.state.sidebar_Toggle}>
-                <Menu.Item>
-                  Hey Man this is working.
-                </Menu.Item>
-              </Sidebar>
-            </Sidebar.Pushable>
-            <Menu.Menu>
-              <Menu.Item>
-              <Icon name='sidebar' size='big' onClick={() => {
-                this.setState({
-                  ...this.state,
-                  sidebar_Toggle: true,
-                })
-              }}/>
-              </Menu.Item>
-            </Menu.Menu>
+            <Menu.Item onClick={() =>{
+              this.setState({
+                right_menu_visible: !this.state.right_menu_visible
+              })
+            }}><Icon name="sidebar" size='large'/></Menu.Item>
           </Menu>
-              <div className="right menu">
-              <div className="item" >
-                {/*<Button primary href={"http://localhost:3000/projects"}>
-                  Browse Projects
-                </Button>
-              </div>
-              <div className="item">
-                <Button primary href={"http://localhost:3000/project/add"}>
+          <Sidebar.Pushable style={{marginTop : -14}}>
+            <Sidebar
+            as={Menu}
+            animation='scale down'
+            icon='labeled'
+            inverted
+            direction = 'top'
+            onHide={() => this.setState({
+              right_menu_visible: false
+            })}
+            vertical
+            visible={this.state.right_menu_visible}
+            width='thin'>
+              <Menu.Item as='a' href={"http://localhost:3000/projects"}>
+                Browse Projects
+              </Menu.Item>
+              <Menu.Item as='a' href={"http://localhost:3000/project/add"}>
                 Add New Project
-                </Button>
-              </div>
-              <div className="item">
-              <Button primary href={"http://localhost:3000/issue/add"}>
+              </Menu.Item>
+              <Menu.Item as='a' href={"http://localhost:3000/issue/add"}>
                 Add New Issue
-                </Button>*/}
-              </div>
-              </div>
-        </Responsive>
-        <div className="ui container">
+              </Menu.Item>
+            </Sidebar>
+            <Sidebar.Pusher>
+            <div className="ui container">
           <div className="ui two column stackable grid">
             <div className="column">
             <div className="userinfo">
             <Responsive as={Header} maxWidth={768}>
-                  <h2>MI PÁGINA</h2>
+                  <h2 style={{marginTop: -90}}>MI PÁGINA</h2>
                 </Responsive>
+                <div className="ui red segments fluid card">
+                  <div className="ui red segment">
+                    <Image
+                    floated='left'
+                    circular>
+                      {avatar(this.state.user_data['display_picture'], this.state.user_data['first_name'])}
+                    </Image>
+                    <p>
+                    <Header>
+                    {this.state.user_data["username"]}
+                    </Header>
+                    Enrollment No: {this.state.user_data["enrNo"]}<br></br>
+                    {User_Role}<br/><br/>
+                    {this.UserPage(this.state.user_data.user_role)}
+                    </p>
+                    </div>
+                    <div className="ui orange segment">
+                      <Segment vertical>
+                      <h3>Ongoing Projects</h3>
+                      </Segment>
+                        {this.state.projects.map(projects =>{
+                          return(
+                            <Segment vertical key={projects.id}> 
+                            <Header as='a' href={"http://localhost:3000/projects/" + projects.id} color='blue'>
+                              <h3>
+                              {projects.name}
+                              </h3>
+                            </Header>
+                            <br/>
+                            {this.statusLabel(projects.status)}
+                            {this.statusText(projects.status)}
+                              <span style={{marginLeft: 10}}>
+                                Created <Moment fromNow>
+                                  {projects.created_at}
+                                </Moment>
+                              </span>
+                            </Segment>
+                          )
+                        } 
+                        )}
+                      </div>
+                </div>
+              </div>
+            </div>
+            <div className="column">
+              <div className='page-heading'>
+                </div> 
+              <div className="issues-info">
+                <Menu widths={2} inverted>
+                  <Menu.Item
+                    name='reportedIssues'
+                    active={ activeItem === 'reportedIssues'}
+                    onClick={this.handleItemClick}
+                    color = {color[0]}
+                  >
+                    <h4>Reported Issues</h4>
+                  </Menu.Item>
+                  <Menu.Item 
+                    name='assignedIssues'
+                    active={ activeItem === 'assignedIssues'}
+                    onClick={this.handleItemClick}
+                    color = {color[1]}
+                  >
+                    <h4>Assigned Issues</h4>
+                  </Menu.Item>
+                </Menu>
+                  {issues}                  
+              </div>  
+            </div>
+          </div>
+        </div>
+            </Sidebar.Pusher>
+          </Sidebar.Pushable>
+        </Responsive>
+        <Responsive minWidth={768}>
+        <div className="ui container">
+          <div className="ui two column stackable grid">
+            <div className="column">
+            <div className="userinfo">
                 <div className="ui red segments fluid card">
                   <div className="ui red segment">
                     <Image
@@ -1001,6 +1147,7 @@ class MyPage extends Component{
             </div>
           </div>
         </div>
+        </Responsive>
       </div>
     )
   }
