@@ -11,6 +11,8 @@ import os
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
+import yaml
+
 import pymysql
 
 pymysql.install_as_MySQLdb()
@@ -18,11 +20,18 @@ pymysql.install_as_MySQLdb()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+base_config_file = open(os.path.join(
+    BASE_DIR,
+    'configuration/config.yml'
+))
+
+base_config = yaml.load(base_config_file, Loader=yaml.FullLoader)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'o%bv+g)ca%(pn2nk#owwin=h$xoqg1vzhqp3f27!6)twvrpg23'
+SECRET_KEY = base_config['secrets']['secretKey']#'o%bv+g)ca%(pn2nk#owwin=h$xoqg1vzhqp3f27!6)twvrpg23'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -154,8 +163,8 @@ AUTH_USER_MODEL = 'BugTracker.AppUser'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'bugtracker274@gmail.com'
-EMAIL_HOST_PASSWORD = '@Bugtracker53'
+EMAIL_HOST_USER = base_config['services']['mailing']['email_host_user'] #'bugtracker274@gmail.com'
+EMAIL_HOST_PASSWORD = base_config['services']['mailing']['email_host_password'] #'@Bugtracker53'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 

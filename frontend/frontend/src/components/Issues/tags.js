@@ -5,6 +5,7 @@ import logo from '../../mediafiles/LogoSmall.png'
 import "./styles.css";
 import Moment from 'react-moment';
 import Avatar from 'react-avatar';
+import { SITE_URL, API_URL } from "../../constants";
 
 class Tags extends Component{
     constructor(props){
@@ -21,7 +22,7 @@ class Tags extends Component{
 
         axios({
             method: 'get',
-            url: `http://127.0.0.1:8000/tags/${id}/tag_issues/`
+            url: `${API_URL}tags/${id}/tag_issues/`
         }).then((res) => {
             console.log(res.data)
             if(res.statusText == 'OK'){
@@ -34,7 +35,7 @@ class Tags extends Component{
 
         axios({
             method: 'get',
-            url: `http://127.0.0.1:8000/tags/${id}/`
+            url: `${API_URL}tags/${id}/`
         }).then((res) =>{
             console.log(res.data)
             if(res.statusText == 'OK'){
@@ -137,28 +138,28 @@ class Tags extends Component{
           <Responsive minWidth={768}>
           <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href="http://localhost:3000/onlogin">
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
-            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+           <h2 className="header item">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
             <div className="right menu">
               <div className="item">
-                <Button primary href={"http://localhost:3000/projects"}>
+              <Button primary href={`${SITE_URL}projects`}>
                   Browse Projects
                 </Button>
               </div>
               <div className="item">
-                <Button primary href={"http://localhost:3000/project/add"}>
-                Add New Project
+              <Button primary href={`${SITE_URL}issue/add`}>
+                Add New Issue
                 </Button>
               </div>
               <div className="item">
-              <Button primary href={"http://localhost:3000/issue/add"}>
-                Add New Issue
+              <Button primary href={`${SITE_URL}project/add`}>
+                Add New Project
                 </Button>
               </div>
               </div>
@@ -168,11 +169,11 @@ class Tags extends Component{
           <Responsive maxWidth={768}>
           <Menu fixed inverted>
             <Container>
-            <a href="http://localhost:3000/onlogin">
-          <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
+            <a href={`${SITE_URL}onlogin`}>
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -196,14 +197,14 @@ class Tags extends Component{
             vertical
             visible={this.state.right_menu_visible}
             width='thin'>
-              <Menu.Item as='a' href={"http://localhost:3000/onlogin"}>
-              Back To My Page
+              <Menu.Item as='a' href={`${SITE_URL}projects`}>
+                Browse Projects
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/project/add"}>
-                Add New Project
-              </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/issue/add"}>
+              <Menu.Item as='a' href={`${SITE_URL}issue/add`}>
                 Add New Issue
+              </Menu.Item>
+              <Menu.Item as='a' href={`${SITE_URL}project/add`}>
+                Add New Project
               </Menu.Item>
             </Sidebar>
             <Sidebar.Pusher>
@@ -219,13 +220,13 @@ class Tags extends Component{
                                 return(<Segment vertical key={issue.id}>
                                     <h3>
                                        {issue.bug_status == 3 ? <Icon name='check circle' color='green' /> : <Icon name='exclamation circle' color='red' />}
-                                       <Header as='a' href={"http://localhost:3000/issues/" + issue.pk}>
+                                       <Header as='a' href={`${SITE_URL}issues/` + issue.pk}>
                                          {issue.title}
                                          <span style={{marginLeft:20}}/>
                                          {issue.tags.map(tag =>{
                                            return(
                                              <span>
-                                               <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`http://localhost:3000/tags/${tag.id}`}/>
+                                               <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`${SITE_URL}tags/${tag.id}`}/>
                                            </span>)
                                          })}
                                          </Header>
@@ -268,7 +269,7 @@ class Tags extends Component{
                     </Popup>
                                            <br/>
                                              The Issue was found in {<Popup
-                                           trigger={<b><a href={'http://localhost:3000/projects/' + issue.project.id}>{issue.project.name}</a></b>}
+                                           trigger={<b><a href={`${SITE_URL}projects/` + issue.project.id}>{issue.project.name}</a></b>}
                                            >
                                              <Card>
                                                <Card.Content>
@@ -305,13 +306,13 @@ class Tags extends Component{
                                 return(<Segment vertical key={issue.id}>
                                     <h3>
                                        {issue.bug_status == 3 ? <Icon name='check circle' color='green' /> : <Icon name='exclamation circle' color='red' />}
-                                       <Header as='a' href={"http://localhost:3000/issues/" + issue.pk}>
+                                       <Header as='a' href={`${SITE_URL}issues/` + issue.pk}>
                                          {issue.title}
                                          <span style={{marginLeft:20}}/>
                                          {issue.tags.map(tag =>{
                                            return(
                                              <span>
-                                               <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`http://localhost:3000/tags/${tag.id}`}/>
+                                               <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`${SITE_URL}tags/${tag.id}`}/>
                                            </span>)
                                          })}
                                          </Header>
@@ -360,7 +361,7 @@ class Tags extends Component{
                                                  </Grid.Row>
                                              </Grid>
                                            The Issue was found in {<Popup
-                                           trigger={<b><a href={'http://localhost:3000/projects/' + issue.project.id}>{issue.project.name}</a></b>}
+                                           trigger={<b><a href={`${SITE_URL}projects/` + issue.project.id}>{issue.project.name}</a></b>}
                                            >
                                              <Card>
                                                <Card.Content>

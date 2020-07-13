@@ -6,6 +6,7 @@ import './styles.css'
 import { Menu, Segment, Header, Icon, Grid, Image, Dimmer, Label, Button, Popup, Card, CardContent, Modal, Form, Dropdown, Input, Message, Responsive, Container, Sidebar} from 'semantic-ui-react'
 import 'moment-timezone';
 import Moment from 'react-moment';
+import { SITE_URL, API_URL } from '../../constants';
 const color = ['violet', 'green']
 
 class MyPage extends Component{
@@ -38,14 +39,14 @@ class MyPage extends Component{
   componentDidMount() {
     axios({
       method:'get',
-      url: `http://127.0.0.1:8000/appusers/my_page/?code=${this.props.access_token}`,
+      url: `${API_URL}appusers/my_page/?code=${this.props.access_token}`,
       withCredentials: true,
     }).then((response) => {
       console.log(response)
       if(response.statusText === "OK"){
         if(response.data.Status == 'User is disabled' || response.data.Status == 'User not Authenticated'){
           alert('You are either not authenticated or disabled by the Admins. Retry Logging in again if not prossible then contact the admins.')
-          window.location = 'http://localhost:3000/'
+          window.location = SITE_URL
         }
         else{this.setState({
           got_response: true,
@@ -60,7 +61,7 @@ class MyPage extends Component{
 
     axios({
       method: 'get',
-      url: 'http://127.0.0.1:8000/tags/',
+      url: `${API_URL}tags/`,
       withCredentials: true    
     }).then((res) => {
       console.log(res.data)
@@ -536,7 +537,7 @@ class MyPage extends Component{
     else if(userRole == 2){
       return(
         <div>
-        <Button size='mini' href="http://localhost:3000/admin/users">
+        <Button size='mini' href={`${SITE_URL}admin/users`}>
           Users Page
         </Button>
         <Modal 
@@ -634,7 +635,7 @@ class MyPage extends Component{
     if(this.state.color !== "" && this.state.icon !== "" && this.state.tagName !== "" && this.state.user_data.user_role === 2){
       axios({
         method: 'get',
-        url : 'http://127.0.0.1:8000/tags/new_tag/',
+        url : `${API_URL}tags/new_tag/`,
         params: {
           tagName : this.state.tagName,
           icon: this.state.icon,
@@ -651,7 +652,7 @@ class MyPage extends Component{
         }
         else{
           alert(res.data.Response)
-          window.location = "http://localhost:3000/"
+          window.location = SITE_URL
         }
       })
     }
@@ -795,13 +796,13 @@ class MyPage extends Component{
             <Segment vertical key={issues.id}>
              <h3>
                 {issues.bug_status == 3 ? <Icon name='check circle' color='green' /> : <Icon name='exclamation circle' color='red' />}
-                <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
+                <Header as='a' href={`${SITE_URL}issues/` + issues.pk}>
                   {issues.title}
                   <span style={{marginLeft:10}}/>
                   {issues.tags.map(tag =>{
                     return(
                       <span>
-                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`http://localhost:3000/tags/${tag.id}`}/>
+                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`${SITE_URL}tags/${tag.id}`}/>
                     </span>)
                   })}
                   </Header>
@@ -825,7 +826,7 @@ class MyPage extends Component{
                         </Card>
                     </Popup> }<br/>
                     The Issue was found in {<Popup
-                    trigger={<b><a href={'http://localhost:3000/projects/' + issues.project.id}>{issues.project.name}</a></b>}
+                    trigger={<b><a href={`${SITE_URL}projects/` + issues.project.id}>{issues.project.name}</a></b>}
                     >
                       <Card>
                         <Card.Content>
@@ -854,13 +855,13 @@ class MyPage extends Component{
             <Segment vertical key={issues.id}>
              <h3>
                 {issues.bug_status == 3 ? <Icon name='check circle' color='green' /> : <Icon name='exclamation circle' color='red' />}
-                <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
+                <Header as='a' href={`${SITE_URL}issues/` + issues.pk}>
                   {issues.title}
                   <span style={{marginLeft:10}}/>
                   {issues.tags.map(tag =>{
                     return(
                       <span>
-                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`http://localhost:3000/tags/${tag.id}`}/>
+                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`${SITE_URL}tags/${tag.id}`}/>
                     </span>)
                   })}
                   </Header>
@@ -884,7 +885,7 @@ class MyPage extends Component{
                         </Card>
                     </Popup> <br/>
                     The Issue was found in {<Popup
-                    trigger={<b><a href={'http://localhost:3000/projects/' + issues.project.id}>{issues.project.name}</a></b>}
+                    trigger={<b><a href={`${SITE_URL}projects/` + issues.project.id}>{issues.project.name}</a></b>}
                     >
                       <Card>
                         <Card.Content>
@@ -917,28 +918,28 @@ class MyPage extends Component{
         <Responsive minWidth={768}>
         <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href="http://localhost:3000/onlogin">
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
               <div className="right menu">
               <div className="item">
-                <Button primary href={"http://localhost:3000/projects"}>
+              <Button primary href={`${SITE_URL}projects`}>
                   Browse Projects
                 </Button>
               </div>
               <div className="item">
-                <Button primary href={"http://localhost:3000/project/add"}>
-                Add New Project
+              <Button primary href={`${SITE_URL}issue/add`}>
+                Add New Issue
                 </Button>
               </div>
               <div className="item">
-              <Button primary href={"http://localhost:3000/issue/add"}>
-                Add New Issue
+              <Button primary href={`${SITE_URL}project/add`}>
+                Add New Project
                 </Button>
               </div>
               </div>
@@ -948,11 +949,11 @@ class MyPage extends Component{
         <Responsive maxWidth={768}>
           <Menu fixed inverted>
             <Container>
-            <a href="http://localhost:3000/onlogin">
-          <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
+            <a href={`${SITE_URL}onlogin`}>
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -976,14 +977,14 @@ class MyPage extends Component{
             vertical
             visible={this.state.right_menu_visible}
             width='thin'>
-              <Menu.Item as='a' href={"http://localhost:3000/projects"}>
+               <Menu.Item as='a' href={`${SITE_URL}projects`}>
                 Browse Projects
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/project/add"}>
-                Add New Project
-              </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/issue/add"}>
+              <Menu.Item as='a' href={`${SITE_URL}issue/add`}>
                 Add New Issue
+              </Menu.Item>
+              <Menu.Item as='a' href={`${SITE_URL}project/add`}>
+                Add New Project
               </Menu.Item>
             </Sidebar>
             <Sidebar.Pusher>
@@ -1017,7 +1018,7 @@ class MyPage extends Component{
                         {this.state.projects.map(projects =>{
                           return(
                             <Segment vertical key={projects.id}> 
-                            <Header as='a' href={"http://localhost:3000/projects/" + projects.id} color='blue'>
+                            <Header as='a' href={`${SITE_URL}projects/` + projects.id} color='blue'>
                               <h3>
                               {projects.name}
                               </h3>
@@ -1096,7 +1097,7 @@ class MyPage extends Component{
                         {this.state.projects.map(projects =>{
                           return(
                             <Segment vertical key={projects.id}> 
-                            <Header as='a' href={"http://localhost:3000/projects/" + projects.id} color='blue'>
+                            <Header as='a' href={`${SITE_URL}projects/` + projects.id} color='blue'>
                               <h3>
                               {projects.name}
                               </h3>

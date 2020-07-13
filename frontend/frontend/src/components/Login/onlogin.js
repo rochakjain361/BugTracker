@@ -4,6 +4,7 @@ import {Redirect} from 'react-router-dom'
 import queryString from 'query-string';
 import MyPage from "../MyPage/index";
 import './styles.css';
+import { API_URL } from '../../constants' 
 
 axios.defaults.xsrfCookieName = 'BUGTRACKER_CSRFTOKEN';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -22,7 +23,7 @@ class OnLogin extends Component{
         if(!this.state.got_response){
             axios({
                 method:'get',
-                url: `http://127.0.0.1:8000/appusers/onlogin/?code=${params['code']}`,
+                url: `${API_URL}appusers/onlogin/?code=${params['code']}`,
                 withCredentials: true
             }).then((response) => {
                 console.log(response)

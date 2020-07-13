@@ -4,6 +4,7 @@ import logo from '../../mediafiles/LogoSmall.png'
 import { Container, Segment, Header, Card, Image, CardContent, Button, Modal, Icon, Responsive, Menu, Sidebar } from "semantic-ui-react";
 import './styles.css'
 import Avatar from "react-avatar";
+import { SITE_URL, API_URL } from "../../constants";
 
 class Users extends Component{
     constructor(props) {
@@ -20,7 +21,7 @@ class Users extends Component{
     componentDidMount(){
         axios({
             method: 'get',
-            url: 'http://127.0.0.1:8000/appusers/'
+            url: `${API_URL}appusers/`
         }).then((response) => {
             console.log(response.data)
             this.setState({
@@ -37,7 +38,7 @@ class Users extends Component{
 
         axios({
             method: 'get',
-            url: `http://127.0.0.1:8000/appusers/${id}/convert_role/`,
+            url: `${API_URL}appusers/${id}/convert_role/`,
             params: {
                 new_role: new_role
             }            
@@ -48,15 +49,15 @@ class Users extends Component{
             }
             else if(res.data.Status == 'User is not an Admin'){
                 alert('Invalid Request user is not an admin.')
-                window.location = 'http://localhost:3000/onlogin/'
+                window.location = `http://localhost:3000/onlogin/`
             }
             else if(res.data.Status == 'User is disabled'){
                 alert('Admins disabled you :`(')
-                window.location = 'http://localhost:3000/'
+                window.location = SITE_URL
             }
             else if(res.data.Status == 'User not Authenticated'){
                 alert('You are not authenticated. Re-Login')
-                window.location = 'http://localhost:3000/'
+                window.location = SITE_URL
             }
         })
     }
@@ -67,7 +68,7 @@ class Users extends Component{
 
         axios({
             method: 'get',
-            url: `http://127.0.0.1:8000/appusers/${id}/disable_user/`,
+            url: `${API_URL}appusers/${id}/disable_user/`,
             params: {
                 is_disabled: new_status 
             }
@@ -78,7 +79,7 @@ class Users extends Component{
             }
             else{
                 alert('User not eligible to perform this action')
-                window.location = 'http://localhost:3000/onlogin/'
+                window.location = `http://localhost:3000/onlogin/`
             }
         })
     }
@@ -218,28 +219,28 @@ class Users extends Component{
                  <Responsive minWidth={768}>
         <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href="http://localhost:3000/onlogin">
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
               <div className="right menu">
               <div className="item">
-                <Button primary href={"http://localhost:3000/projects"}>
+              <Button primary href={`${SITE_URL}projects`}>
                   Browse Projects
                 </Button>
               </div>
               <div className="item">
-                <Button primary href={"http://localhost:3000/project/add"}>
-                Add New Project
+              <Button primary href={`${SITE_URL}issue/add`}>
+                Add New Issue
                 </Button>
               </div>
               <div className="item">
-              <Button primary href={"http://localhost:3000/issue/add"}>
-                Add New Issue
+              <Button primary href={`${SITE_URL}project/add`}>
+                Add New Project
                 </Button>
               </div>
               </div>
@@ -249,11 +250,11 @@ class Users extends Component{
         <Responsive maxWidth={768}>
           <Menu fixed inverted>
             <Container>
-            <a href="http://localhost:3000/onlogin">
-          <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
+            <a href={`${SITE_URL}onlogin`}>
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -277,14 +278,14 @@ class Users extends Component{
             vertical
             visible={this.state.right_menu_visible}
             width='thin'>
-              <Menu.Item as='a' href={"http://localhost:3000/projects"}>
+              <Menu.Item as='a' href={`${SITE_URL}projects`}>
                 Browse Projects
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/project/add"}>
-                Add New Project
-              </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/issue/add"}>
+              <Menu.Item as='a' href={`${SITE_URL}issue/add`}>
                 Add New Issue
+              </Menu.Item>
+              <Menu.Item as='a' href={`${SITE_URL}project/add`}>
+                Add New Project
               </Menu.Item>
             </Sidebar>
             <Sidebar.Pusher>

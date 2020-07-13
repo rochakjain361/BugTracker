@@ -8,6 +8,7 @@ import Moment from "react-moment";
 import { Editor } from '@tinymce/tinymce-react';
 import qs from 'qs';
 import { Redirect } from "react-router-dom";
+import { API_URL, SITE_URL } from "../../constants";
 const color = ['red', 'green']
 
 class ProjectDetails extends Component{
@@ -45,7 +46,7 @@ class ProjectDetails extends Component{
         axios(
           {
             method:'get',
-            url: `http://127.0.0.1:8000/project/${id}/`,
+            url: `${API_URL}project/${id}/`,
             withCredentials: true
         }).then((response) =>{
             console.log(response)
@@ -63,7 +64,7 @@ class ProjectDetails extends Component{
 
         axios({
           method:'get',
-          url: `http://127.0.0.1:8000/project/${id}/issues/`,
+          url: `${API_URL}project/${id}/issues/`,
           withCredentials: true
         }).then((response) => {
           console.log(response)
@@ -78,7 +79,7 @@ class ProjectDetails extends Component{
         
         axios({
           method:'get',
-          url: 'http://127.0.0.1:8000/appusers/',
+          url: `${API_URL}appusers/`,
           withCredentials: true
         }).then((res) => {
           if(res.statusText === "OK"){
@@ -141,7 +142,7 @@ class ProjectDetails extends Component{
 
       axios({
         method: 'get',
-        url: `http://127.0.0.1:8000/project/${this.state.project.id}/status_update/`,
+        url: `${API_URL}project/${this.state.project.id}/status_update/`,
         params : {
           status : this.state.newStatus
         }
@@ -156,7 +157,7 @@ class ProjectDetails extends Component{
         }
         else{
           alert('User not Authenticated or is disabled')
-          window.location = 'http://localhost:3000/'
+          window.location = SITE_URL
         }
       })
       }
@@ -166,7 +167,7 @@ class ProjectDetails extends Component{
 
       axios({
         method: 'get',
-        url: `http://127.0.0.1:8000/project/${this.state.project.id}/wiki_update/`,
+        url: `${API_URL}project/${this.state.project.id}/wiki_update/`,
         params: {
           wiki: this.state.wiki
         }
@@ -181,7 +182,7 @@ class ProjectDetails extends Component{
         }
         else{
           alert('User not Authenticated or is disabled')
-          window.location = 'http://localhost:3000/'
+          window.location = SITE_URL
         }
       })
     }
@@ -191,7 +192,7 @@ class ProjectDetails extends Component{
       console.log(this.state.project.id)
       axios({
         method: 'get',
-        url: `http://127.0.0.1:8000/project/${this.state.project.id}/add_team_members/`,
+        url: `${API_URL}project/${this.state.project.id}/add_team_members/`,
         params: {
           add_members: this.state.new_members
         },
@@ -209,7 +210,7 @@ class ProjectDetails extends Component{
         }
         else{
           alert('User not Authenticated or is disabled')
-          window.location = 'http://localhost:3000/'
+          window.location = SITE_URL
         }
       })
     }
@@ -219,11 +220,11 @@ class ProjectDetails extends Component{
       if(this.state.delete_project_name === this.state.project.name){
         axios({
           method: 'get',
-          url: `http://127.0.0.1:8000/project/${this.state.project.id}/delete_project/`
+          url: `${API_URL}project/${this.state.project.id}/delete_project/`
         }).then((res) => {
           if(res.data.Status == 'Project Deleted'){
             alert('Project Deleted')
-            window.location = "http://localhost:3000/onlogin"
+            window.location = `${SITE_URL}onlogin`
           }
           else if(res.data.Status == 'User not an Admin or the project Creator'){
             alert('You cannot delete this project')
@@ -231,7 +232,7 @@ class ProjectDetails extends Component{
           }
           else{
             alert('User not Authenticated or is disabled')
-            window.location = 'http://localhost:3000/'
+            window.location = SITE_URL
           }
         })
       }
@@ -321,19 +322,21 @@ class ProjectDetails extends Component{
 
       if(this.state.activeItem === 'Open'){
         issues_res = (<Segment color='red'>
-        {this.state.project_issues.map(issues =>{
+        {
+        this.state.project_issues.length ? 
+        this.state.project_issues.map(issues =>{
           if(issues.bug_status === 1 || issues.bug_status === 2){
           return(
             <Segment vertical>
             <h3>
               <Icon name='exclamation circle' color='red'/>
-              <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
+              <Header as='a' href={`${SITE_URL}issues/` + issues.pk}>
               {issues.title}
               <span style={{marginLeft: 5}}/>
               {issues.tags.map(tag =>{
                 return(
                   <span>
-                    <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={'http://localhost:3000/tags/' + tag.id}/>
+                    <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`${SITE_URL}tags/` + tag.id}/>
                 </span>)
               })}
               </Header>
@@ -379,18 +382,25 @@ class ProjectDetails extends Component{
           </div>
             </Segment>
           )}
-        })}
+        }):
+        <center>
+              <Icon name='frown outline'/>
+              No more bits available. You have scrolled enough for today.
+            </center>
+        }
     </Segment>)
 
 
         issues=(<Segment color='red'>
-            {this.state.project_issues.map(issues =>{
+            {
+              this.state.project_issues.length ? 
+            this.state.project_issues.map(issues =>{
               if(issues.bug_status === 1 || issues.bug_status === 2){
               return(
                 <Segment vertical>
                 <h3>
                   <Icon name='exclamation circle' color='red'/>
-                  <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
+                  <Header as='a' href={`${SITE_URL}issues/` + issues.pk}>
                   {issues.title}
                   <span style={{marginLeft: 5}}/>
                   {issues.tags.map(tag =>{
@@ -447,19 +457,25 @@ class ProjectDetails extends Component{
               </div>
                 </Segment>
               )}
-            })}
+            }):
+            <center>
+              <Icon name='frown outline'/>
+              No more bits available. You have scrolled enough for today.
+            </center>
+            }
         </Segment>)
       }
 
       if(this.state.activeItem === 'Closed'){
         issues_res=(<Segment color='green'>
-        {this.state.project_issues.map(issues =>{
+        {this.state.project.length ? 
+        this.state.project_issues.map(issues =>{
           if(issues.bug_status === 3){
           return(
             <Segment vertical >
             <h3>
             <Icon name='check circle' color='green'/>
-            <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
+            <Header as='a' href={`${SITE_URL}issues/` + issues.pk}>
               {issues.title}
               <span style={{marginLeft: 5}}/>
               {issues.tags.map(tag =>{
@@ -508,18 +524,23 @@ class ProjectDetails extends Component{
           </div>
             </Segment>
           )}
-        })}
+        }):
+        <center>
+              <Icon name='frown outline'/>
+              No more bits available. You have scrolled enough for today.
+            </center>
+        }
     </Segment>)
 
 
         issues=(<Segment color='green'>
-            {this.state.project_issues.map(issues =>{
+            {this.state.project_issues.length ? this.state.project_issues.map(issues =>{
               if(issues.bug_status === 3){
               return(
                 <Segment vertical >
                 <h3>
                 <Icon name='check circle' color='green'/>
-                <Header as='a' href={"http://localhost:3000/issues/" + issues.pk}>
+                <Header as='a' href={`${SITE_URL}issues/` + issues.pk}>
                   {issues.title}
                   <span style={{marginLeft: 5}}/>
                   {issues.tags.map(tag =>{
@@ -573,7 +594,10 @@ class ProjectDetails extends Component{
               </div>
                 </Segment>
               )}
-            })}
+            }): <center>
+              <Icon name='frown outline'/>
+              No more bits available. You have scrolled enough for today.
+            </center>}
         </Segment>)
       }
       return(
@@ -581,23 +605,27 @@ class ProjectDetails extends Component{
               <Responsive minWidth={768}>
               <div className="ui fixed inverted menu">
                 <div className="ui container">
+                <a href={`${SITE_URL}onlogin`}>
                 <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
+                  </a>
+                  <a href={`${SITE_URL}onlogin`}>
                   <h2 className="header item">
                     BugTracker 
                   </h2> 
+                  </a>
                   <div className="right menu">
                     <div className="item">
-                    <Button primary href={"http://localhost:3000/projects"}>
+                    <Button primary href={`${SITE_URL}projects`}>
                   Browse Projects
                 </Button>
                     </div>
                     <div className="item">
-                    <Button primary href={"http://localhost:3000/project/add"}>
+                    <Button primary href={`${SITE_URL}project/add`}>
                     Add New Project
                 </Button>
                     </div>
                     <div className="item">
-                    <Button primary href={"http://localhost:3000/issue/add"}>
+                    <Button primary href={`${SITE_URL}issue/add`}>
                     Add New Issue
                 </Button>
                     </div>
@@ -608,11 +636,11 @@ class ProjectDetails extends Component{
               <Responsive maxWidth={768}>
               <Menu fixed inverted>
             <Container>
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
            </a> 
            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -636,13 +664,13 @@ class ProjectDetails extends Component{
             vertical
             visible={this.state.right_menu_visible}
             width='thin'>
-              <Menu.Item as='a' href={"http://localhost:3000/projects"}>
+              <Menu.Item as='a' href={`${SITE_URL}projects`}>
                 Browse Projects
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/project/add"}>
+              <Menu.Item as='a' href={`${SITE_URL}project/add`}>
                 Add New Project
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/issue/add"}>
+              <Menu.Item as='a' href={`${SITE_URL}issue/add`}>
                 Add New Issue
               </Menu.Item>
             </Sidebar>

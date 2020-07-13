@@ -1,10 +1,11 @@
 import React, {Component} from "react";
 import logo from '../../mediafiles/LogoSmall.png'
-import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button, Message, Menu, Responsive, Icon, Sidebar} from "semantic-ui-react";
+import { Container, Header, Segment, Form, Radio,  Input, Dropdown, Button, Message, Menu, Responsive, Icon, Sidebar, Loader} from "semantic-ui-react";
 import './styles.css'
 import { Editor } from "@tinymce/tinymce-react";
 import axios from "axios";
 import qs from 'qs'
+import { API_URL, SITE_URL } from "../../constants";
 
 class newProject extends Component{
     constructor(props){
@@ -27,7 +28,7 @@ class newProject extends Component{
     componentDidMount(){
         axios({
             method: 'get',
-            url: 'http://127.0.0.1:8000/appusers/'
+            url: `${API_URL}appusers/`
         }).then((response) => {
             if(response.statusText === "OK"){
                 this.setState({
@@ -39,7 +40,7 @@ class newProject extends Component{
         })
         axios({
             method: 'get',
-            url: 'http://127.0.0.1:8000/project/'
+            url: `${API_URL}project/`
         }).then((res) => {
             console.log(res.data)
             this.setState({
@@ -50,9 +51,9 @@ class newProject extends Component{
     }
     handleSubmit = event => {
         if(this.state.name !== "" && this.state.wiki !== "" && this.state.creator.length !== 0 && this.state.members.length !== 0){
-            axios({
+                axios({
                 method: 'get',
-                url: 'http://127.0.0.1:8000/project/add_project',
+                url: `${API_URL}project/add_project`,
                 params: {
                     name: this.state.name,
                     wiki: this.state.wiki,
@@ -67,13 +68,14 @@ class newProject extends Component{
             }).then((response) => {
                 if(response.data.Status == 'Project Created'){
                     alert('Project Created')
-                    window.location = 'http://localhost:3000/onlogin/'
+                    window.location = `${SITE_URL}onlogin/`
                 }
                 else{
                     alert('User not Authenticated or is disabled')
-                    window.location = 'http://localhost:3000/'
+                    window.location = `${SITE_URL}`
                 }
             })
+            
         }
         else{
             alert('Form Incomplete. Fill Again')
@@ -95,27 +97,27 @@ class newProject extends Component{
                 <Responsive minWidth={768}>
                 <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href="http://localhost:3000/onlogin">
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
               <div className="right menu">
               <div className="item">
-                <Button primary href={"http://localhost:3000/projects"}>
+                <Button primary href={`${SITE_URL}projects`}>
                   Browse Projects
                 </Button>
               </div>
               <div className="item">
-              <Button primary href={"http://localhost:3000/issue/add"}>
+              <Button primary href={`${SITE_URL}issue/add`}>
                 Add New Issue
                 </Button>
               </div>
               <div className="item">
-                <Button primary href={"http://localhost:3000/onlogin"}>
+                <Button primary href={`${SITE_URL}onlogin`}>
                 Back to My Page
                 </Button>
               </div>
@@ -126,11 +128,11 @@ class newProject extends Component{
                 <Responsive maxWidth={768}>
                 <Menu fixed inverted>
             <Container>
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
            </a> 
            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -154,13 +156,13 @@ class newProject extends Component{
             vertical
             visible={this.state.right_menu_visible}
             width='thin'>
-                <Menu.Item as='a' href={"http://localhost:3000/projects"}>
+                <Menu.Item as='a' href={`${SITE_URL}projects`}>
                 Browse Projects
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/issue/add"}>
+              <Menu.Item as='a' href={`${SITE_URL}issue/add`}>
                 Add New Issue
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/onlogin"}>
+              <Menu.Item as='a' href={`${SITE_URL}onlogin`}>
               Back To My Page
               </Menu.Item>
                 </Sidebar>

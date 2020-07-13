@@ -6,6 +6,7 @@ import { Editor } from "@tinymce/tinymce-react";
 
 import './styles.css'
 import qs from 'qs'
+import { SITE_URL, API_URL } from '../../constants';
 
 class newIssue extends Component{
     constructor(props){
@@ -31,7 +32,7 @@ class newIssue extends Component{
     componentDidMount(){
         axios({
             method: 'get',
-            url: 'http://127.0.0.1:8000/project/'
+            url: `${API_URL}project/`
         }).then((response)=> {
             this.setState({
                 ...this.state,
@@ -42,7 +43,7 @@ class newIssue extends Component{
 
         axios({
             method: 'get',
-            url: 'http://127.0.0.1:8000/tags/'
+            url: `${API_URL}tags/`
         }).then((res) => {
             this.setState({
                 ...this.state,
@@ -55,7 +56,7 @@ class newIssue extends Component{
         console.log(this.state);
         axios({
             method: 'get',
-            url: 'http://127.0.0.1:8000/issues/add_issue/',
+            url: `${API_URL}issues/add_issue/`,
             params: {
                 title: this.state.title,
                 description: this.state.description,
@@ -74,17 +75,17 @@ class newIssue extends Component{
                 uploadData.append('issue', response.data.Id)
                 uploadData.append('image', this.state.file[i], this.state.file[i].name)
         
-                fetch('http://127.0.0.1:8000/issue_images/', {
+                fetch(`${API_URL}issue_images/`, {
                     method: 'POST',
                     body: uploadData
                 }).then(res => console.log(res))
                 }
                 alert('New Issue Added')
-                window.location = 'http://localhost:3000/onlogin'
+                window.location = `${SITE_URL}onlogin`
             }
             else{
                 alert('User not Authenticated or is disabled')
-                window.location = 'http://localhost:3000/'
+                window.location = SITE_URL
             }
         })
     }
@@ -126,28 +127,28 @@ class newIssue extends Component{
                 <Responsive minWidth={768}>
                 <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href="http://localhost:3000/onlogin">
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
-            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+           <h2 className="header item">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
             <div className="right menu">
               <div className="item">
-                <Button primary href={"http://localhost:3000/projects"}>
+              <Button primary href={`${SITE_URL}projects`}>
                   Browse Projects
                 </Button>
               </div>
               <div className="item">
-                <Button primary href={"http://localhost:3000/project/add"}>
+              <Button primary href={`${SITE_URL}project/add`}>
                 Add New Project
                 </Button>
               </div>
               <div className="item">
-              <Button primary href={"http://localhost:3000/onlogin"}>
-              Back to My Page
+                <Button primary href={`${SITE_URL}onlogin`}>
+                Back to My Page
                 </Button>
               </div>
               </div>
@@ -157,11 +158,11 @@ class newIssue extends Component{
                 <Responsive maxWidth={768}>
                 <Menu fixed inverted>
             <Container>
-            <a href="http://localhost:3000/onlogin">
-          <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
+            <a href={`${SITE_URL}onlogin`}>
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -185,16 +186,16 @@ class newIssue extends Component{
             vertical
             visible={this.state.right_menu_visible}
             width='thin'>
-              <Menu.Item as='a' href={"http://localhost:3000/projects"}>
+              <Menu.Item as='a' href={`${SITE_URL}projects`}>
                 Browse Projects
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/project/add"}>
-                Add New Project
+              <Menu.Item as='a' href={`${SITE_URL}project/add`}>
+                Add New project
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/onlogin"}>
+              <Menu.Item as='a' href={`${SITE_URL}onlogin`}>
               Back To My Page
               </Menu.Item>
-            </Sidebar>
+                </Sidebar>
             <Sidebar.Pusher>
             <Container>
                     <Segment vertical>

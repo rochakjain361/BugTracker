@@ -3,6 +3,7 @@ import axios from 'axios'
 import { Button } from 'semantic-ui-react';
 import './styles.css';
 import logo from '../../mediafiles/LogoBig.png'
+import { client_id } from "../../constants";
 
 axios.defaults.xsrfCookieName = 'BUGTRACKER_CSRFTOKEN';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -14,7 +15,7 @@ class Login extends Component {
     }
 
     redirect() {
-        window.location ='https://internet.channeli.in/oauth/authorise/?client_id=gfZHj4O7eZKrzv8Vpgqi1s5kKWgvgyFCf5vt822c&redirect_url=http://localhost:3000/onlogin/&state=Success'
+        window.location = `https://internet.channeli.in/oauth/authorise/?client_id=&redirect_url=${client_id}http://localhost:3000/onlogin/&state=Success`
     }
     
     render(){

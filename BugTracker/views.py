@@ -15,6 +15,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework.authentication import BasicAuthentication
+from IMG_Summer_Project.settings import base_config, BASE_DIR
 #from django.middleware import csrf;
 # Create your views here.
 
@@ -39,8 +40,8 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         
         url = 'https://internet.channeli.in/open_auth/token/'
         data = {
-                'client_id':'gfZHj4O7eZKrzv8Vpgqi1s5kKWgvgyFCf5vt822c',
-                'client_secret':'0DTRwGP07h4r4gF7IUGdEvpw6jp9mvk7hYchwDldW1PjnqvbhBacIFXBeFSA0etDI8CBouTGeJb42t9hEOhraSXcRWkUrSZ2bidOjawPD4QZBCGiuZV0F4emsGSmYxMz',
+                'client_id': base_config['secrets']['clientID'],
+                'client_secret': base_config['secrets']['clientSecret'],
                 'grant_type':'authorization_code',
                 'redirect_url':'http://127.0.0.1:8000/appusers/onlogin',
                 'code': code
@@ -333,7 +334,7 @@ class IssuesViewSet(viewsets.ModelViewSet):
             member_id = request.GET.get('memberId')
             issue = Issues.objects.get(pk=pk)
             project = issue.project
-            if request.user == creator or request.user.user_role == 2 or request.user in issue.project.members.all():
+            if request.user == project.creator or request.user.user_role == 2 or request.user in issue.project.members.all():
                 if AppUser.objects.get(pk=member_id) in issue.project.members.all():
                     issue.assigned_to = AppUser.objects.get(pk=member_id)
                     issue.bug_status = 2

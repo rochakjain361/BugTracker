@@ -8,6 +8,7 @@ import 'moment-timezone';
 import Moment from 'react-moment';
 import "./styles.css";
 import { Editor } from "@tinymce/tinymce-react";
+import { SITE_URL, API_URL } from "../../constants";
 
 class IssueComments extends Component{
     constructor(props){
@@ -41,7 +42,7 @@ class IssueComments extends Component{
         WebSocketInstance.connect(id) 
         axios({
             method:'get',
-            url: `http://127.0.0.1:8000/issues/${id}/`
+            url: `${API_URL}issues/${id}/`
         }).then((response) => {
             //console.log(response)
             if(response.statusText == 'OK'){
@@ -56,7 +57,7 @@ class IssueComments extends Component{
 
         axios({
             method:'get',
-            url: `http://127.0.0.1:8000/issue_images/get_image_url/?issue=${id}`,
+            url: `${API_URL}issue_images/get_image_url/?issue=${id}`,
         }).then((response) => {
             //console.log(response.data.data)
             if(response.statusText == 'OK'){
@@ -122,7 +123,7 @@ class IssueComments extends Component{
 
         axios({
             method: 'get',
-            url: `http://127.0.0.1:8000/issues/${id}/assign/?memberId=${this.state.assignee}`
+            url: `${API_URL}issues/${id}/assign/?memberId=${this.state.assignee}`
         }).then((res) =>{
             if(res.data.Response == 'User Assigned'){
                 alert('User Assigned to this Issue')
@@ -134,7 +135,7 @@ class IssueComments extends Component{
             }
             else{
                 alert('User not authenticated or is disabled.')
-                window.location = 'http://localhost:3000/' 
+                window.location = SITE_URL 
             }
         })
     }
@@ -145,7 +146,7 @@ class IssueComments extends Component{
 
         axios({
             method: 'get',
-            url: `http://127.0.0.1:8000/issues/${id}/close_issue/`
+            url: `${API_URL}issues/${id}/close_issue/`
         }).then((res) => {
             if(res.data.Response == 'Issue Closed'){
                 alert('Issue Closed')
@@ -157,7 +158,7 @@ class IssueComments extends Component{
             }
             else{
                 alert('User not authenticated or is disabled.')
-                window.location = 'http://localhost:3000/' 
+                window.location = SITE_URL 
             }
         })
     }
@@ -170,11 +171,11 @@ class IssueComments extends Component{
         if(this.state.delete_issue_name == this.state.issue.title){
             axios({
                 method: 'get',
-                url: `http://127.0.0.1:8000/issues/${id}/delete_issue/`
+                url: `${API_URL}issues/${id}/delete_issue/`
             }).then((res) => {
                 if(res.data.Response == 'Issue Deleted'){
                     alert('Issue Deleted')
-                    window.location = "http://localhost:3000/onlogin"
+                    window.location = `${SITE_URL}onlogin`
                 }
                 else if(res.data.Response == 'User cannot delete this issue'){
                     alert('You cannot delete this issue')
@@ -182,7 +183,7 @@ class IssueComments extends Component{
                 }
                 else{
                     alert('User not authenticated or is disabled.')
-                    window.location = 'http://localhost:3000/' 
+                    window.location = SITE_URL 
                 }
             })
         }
@@ -285,27 +286,27 @@ class IssueComments extends Component{
             <Responsive minWidth={768}>
             <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href="http://localhost:3000/onlogin">
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
-            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+           <h2 className="header item">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
             <div className="right menu">
               <div className="item">
-                <Button primary href={"http://localhost:3000/projects"}>
+                <Button primary href={`${SITE_URL}projects`}>
                   Browse Projects
                 </Button>
               </div>
               <div className="item">
-                <Button primary href={"http://localhost:3000/project/add"}>
+                <Button primary href={`${SITE_URL}project/add`}>
                 Add New Project
                 </Button>
               </div>
               <div className="item">
-              <Button primary href={"http://localhost:3000/issue/add"}>
+              <Button primary href={`${SITE_URL}issue/add`}>
                 Add New Issue
                 </Button>
               </div>
@@ -316,11 +317,11 @@ class IssueComments extends Component{
             <Responsive maxWidth={768}>
             <Menu fixed inverted>
             <Container>
-            <a href="http://localhost:3000/onlogin">
-          <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
+            <a href={`${SITE_URL}onlogin`}>
+          <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href="http://localhost:3000/onlogin">
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -344,13 +345,13 @@ class IssueComments extends Component{
             vertical
             visible={this.state.right_menu_visible}
             width='thin'>
-              <Menu.Item as='a' href={"http://localhost:3000/projects"}>
+              <Menu.Item as='a' href={`${SITE_URL}projects`}>
                 Browse Projects
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/project/add"}>
+              <Menu.Item as='a' href={`${SITE_URL}project/add`}>
                 Add New Project
               </Menu.Item>
-              <Menu.Item as='a' href={"http://localhost:3000/issue/add"}>
+              <Menu.Item as='a' href={`${SITE_URL}issue/add`}>
                 Add New Issue
               </Menu.Item>
             </Sidebar>
@@ -416,7 +417,7 @@ class IssueComments extends Component{
                 {this.state.tags.map(tag => {
                     return(
                         <span style={{margin: 5}}>
-                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`http://localhost:3000/tags/${tag.id}`} size='mini'/>
+                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`${SITE_URL}tags/${tag.id}`} size='mini'/>
                     </span>
                     )
                 })}
@@ -610,7 +611,7 @@ class IssueComments extends Component{
                 {this.state.tags.map(tag => {
                     return(
                         <span style={{margin: 5}}>
-                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`http://localhost:3000/tags/${tag.id}`}/>
+                        <Label icon={tag.icon} content={tag.tagName} color={this.tagColor(tag.color)} href={`${SITE_URL}tags/${tag.id}`}/>
                     </span>
                     )
                 })}
