@@ -127,9 +127,16 @@ REST_FRAMEWORK = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'NAME': 'bugtracker_data',
+        'USER': 'root',
+        'PASSWORD': base_config['secrets']['mysqlPassword'],
+        '''
         'OPTIONS': {
             'read_default_file': '/etc/mysql/my.cnf',
         },
+        '''
     }
 }
 
