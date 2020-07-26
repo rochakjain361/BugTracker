@@ -127,18 +127,26 @@ REST_FRAMEWORK = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'NAME': 'bugtracker_data',
-        'USER': 'root',
-        'PASSWORD': base_config['secrets']['mysqlPassword'],
-        '''
         'OPTIONS': {
-            'read_default_file': '/etc/mysql/my.cnf',
-        },
-        '''
+        'read_default_file': '/etc/mysql/my.cnf',
+    }
     }
 }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            # 'use_unicode': True,
+            'database': "bugtracker_data",
+            'user': 'root',
+            'password':  base_config['secrets']['mysqlPassword'],
+            # 'read_default_file': '/etc/mysql/my.cnf',
+        }
+    }
+}
+
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
