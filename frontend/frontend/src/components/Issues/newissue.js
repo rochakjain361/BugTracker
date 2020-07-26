@@ -7,6 +7,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import './styles.css'
 import qs from 'qs'
 import { SITE_URL, API_URL } from '../../constants';
+import queryString from 'qs';
 
 class newIssue extends Component{
     constructor(props){
@@ -30,6 +31,15 @@ class newIssue extends Component{
     }
 
     componentDidMount(){
+        let url = this.props.location.search;
+        let params = queryString.parse(url)
+        console.log(params['?project'])
+        if(params){
+            this.setState({
+                ...this.state,
+                project: params['?project']
+            })
+        }
         axios({
             method: 'get',
             url: `${API_URL}project/`
@@ -81,7 +91,7 @@ class newIssue extends Component{
                 }).then(res => console.log(res))
                 }
                 alert('New Issue Added')
-                window.location = `${SITE_URL}onlogin`
+                window.location = `${SITE_URL}mypage`
             }
             else{
                 alert('User not Authenticated or is disabled')
@@ -122,16 +132,19 @@ class newIssue extends Component{
 
     render(){
         const {bug_status} = this.state
+        let url = this.props.location.search;
+        let params = queryString.parse(url)
+        console.log(params)
         return(
             <div>
                 <Responsive minWidth={768}>
                 <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}onlogin`}>
+          <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -147,7 +160,7 @@ class newIssue extends Component{
                 </Button>
               </div>
               <div className="item">
-                <Button primary href={`${SITE_URL}onlogin`}>
+                <Button primary href={`${SITE_URL}mypage`}>
                 Back to My Page
                 </Button>
               </div>
@@ -158,11 +171,11 @@ class newIssue extends Component{
                 <Responsive maxWidth={768}>
                 <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -192,7 +205,7 @@ class newIssue extends Component{
               <Menu.Item as='a' href={`${SITE_URL}project/add`}>
                 Add New project
               </Menu.Item>
-              <Menu.Item as='a' href={`${SITE_URL}onlogin`}>
+              <Menu.Item as='a' href={`${SITE_URL}mypage`}>
               Back To My Page
               </Menu.Item>
                 </Sidebar>
@@ -292,7 +305,9 @@ class newIssue extends Component{
                             </Form.Group>
                             </h3>
                             <h3>Project</h3>
-                            <Dropdown 
+                            {params['?name'] != null ? <Dropdown
+                            disabled
+                            placeholder={params['?name']}/> : <Dropdown 
                             placeholder='Select the Project in which the Issue is found'  
                             search
                             fluid
@@ -305,7 +320,7 @@ class newIssue extends Component{
                                 }
                             })} 
                             onChange={this.handleDropdownChange}
-                            />
+                            />}
                             <br/>
                             <h3>Tag</h3>
                             <Dropdown
@@ -436,7 +451,9 @@ class newIssue extends Component{
                             </Form.Group>
                             </h3>
                             <h3>Project</h3>
-                            <Dropdown 
+                            {params['?name'] != null ? <Dropdown
+                            disabled
+                            placeholder={params['?name']}/> : <Dropdown 
                             placeholder='Select the Project in which the Issue is found'  
                             search
                             fluid
@@ -449,7 +466,7 @@ class newIssue extends Component{
                                 }
                             })} 
                             onChange={this.handleDropdownChange}
-                            />
+                            />}
                             <br/>
                             <h3>Tag</h3>
                             <Dropdown

@@ -138,11 +138,11 @@ class Tags extends Component{
           <Responsive minWidth={768}>
           <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}onlogin`}>
+          <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -169,11 +169,11 @@ class Tags extends Component{
           <Responsive maxWidth={768}>
           <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>

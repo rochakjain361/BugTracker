@@ -42,8 +42,8 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         data = {
                 'client_id': base_config['secrets']['clientID'],
                 'client_secret': base_config['secrets']['clientSecret'],
-                'grant_type':'authorization_code',
-                'redirect_url':'http://127.0.0.1:8000/appusers/onlogin',
+                'grant_type': 'authorization_code',
+                'redirect_uri': 'http://localhost:3000/onlogin/',
                 'code': code
                 } 
         
@@ -78,7 +78,10 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
             if in_img:
                 enrNum = user_data["student"]["enrolmentNumber"]
                 email = user_data["contactInformation"]["instituteWebmailAddress"]
-                dp = user_data['person']['displayPicture']
+                if user_data['person']['displayPicture'] == None:
+                    dp = ""
+                else:
+                    dp = user_data['person']['displayPicture']
 
                 name = (user_data["person"]["fullName"]).split()
                 firstname = name[0]
@@ -97,16 +100,18 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
             else:
                 return Response({'status': 'User not in IMG'}, status=status.HTTP_401_UNAUTHORIZED)
         user.access_token = acs_token
-        user.display_picture = user_data['person']['displayPicture']
+        if user_data['person']['displayPicture'] == None:
+            user.display_picture = ""
+        else: 
+            user.display_picture = user_data['person']['displayPicture']
         user.save()
         login(request, user)
-        return Response({'Status': 'User Exists', 'access_token': acs_token})
+        return Response({'status': 'User Exists', 'access_token': acs_token})
 
     @action(methods = ['get', 'options',], detail=False, url_path='my_page', url_name='my_page', permission_classes=[AllowAny])
     def get_my_page(self, request):
         if request.user.is_authenticated and not request.user.is_disabled:
-            code = request.GET.get('code')
-            user = AppUser.objects.get(access_token = code)
+            user = request.user
             serializer = AppUserSerializer(user)
             login(request=request, user=user)
 
@@ -180,19 +185,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
             name = request.GET.get('name')
             wiki = request.GET.get('wiki')
             status = request.GET.get('status')
-            creator = request.GET.get('creator')
+            creator = request.user
             members = []
-            for x in range(len(code) - 4):
+            for x in range(len(code) - 3):
                 members.append(request.GET.get('members[%d]' % x))
-            creator_user = AppUser.objects.get(pk = creator)
             team_members = []
             for m in members:
                 team_members.append(AppUser.objects.get(pk = m))
-            newProject = Project(name = name, wiki = wiki, status = status, creator = creator_user)
+            team_members.append(request.user)
+            newProject = Project(name = name, wiki = wiki, status = status, creator = creator)
             newProject.save()
             newProject.members.set(team_members)
             instance = Mailer()
-            instance.newProjectStarted(project_name=name, project_creator=creator_user, team_members=team_members)
+            instance.newProjectStarted(project_name=name, project_creator=creator, team_members=team_members)
             return Response({'Status':'Project Created'})
         else:
             return Response({'Status':'User Not Authenticated.'})

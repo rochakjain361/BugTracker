@@ -15,7 +15,7 @@ class Login extends Component {
     }
 
     redirect() {
-        window.location = `https://internet.channeli.in/oauth/authorise/?client_id=&redirect_url=${client_id}http://localhost:3000/onlogin/&state=Success`
+        window.location = `https://internet.channeli.in/oauth/authorise/?client_id=${client_id}&redirect_uri=http://localhost:3000/onlogin/&state=Success`
     }
     
     render(){

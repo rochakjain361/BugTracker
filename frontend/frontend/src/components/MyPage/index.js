@@ -39,7 +39,7 @@ class MyPage extends Component{
   componentDidMount() {
     axios({
       method:'get',
-      url: `${API_URL}appusers/my_page/?code=${this.props.access_token}`,
+      url: `${API_URL}appusers/my_page/`,
       withCredentials: true,
     }).then((response) => {
       console.log(response)
@@ -705,7 +705,7 @@ class MyPage extends Component{
     const avatar = (url, firstname) => {
       if(url === ""){
           return(
-              <Avatar name={firstname}/>
+              <Avatar name={firstname} color='Crimson'/>
           )
       }
       else{
@@ -787,6 +787,7 @@ class MyPage extends Component{
 
     let issues;
     sessionStorage.setItem('pk', this.state.user_data.pk);
+    sessionStorage.setItem('access_token', this.state.user_data.access_token)
     if(this.state.activeItem === 'reportedIssues'){
       var rptd_issues = Array(this.state.reported_issues)[0]
       issues=(<div>
@@ -918,11 +919,11 @@ class MyPage extends Component{
         <Responsive minWidth={768}>
         <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}onlogin`}>
+          <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -949,11 +950,11 @@ class MyPage extends Component{
         <Responsive maxWidth={768}>
           <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>

@@ -45,11 +45,11 @@ class Users extends Component{
         }).then((res) => {
             if(res.data.Status == 'Role Upgraded'){
                 alert('Role Upgraded')
-                this.refreshpage()
+                window.location = `${SITE_URL}mypage/`
             }
             else if(res.data.Status == 'User is not an Admin'){
                 alert('Invalid Request user is not an admin.')
-                window.location = `http://localhost:3000/onlogin/`
+                window.location = `${SITE_URL}mypage/`
             }
             else if(res.data.Status == 'User is disabled'){
                 alert('Admins disabled you :`(')
@@ -79,7 +79,7 @@ class Users extends Component{
             }
             else{
                 alert('User not eligible to perform this action')
-                window.location = `http://localhost:3000/onlogin/`
+                window.location = `${SITE_URL}mypage/`
             }
         })
     }
@@ -92,7 +92,7 @@ class Users extends Component{
         const avatar = (url, firstname) => {
             if(url === ""){
                 return(
-                    <Avatar name={firstname}/>
+                    <Avatar name={firstname} color='Crimson'/>
                 )
             }
             else{
@@ -219,11 +219,11 @@ class Users extends Component{
                  <Responsive minWidth={768}>
         <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}onlogin`}>
+          <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -250,11 +250,11 @@ class Users extends Component{
         <Responsive maxWidth={768}>
           <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -309,7 +309,7 @@ class Users extends Component{
                                             <Image
                                             floated='right'
                                             circular>
-                                                {avatar(user['display_picture'], user['username'])}
+                                                {avatar(user['display_picture'], user['first_name'])}
                                             </Image>
                                             <Card.Header>
                                                 {user.username}
@@ -362,7 +362,7 @@ class Users extends Component{
                                             <Image
                                             floated='right'
                                             circular>
-                                                {avatar(user['display_picture'], user['username'])}
+                                                {avatar(user['display_picture'], user['first_name'])}
                                             </Image>
                                             <Card.Header>
                                                 {user.username}

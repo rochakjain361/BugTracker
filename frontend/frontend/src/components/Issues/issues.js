@@ -108,12 +108,17 @@ class IssueComments extends Component{
     }
 
     sendCommentHandler = (e, comment) => {
-        const messageObject = {
-            from : sessionStorage.getItem('access_token'),
-            text : comment
+        if(this.state.comment != ""){
+            const messageObject = {
+                from : sessionStorage.getItem('access_token'),
+                text : comment
+            }
+            WebSocketInstance.newComment(messageObject, this.props.match.params.id)
+            e.preventDefault();
+            this.setState({
+                comment: ""
+            })
         }
-        WebSocketInstance.newComment(messageObject, this.props.match.params.id)
-        e.preventDefault();
     }
     
     AssignIssueSubmit(){
@@ -175,7 +180,7 @@ class IssueComments extends Component{
             }).then((res) => {
                 if(res.data.Response == 'Issue Deleted'){
                     alert('Issue Deleted')
-                    window.location = `${SITE_URL}onlogin`
+                    window.location = `${SITE_URL}mypage`
                 }
                 else if(res.data.Response == 'User cannot delete this issue'){
                     alert('You cannot delete this issue')
@@ -286,11 +291,11 @@ class IssueComments extends Component{
             <Responsive minWidth={768}>
             <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}onlogin`}>
+          <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -317,11 +322,11 @@ class IssueComments extends Component{
             <Responsive maxWidth={768}>
             <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>

@@ -224,7 +224,7 @@ class ProjectDetails extends Component{
         }).then((res) => {
           if(res.data.Status == 'Project Deleted'){
             alert('Project Deleted')
-            window.location = `${SITE_URL}onlogin`
+            window.location = `${SITE_URL}mypage`
           }
           else if(res.data.Status == 'User not an Admin or the project Creator'){
             alert('You cannot delete this project')
@@ -293,7 +293,7 @@ class ProjectDetails extends Component{
       const avatar = (url, firstname) => {
         if(url === ""){
             return(
-                <Avatar name={firstname}/>
+                <Avatar name={firstname} color='Crimson'/>
             )
         }
         else{
@@ -351,7 +351,7 @@ class ProjectDetails extends Component{
                         floated='right'
                         circular
                         >
-                           {avatar(issues.reported_by.display_picture, issues.reported_by.username)}
+                           {avatar(issues.reported_by.display_picture, issues.reported_by.first_name)}
                         </Image>
                         <Card.Header as='h4'>{issues.reported_by.username}</Card.Header>
                         <Card.Meta>Enrollment No: {issues.reported_by.enrNo}</Card.Meta>
@@ -370,7 +370,7 @@ class ProjectDetails extends Component{
                         floated='right'
                         circular
                         >
-                           {avatar(issues.assigned_to.display_picture, issues.assigned_to.username)}
+                           {avatar(issues.assigned_to.display_picture, issues.assigned_to.first_name)}
                         </Image>
                         <Card.Header as='h4'>{issues.assigned_to.username}</Card.Header>
                         <Card.Meta>Enrollment No: {issues.assigned_to.enrNo}</Card.Meta>
@@ -423,7 +423,7 @@ class ProjectDetails extends Component{
                             floated='right'
                             circular
                             >
-                               {avatar(issues.reported_by.display_picture, issues.reported_by.username)}
+                               {avatar(issues.reported_by.display_picture, issues.reported_by.first_name)}
                             </Image>
                             <Card.Header as='h4'>{issues.reported_by.username}</Card.Header>
                             <Card.Meta>Enrollment No: {issues.reported_by.enrNo}</Card.Meta>
@@ -468,7 +468,7 @@ class ProjectDetails extends Component{
 
       if(this.state.activeItem === 'Closed'){
         issues_res=(<Segment color='green'>
-        {this.state.project.length ? 
+        {this.state.project_issues.length ? 
         this.state.project_issues.map(issues =>{
           if(issues.bug_status === 3){
           return(
@@ -495,7 +495,7 @@ class ProjectDetails extends Component{
                         floated='right'
                         circular
                         >
-                           {avatar(issues.reported_by.display_picture, issues.reported_by.username)}
+                           {avatar(issues.reported_by.display_picture, issues.reported_by.first_name)}
                         </Image>
                         <Card.Header as='h4'>{issues.reported_by.username}</Card.Header>
                         <Card.Meta>Enrollment No: {issues.reported_by.enrNo}</Card.Meta>
@@ -512,7 +512,7 @@ class ProjectDetails extends Component{
                         floated='right'
                         circular
                         >
-                           {avatar(issues.assigned_to.display_picture, issues.assigned_to.username)}
+                           {avatar(issues.assigned_to.display_picture, issues.assigned_to.first_name)}
                         </Image>
                         <Card.Header as='h4'>{issues.assigned_to.username}</Card.Header>
                         <Card.Meta>Enrollment No: {issues.assigned_to.enrNo}</Card.Meta>
@@ -562,7 +562,7 @@ class ProjectDetails extends Component{
                             floated='right'
                             circular
                             >
-                               {avatar(issues.reported_by.display_picture, issues.reported_by.username)}
+                               {avatar(issues.reported_by.display_picture, issues.reported_by.first_name)}
                             </Image>
                             <Card.Header as='h4'>{issues.reported_by.username}</Card.Header>
                             <Card.Meta>Enrollment No: {issues.reported_by.enrNo}</Card.Meta>
@@ -580,7 +580,7 @@ class ProjectDetails extends Component{
                             floated='right'
                             circular
                             >
-                               {avatar(issues.assigned_to.display_picture, issues.assigned_to.username)}
+                               {avatar(issues.assigned_to.display_picture, issues.assigned_to.first_name)}
                             </Image>
                             <Card.Header as='h4'>{issues.assigned_to.username}</Card.Header>
                             <Card.Meta>Enrollment No: {issues.assigned_to.enrNo}</Card.Meta>
@@ -594,7 +594,8 @@ class ProjectDetails extends Component{
               </div>
                 </Segment>
               )}
-            }): <center>
+            }): 
+            <center>
               <Icon name='frown outline'/>
               No more bits available. You have scrolled enough for today.
             </center>}
@@ -605,10 +606,10 @@ class ProjectDetails extends Component{
               <Responsive minWidth={768}>
               <div className="ui fixed inverted menu">
                 <div className="ui container">
-                <a href={`${SITE_URL}onlogin`}>
+                <a href={`${SITE_URL}mypage`}>
                 <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
                   </a>
-                  <a href={`${SITE_URL}onlogin`}>
+                  <a href={`${SITE_URL}mypage`}>
                   <h2 className="header item">
                     BugTracker 
                   </h2> 
@@ -636,11 +637,11 @@ class ProjectDetails extends Component{
               <Responsive maxWidth={768}>
               <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -789,7 +790,9 @@ class ProjectDetails extends Component{
                                 </Button>
                             </Form>
                         </Modal>
-                        <div dangerouslySetInnerHTML={{ __html: this.state.project.wiki }} />
+                        <Segment>
+                          <div dangerouslySetInnerHTML={{ __html: this.state.project.wiki }} />
+                        </Segment>
                         </h4>
                     </p>
                     <p>
@@ -853,7 +856,7 @@ class ProjectDetails extends Component{
                             floated='right'
                             circular
                             >
-                               {avatar(members.display_picture, members.username)}
+                               {avatar(members.display_picture, members.first_name)}
                             </Image>
                             <Card.Header as='h4'>{members.username}</Card.Header>
                             <Card.Meta>Enrollment No: {members.enrNo}</Card.Meta>
@@ -877,7 +880,7 @@ class ProjectDetails extends Component{
                     <Grid.Row>
                       <Grid.Column>
                         <h3>
-                          Ongoing Issues:
+                          Ongoing Issues: 
                         </h3>
                       </Grid.Column>
                       <Grid.Column>
@@ -901,6 +904,9 @@ class ProjectDetails extends Component{
                     </Grid.Row>
                   </Grid>
                   {issues_res}
+                  <Button size='tiny' floated='right' style={{marginBottom: 20}} href={`${SITE_URL}issue/add/?project=${this.state.project.id}`}>
+                          Add New Issue
+                        </Button>
                 </Segment>
               </Container>
               </Sidebar.Pusher>
@@ -1029,7 +1035,9 @@ class ProjectDetails extends Component{
                                 </Button>
                             </Form>
                         </Modal>
+                        <Segment>
                         <div dangerouslySetInnerHTML={{ __html: this.state.project.wiki }} />
+                        </Segment>
                         </h4>
                     </p>
                     <p>
@@ -1093,7 +1101,7 @@ class ProjectDetails extends Component{
                             floated='right'
                             circular
                             >
-                               {avatar(members.display_picture, members.username)}
+                               {avatar(members.display_picture, members.first_name)}
                             </Image>
                             <Card.Header as='h4'>{members.username}</Card.Header>
                             <Card.Meta>Enrollment No: {members.enrNo}</Card.Meta>
@@ -1137,6 +1145,13 @@ class ProjectDetails extends Component{
                              <h4>Closed</h4>
                           </Menu.Item>
                         </Menu>
+                      </Grid.Column>
+                      <Grid.Column>
+                      </Grid.Column>
+                      <Grid.Column>
+                        <Button size='small' href={`${SITE_URL}issue/add/?project=${this.state.project.id}&?name=${this.state.project.name}`}>
+                          Add New Issue
+                        </Button>
                       </Grid.Column>
                     </Grid.Row>
                   </Grid>

@@ -89,7 +89,7 @@ class Projects extends Component {
         const avatar = (url, firstname) => {
             if(url === ""){
                 return(
-                    <Avatar name={firstname}/>
+                    <Avatar name={firstname} color='Crimson'/>
                 )
             }
             else{
@@ -113,17 +113,17 @@ class Projects extends Component {
               <Responsive minWidth={768}>
               <div className="ui fixed inverted menu">
                     <div className="ui container">
-                    <a href={`${SITE_URL}onlogin`}>
+                    <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
             <div className="right menu">
               <div className="item">
-                <Button primary href={`${SITE_URL}onlogin`}>
+                <Button primary href={`${SITE_URL}mypage`}>
                   Back To My Page
                 </Button>
               </div>
@@ -144,11 +144,11 @@ class Projects extends Component {
               <Responsive maxWidth={768}>
               <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -172,7 +172,7 @@ class Projects extends Component {
             vertical
             visible={this.state.right_menu_visible}
             width='thin'>
-              <Menu.Item as='a' href={`${SITE_URL}onlogin`}>
+              <Menu.Item as='a' href={`${SITE_URL}mypage`}>
               Back To My Page
               </Menu.Item>
               <Menu.Item as='a' href={`${SITE_URL}project/add`}>
@@ -259,7 +259,7 @@ class Projects extends Component {
                             floated='right'
                             circular
                             >
-                               {avatar(projects.creator.display_picture, projects.creator.username)}
+                               {avatar(projects.creator.display_picture, projects.creator.first_name)}
                             </Image>
                             <Card.Header as='h4'>{projects.creator.username}</Card.Header>
                             <Card.Meta>Enrollment No: {projects.creator.enrNo}</Card.Meta>
@@ -341,7 +341,7 @@ class Projects extends Component {
                     {this.state.ongoing_projects.map(projects =>{
                           return(
                             <Segment vertical key={projects.id}> 
-                            <Header as='a' href={`${API_URL}projects/` + projects.id} color='blue'>
+                            <Header as='a' href={`${SITE_URL}projects/` + projects.id} color='blue'>
                               <h3>
                               {projects.name}
                               </h3>
@@ -357,7 +357,7 @@ class Projects extends Component {
                             floated='right'
                             circular
                             >
-                               {avatar(projects.creator.display_picture, projects.creator.username)}
+                               {avatar(projects.creator.display_picture, projects.creator.first_name)}
                             </Image>
                             <Card.Header as='h4'>{projects.creator.username}</Card.Header>
                             <Card.Meta>Enrollment No: {projects.creator.enrNo}</Card.Meta>

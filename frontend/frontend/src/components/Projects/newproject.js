@@ -14,7 +14,6 @@ class newProject extends Component{
             name: '',
             wiki: '',
             status: 1,
-            creator: [],
             members: [],
             users_available: [],
             projectsMade: [],
@@ -37,6 +36,20 @@ class newProject extends Component{
                 })
                 console.log(this.state)
             }
+            console.log(this.state.users_available)
+            console.log(sessionStorage.getItem('pk'))
+            for(let i = 0; i<this.state.users_available.length; i++){
+                if(this.state.users_available[i].pk == sessionStorage.getItem('pk')){
+                    console.log('This is working')
+                    var array = [...this.state.users_available]
+                    array.splice(i, 1)
+                    this.setState({
+                        ...this.state,
+                        users_available: array
+                    })
+                    console.log(this.state.users_available)
+                }
+            }
         })
         axios({
             method: 'get',
@@ -50,7 +63,7 @@ class newProject extends Component{
         })
     }
     handleSubmit = event => {
-        if(this.state.name !== "" && this.state.wiki !== "" && this.state.creator.length !== 0 && this.state.members.length !== 0){
+        if(this.state.name !== "" && this.state.wiki !== "" && this.state.members.length !== 0){
                 axios({
                 method: 'get',
                 url: `${API_URL}project/add_project`,
@@ -58,7 +71,6 @@ class newProject extends Component{
                     name: this.state.name,
                     wiki: this.state.wiki,
                     status: this.state.status,
-                    creator: this.state.creator,
                     members: this.state.members
                 },
                 paramsSerializer: params => {
@@ -68,7 +80,7 @@ class newProject extends Component{
             }).then((response) => {
                 if(response.data.Status == 'Project Created'){
                     alert('Project Created')
-                    window.location = `${SITE_URL}onlogin/`
+                    window.location = `${SITE_URL}mypage/`
                 }
                 else{
                     alert('User not Authenticated or is disabled')
@@ -97,11 +109,11 @@ class newProject extends Component{
                 <Responsive minWidth={768}>
                 <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}onlogin`}>
+          <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -117,7 +129,7 @@ class newProject extends Component{
                 </Button>
               </div>
               <div className="item">
-                <Button primary href={`${SITE_URL}onlogin`}>
+                <Button primary href={`${SITE_URL}mypage`}>
                 Back to My Page
                 </Button>
               </div>
@@ -128,11 +140,11 @@ class newProject extends Component{
                 <Responsive maxWidth={768}>
                 <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}onlogin`}>
+            <a href={`${SITE_URL}mypage`}>
                 BugTracker
                 </a>
             </h2>
@@ -162,7 +174,7 @@ class newProject extends Component{
               <Menu.Item as='a' href={`${SITE_URL}issue/add`}>
                 Add New Issue
               </Menu.Item>
-              <Menu.Item as='a' href={`${SITE_URL}onlogin`}>
+              <Menu.Item as='a' href={`${SITE_URL}mypage`}>
               Back To My Page
               </Menu.Item>
                 </Sidebar>
@@ -282,26 +294,6 @@ class newProject extends Component{
                                 console.log(data.value)
                                 this.setState({
                                     members: data.value
-                                })
-                            }}
-                            />
-                            <br/>
-                            <h3>Project Creator</h3>
-                            <Dropdown
-                            placeholder='Select User'
-                            fluid
-                            search
-                            selection
-                            options={this.state.users_available.map(user => {
-                                return{
-                                    "key": user.pk,
-                                    "text": user.username,
-                                    "value": user.pk
-                                }
-                            })}
-                            onChange={(event, data) => {
-                                this.setState({
-                                    creator: data.value
                                 })
                             }}
                             />
@@ -430,26 +422,6 @@ class newProject extends Component{
                                 console.log(data.value)
                                 this.setState({
                                     members: data.value
-                                })
-                            }}
-                            />
-                            <br/>
-                            <h3>Project Creator</h3>
-                            <Dropdown
-                            placeholder='Select User'
-                            fluid
-                            search
-                            selection
-                            options={this.state.users_available.map(user => {
-                                return{
-                                    "key": user.pk,
-                                    "text": user.username,
-                                    "value": user.pk
-                                }
-                            })}
-                            onChange={(event, data) => {
-                                this.setState({
-                                    creator: data.value
                                 })
                             }}
                             />
