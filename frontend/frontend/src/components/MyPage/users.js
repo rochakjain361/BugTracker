@@ -40,16 +40,17 @@ class Users extends Component{
             method: 'get',
             url: `${API_URL}appusers/${id}/convert_role/`,
             params: {
-                new_role: new_role
+                new_role: new_role,
+                code: sessionStorage.getItem('access_token') 
             }            
         }).then((res) => {
             if(res.data.Status == 'Role Upgraded'){
                 alert('Role Upgraded')
-                window.location = `${SITE_URL}mypage/`
+                window.location = `${SITE_URL}onlogin/`
             }
             else if(res.data.Status == 'User is not an Admin'){
                 alert('Invalid Request user is not an admin.')
-                window.location = `${SITE_URL}mypage/`
+                window.location = `${SITE_URL}onlogin/`
             }
             else if(res.data.Status == 'User is disabled'){
                 alert('Admins disabled you :`(')
@@ -70,7 +71,8 @@ class Users extends Component{
             method: 'get',
             url: `${API_URL}appusers/${id}/disable_user/`,
             params: {
-                is_disabled: new_status 
+                is_disabled: new_status,
+                code: sessionStorage.getItem('access_token') 
             }
         }).then((res) => {
             if(res.data.status == 'User Status Changed'){
@@ -79,7 +81,7 @@ class Users extends Component{
             }
             else{
                 alert('User not eligible to perform this action')
-                window.location = `${SITE_URL}mypage/`
+                window.location = `${SITE_URL}onlogin/`
             }
         })
     }
@@ -219,11 +221,11 @@ class Users extends Component{
                  <Responsive minWidth={768}>
         <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}mypage`}>
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -250,11 +252,11 @@ class Users extends Component{
         <Responsive maxWidth={768}>
           <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>

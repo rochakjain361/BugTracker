@@ -39,7 +39,7 @@ class MyPage extends Component{
   componentDidMount() {
     axios({
       method:'get',
-      url: `${API_URL}appusers/my_page/`,
+      url: `${API_URL}appusers/my_page/?code=${this.props.access_token}`,
       withCredentials: true,
     }).then((response) => {
       console.log(response)
@@ -639,7 +639,8 @@ class MyPage extends Component{
         params: {
           tagName : this.state.tagName,
           icon: this.state.icon,
-          color : this.state.color
+          color : this.state.color,
+          code: sessionStorage.getItem('access_token') 
         }
       }).then(res => {
         if(res.data.Response == 'New Tag Created'){
@@ -919,11 +920,11 @@ class MyPage extends Component{
         <Responsive minWidth={768}>
         <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}mypage`}>
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -950,11 +951,11 @@ class MyPage extends Component{
         <Responsive maxWidth={768}>
           <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>

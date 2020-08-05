@@ -65,7 +65,6 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         try:
             user_data = user_data.json()
             user = AppUser.objects.get(enrNo=user_data["student"]["enrolmentNumber"])
-            print(user_data['person']['displayPicture'])
         except AppUser.DoesNotExist:
             #CHECK IMG MEMBER OR NOT
             in_img = False
@@ -105,13 +104,14 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
         else: 
             user.display_picture = user_data['person']['displayPicture']
         user.save()
-        login(request, user)
+        login(request=request, user=user)
         return Response({'status': 'User Exists', 'access_token': acs_token})
 
     @action(methods = ['get', 'options',], detail=False, url_path='my_page', url_name='my_page', permission_classes=[AllowAny])
     def get_my_page(self, request):
-        if request.user.is_authenticated and not request.user.is_disabled:
-            user = request.user
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
             serializer = AppUserSerializer(user)
             login(request=request, user=user)
 
@@ -129,29 +129,33 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                             'assigned_issues': serializer3.data,
                             'reported_issues': serializer4.data})
         
-        elif request.user.is_disabled:
+        elif user.is_disabled:
             return Response({'Status' : 'User is disabled'})
         else:
             return Response({'Status' : 'User not Authenticated'})
 
-    @action(methods = ['get',], detail = True, url_path='convert_role', url_name='convert_role')
+    @action(methods = ['get',], detail = True, url_path='convert_role', url_name='convert_role', permission_classes=[AllowAny])
     def convert_user_role(self, request, pk):
-        if request.user.is_authenticated and not request.user.is_disabled:
-            if request.user.user_role == 2:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
+            if user.user_role == 2:
                 user = AppUser.objects.get(pk=pk)
                 user.user_role = request.GET.get('new_role')
                 user.save()
                 return Response({'Status': 'Role Upgraded'})
             else: 
                 return Response({'Status': 'User is not an Admin'})
-        elif request.user.is_disabled:
+        elif user.is_disabled:
             return Response({'Status' : 'User is disabled'})
         else:
             return Response({'Status' : 'User not Authenticated'})
 
-    @action(methods = ['get',], detail=True, url_path='disable_user', url_name='disable_user')
+    @action(methods = ['get',], detail=True, url_path='disable_user', url_name='disable_user', permission_classes=[AllowAny])
     def disable_user(self, request, pk):
-        if request.user.user_role == 2 and not request.user.is_disabled and request.user.is_authenticated:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.user_role == 2 and not user.is_disabled and user.is_authenticated:
             user = AppUser.objects.get(pk = pk)
             user.is_disabled = request.GET.get('is_disabled')
             user.save()
@@ -161,7 +165,6 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
-    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -169,7 +172,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return ProjectGETSerializer
 
-    @action(methods=['get', ], detail=True, url_path='issues', url_name='issues')
+    @action(methods=['get', ], detail=True, url_path='issues', url_name='issues', permission_classes=[AllowAny])
     def get_issues(self, request, pk):
         try:
             issues_list = Issues.objects.filter(project=pk)
@@ -178,21 +181,23 @@ class ProjectViewSet(viewsets.ModelViewSet):
         ser = IssueGETSerializer(issues_list, many=True)
         return Response(ser.data)
 
-    @action(methods=['get', 'options'], detail=False, url_path='add_project', url_name='add_path')
+    @action(methods=['get', 'options'], detail=False, url_path='add_project', url_name='add_path', permission_classes=[AllowAny])
     def add_project(self, request):
-        if request.user.is_authenticated and not request.user.is_disabled:
+        code1 = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code1)
+        if user.is_authenticated and not user.is_disabled:
             code = request.GET
             name = request.GET.get('name')
             wiki = request.GET.get('wiki')
             status = request.GET.get('status')
-            creator = request.user
+            creator = user
             members = []
-            for x in range(len(code) - 3):
+            for x in range(len(code) - 4):
                 members.append(request.GET.get('members[%d]' % x))
             team_members = []
             for m in members:
                 team_members.append(AppUser.objects.get(pk = m))
-            team_members.append(request.user)
+            team_members.append(user)
             newProject = Project(name = name, wiki = wiki, status = status, creator = creator)
             newProject.save()
             newProject.members.set(team_members)
@@ -202,12 +207,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Status':'User Not Authenticated.'})
 
-    @action(methods=['get',], detail=True, url_path='status_update', url_name='status_update')
+    @action(methods=['get',], detail=True, url_path='status_update', url_name='status_update', permission_classes=[AllowAny])
     def update_status(self, request, pk):
-        if request.user.is_authenticated and not request.user.is_disabled:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
             project = Project.objects.get(pk =pk)
             creator = project.creator
-            if request.user == creator or request.user.user_role == 2 or request.user in project.members.all():
+            if user == creator or user.user_role == 2 or user in project.members.all():
                 status = request.GET.get('status')
                 print(status)
                 project.status = status
@@ -224,12 +231,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Status': 'User not authenticated or is disabled'})
 
-    @action(methods=['get',], detail=True, url_path='wiki_update', url_name='wiki_update')
+    @action(methods=['get',], detail=True, url_path='wiki_update', url_name='wiki_update', permission_classes=[AllowAny])
     def update_wiki(self, request, pk):
-        if request.user.is_authenticated and not request.user.is_disabled:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
             project = Project.objects.get(pk =pk)
             creator = project.creator
-            if request.user == creator or request.user.user_role == 2 or request.user in project.members.all():
+            if user == creator or user.user_role == 2 or user in project.members.all():
                 wiki = request.GET.get('wiki')
                 print(wiki)
                 project.wiki = wiki
@@ -242,12 +251,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Status': 'User not authenticated or is disabled'})
 
-    @action(methods=['get',], detail=True, url_path='add_team_members', url_name='add_team_members')
+    @action(methods=['get',], detail=True, url_path='add_team_members', url_name='add_team_members', permission_classes=[AllowAny])
     def add_team_members(self, request, pk):
-        if request.user.is_authenticated and not request.user.is_disabled:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
             project = Project.objects.get(pk =pk)
             creator = project.creator
-            if request.user == creator or request.user.user_role == 2:
+            if user == creator or user.user_role == 2:
                 members = []
                 for x in range(len(request.GET)):
                     members.append(request.GET.get('add_members[%d]' % x))
@@ -263,12 +274,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Status': 'User Disabled or not authenticated'})
     
-    @action(methods=['get',], detail=True, url_path='delete_project', url_name='delete_project')
+    @action(methods=['get',], detail=True, url_path='delete_project', url_name='delete_project', permission_classes=[AllowAny])
     def delete_project(self, request, pk):
-        if request.user.is_authenticated and not request.user.is_disabled:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
             project = Project.objects.get(pk= pk)
             creator = project.creator
-            if request.user == creator or request.user.user_role == 2:
+            if user == creator or user.user_role == 2:
                 instance = Mailer()
                 instance.deleteProject(project_name= project.name, team_members= project.members.all())
                 project.delete()
@@ -298,26 +311,28 @@ class IssuesViewSet(viewsets.ModelViewSet):
         else:
             return IssueGETSerializer
         
-    @action(methods=['get',], detail=True, url_path='comments', url_name='comments')
+    @action(methods=['get',], detail=True, url_path='comments', url_name='comments', permission_classes=[AllowAny])
     def get_issue_comments(self, request, pk):
         issue = Issues.objects.get(pk=pk)
         comments = Comment.objects.filter(issue=issue)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
 
-    @action(methods=['get',], detail=False, url_path='add_issue', url_name='add_issue')
+    @action(methods=['get',], detail=False, url_path='add_issue', url_name='add_issue', permission_classes=[AllowAny])
     def add_issue(self, request):
-        if request.user.is_authenticated and not request.user.is_disabled:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
             code = request.GET
             title = request.GET.get('title')
             description = request.GET.get('description')
             bug_status = request.GET.get('bug_status')
-            reported_by = request.user
+            reported_by = user
             project_id = request.GET.get('project')
             project = Project.objects.get(pk = project_id)
             print(code)
             tags = []
-            for x in range(len(code) - 4):
+            for x in range(len(code) - 5):
                 tags.append(request.GET.get('tags[%d]' % x))
             new_tags = []
             for m in tags:
@@ -333,13 +348,15 @@ class IssuesViewSet(viewsets.ModelViewSet):
         else: 
             return Response({'Status':'User not Authenticated or is disabled'})
 
-    @action(methods=['get',], detail=True, url_path='assign', url_name='assign')
+    @action(methods=['get',], detail=True, url_path='assign', url_name='assign', permission_classes=[AllowAny])
     def assign_issue(self, request, pk):
-        if request.user.is_authenticated and not request.user.is_disabled:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
             member_id = request.GET.get('memberId')
             issue = Issues.objects.get(pk=pk)
             project = issue.project
-            if request.user == project.creator or request.user.user_role == 2 or request.user in issue.project.members.all():
+            if user == project.creator or user.user_role == 2 or user in issue.project.members.all():
                 if AppUser.objects.get(pk=member_id) in issue.project.members.all():
                     issue.assigned_to = AppUser.objects.get(pk=member_id)
                     issue.bug_status = 2
@@ -354,12 +371,14 @@ class IssuesViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Response': 'User not authenticated or is disabled'})
 
-    @action(methods=['get',], detail=True, url_path='close_issue', url_name='close_issue')
+    @action(methods=['get',], detail=True, url_path='close_issue', url_name='close_issue', permission_classes=[AllowAny])
     def close_issue(self, request, pk):
-        if request.user.is_authenticated and not request.user.is_disabled:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
             issue = Issues.objects.get(pk = pk)
             project = issue.project
-            if request.user == creator or request.user.user_role == 2 or request.user in project.members.all() or request.user == issue.assigned_to:
+            if user == creator or user.user_role == 2 or user in project.members.all() or user == issue.assigned_to:
                 issue.bug_status = 3
                 instance = Mailer()
                 instance.closeIssue(issue= issue, project_name= issue.project, reported_by= issue.reported_by, team_members= issue.project.members.all())
@@ -370,12 +389,14 @@ class IssuesViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Response': 'User not authenticated or is disabled'})
 
-    @action(methods=['get',], detail=True, url_path='delete_issue', url_name='delete_issue')
+    @action(methods=['get',], detail=True, url_path='delete_issue', url_name='delete_issue', permission_classes=[AllowAny])
     def delete_issue(self, request, pk):
-        if request.user.is_authenticated and not request.user.is_disabled:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
             issue = Issues.objects.get(pk = pk)
             project = issue.project
-            if request.user == project.creator or request.user.user_role == 2 or request.user in project.members.all() or request.user == issue.assigned_to:
+            if user == project.creator or user.user_role == 2 or user in project.members.all() or user == issue.assigned_to:
                 instance = Mailer()
                 instance.deleteIssue(issue= issue, project_name= issue.project, reported_by= issue.reported_by, team_members= issue.project.members.all())
                 issue.delete()
@@ -408,10 +429,12 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tags.objects.all()
     serializer_class = TagSerializer
 
-    @action(methods=['get',], detail=False, url_path='new_tag', url_name='new_tag')
+    @action(methods=['get',], detail=False, url_path='new_tag', url_name='new_tag', permission_classes=[AllowAny])
     def new_tag(self, request):
-        if request.user.is_authenticated and not request.user.is_disabled:
-            if request.user.user_role == 2:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
+            if user.user_role == 2:
                 tagName = request.GET.get('tagName')
                 icon = request.GET.get('icon')
                 color = request.GET.get('color')
@@ -423,9 +446,11 @@ class TagViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Response': 'User not authenticated'})
     
-    @action(methods=['get',], detail=True, url_path='tag_issues', url_name='tag_issues')
+    @action(methods=['get',], detail=True, url_path='tag_issues', url_name='tag_issues', permission_classes=[AllowAny])
     def tag_issues(self, request, pk):
-        if request.user.is_authenticated and not request.user.is_disabled:
+        code = request.GET.get('code')
+        user = AppUser.objects.get(access_token = code)
+        if user.is_authenticated and not user.is_disabled:
             tag = Tags.objects.get(pk = pk)
             issues = Issues.objects.filter(tags = tag)
             serializer = IssueGETSerializer(issues, many=True)

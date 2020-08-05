@@ -71,7 +71,8 @@ class newProject extends Component{
                     name: this.state.name,
                     wiki: this.state.wiki,
                     status: this.state.status,
-                    members: this.state.members
+                    members: this.state.members,
+                    code: sessionStorage.getItem('access_token') 
                 },
                 paramsSerializer: params => {
                     return qs.stringify(params)
@@ -80,7 +81,7 @@ class newProject extends Component{
             }).then((response) => {
                 if(response.data.Status == 'Project Created'){
                     alert('Project Created')
-                    window.location = `${SITE_URL}mypage/`
+                    window.location = `${SITE_URL}onlogin/`
                 }
                 else{
                     alert('User not Authenticated or is disabled')
@@ -109,11 +110,11 @@ class newProject extends Component{
                 <Responsive minWidth={768}>
                 <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}mypage`}>
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -129,7 +130,7 @@ class newProject extends Component{
                 </Button>
               </div>
               <div className="item">
-                <Button primary href={`${SITE_URL}mypage`}>
+                <Button primary href={`${SITE_URL}onlogin`}>
                 Back to My Page
                 </Button>
               </div>
@@ -140,11 +141,11 @@ class newProject extends Component{
                 <Responsive maxWidth={768}>
                 <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -174,7 +175,7 @@ class newProject extends Component{
               <Menu.Item as='a' href={`${SITE_URL}issue/add`}>
                 Add New Issue
               </Menu.Item>
-              <Menu.Item as='a' href={`${SITE_URL}mypage`}>
+              <Menu.Item as='a' href={`${SITE_URL}onlogin`}>
               Back To My Page
               </Menu.Item>
                 </Sidebar>

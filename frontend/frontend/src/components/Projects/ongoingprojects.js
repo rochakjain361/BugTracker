@@ -113,17 +113,17 @@ class Projects extends Component {
               <Responsive minWidth={768}>
               <div className="ui fixed inverted menu">
                     <div className="ui container">
-                    <a href={`${SITE_URL}mypage`}>
+                    <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
             <div className="right menu">
               <div className="item">
-                <Button primary href={`${SITE_URL}mypage`}>
+                <Button primary href={`${SITE_URL}onlogin`}>
                   Back To My Page
                 </Button>
               </div>
@@ -144,11 +144,11 @@ class Projects extends Component {
               <Responsive maxWidth={768}>
               <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -172,7 +172,7 @@ class Projects extends Component {
             vertical
             visible={this.state.right_menu_visible}
             width='thin'>
-              <Menu.Item as='a' href={`${SITE_URL}mypage`}>
+              <Menu.Item as='a' href={`${SITE_URL}onlogin`}>
               Back To My Page
               </Menu.Item>
               <Menu.Item as='a' href={`${SITE_URL}project/add`}>

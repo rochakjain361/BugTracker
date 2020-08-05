@@ -22,7 +22,10 @@ class Tags extends Component{
 
         axios({
             method: 'get',
-            url: `${API_URL}tags/${id}/tag_issues/`
+            url: `${API_URL}tags/${id}/tag_issues/`,
+            params:{
+              code: sessionStorage.getItem('access_token') 
+            }
         }).then((res) => {
             console.log(res.data)
             if(res.statusText == 'OK'){
@@ -138,11 +141,11 @@ class Tags extends Component{
           <Responsive minWidth={768}>
           <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}mypage`}>
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -169,11 +172,11 @@ class Tags extends Component{
           <Responsive maxWidth={768}>
           <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>

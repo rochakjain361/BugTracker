@@ -144,7 +144,8 @@ class ProjectDetails extends Component{
         method: 'get',
         url: `${API_URL}project/${this.state.project.id}/status_update/`,
         params : {
-          status : this.state.newStatus
+          status : this.state.newStatus,
+          code: sessionStorage.getItem('access_token') 
         }
       }).then((response) => {
         if(response.data.Status == 'Status Updated'){
@@ -169,7 +170,8 @@ class ProjectDetails extends Component{
         method: 'get',
         url: `${API_URL}project/${this.state.project.id}/wiki_update/`,
         params: {
-          wiki: this.state.wiki
+          wiki: this.state.wiki,
+          code: sessionStorage.getItem('access_token') 
         }
       }).then((response) => {
         if(response.data.Status == 'Wiki Updated'){
@@ -194,7 +196,8 @@ class ProjectDetails extends Component{
         method: 'get',
         url: `${API_URL}project/${this.state.project.id}/add_team_members/`,
         params: {
-          add_members: this.state.new_members
+          add_members: this.state.new_members,
+          code: sessionStorage.getItem('access_token') 
         },
         paramsSerializer: params => {
           return qs.stringify(params)
@@ -220,11 +223,14 @@ class ProjectDetails extends Component{
       if(this.state.delete_project_name === this.state.project.name){
         axios({
           method: 'get',
-          url: `${API_URL}project/${this.state.project.id}/delete_project/`
+          url: `${API_URL}project/${this.state.project.id}/delete_project/`,
+          params:{
+            code: sessionStorage.getItem('access_token') 
+          }
         }).then((res) => {
           if(res.data.Status == 'Project Deleted'){
             alert('Project Deleted')
-            window.location = `${SITE_URL}mypage`
+            window.location = `${SITE_URL}onlogin`
           }
           else if(res.data.Status == 'User not an Admin or the project Creator'){
             alert('You cannot delete this project')
@@ -606,10 +612,10 @@ class ProjectDetails extends Component{
               <Responsive minWidth={768}>
               <div className="ui fixed inverted menu">
                 <div className="ui container">
-                <a href={`${SITE_URL}mypage`}>
+                <a href={`${SITE_URL}onlogin`}>
                 <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
                   </a>
-                  <a href={`${SITE_URL}mypage`}>
+                  <a href={`${SITE_URL}onlogin`}>
                   <h2 className="header item">
                     BugTracker 
                   </h2> 
@@ -637,11 +643,11 @@ class ProjectDetails extends Component{
               <Responsive maxWidth={768}>
               <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4, marginLeft: 30}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>

@@ -110,6 +110,15 @@ CHANNEL_LAYERS ={
         }
 
 # Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',	
+        'OPTIONS': {	       
+            'read_default_file': '/etc/mysql/my.cnf',	            'read_default_file': '/etc/mysql/my.cnf',
+        },
+    }
+}
+
 REST_FRAMEWORK = {
     #'DEFAULT_PERMISSION_CLASSES': [
     #    'rest_framework.permissions.IsAuthenticated',
@@ -123,21 +132,6 @@ REST_FRAMEWORK = {
 }
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            # 'use_unicode': True,
-            'database': "bugtracker_data",
-            'user': 'root',
-            'password':  base_config['secrets']['mysqlPassword'],
-            # 'read_default_file': '/etc/mysql/my.cnf',
-        }
-    }
-}
 
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

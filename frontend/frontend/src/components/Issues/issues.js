@@ -128,7 +128,7 @@ class IssueComments extends Component{
 
         axios({
             method: 'get',
-            url: `${API_URL}issues/${id}/assign/?memberId=${this.state.assignee}`
+            url: `${API_URL}issues/${id}/assign/?memberId=${this.state.assignee}&?code=${sessionStorage.getItem('access_token')}`
         }).then((res) =>{
             if(res.data.Response == 'User Assigned'){
                 alert('User Assigned to this Issue')
@@ -151,7 +151,10 @@ class IssueComments extends Component{
 
         axios({
             method: 'get',
-            url: `${API_URL}issues/${id}/close_issue/`
+            url: `${API_URL}issues/${id}/close_issue/`,
+            params:{
+                code: sessionStorage.getItem('access_token')
+            }
         }).then((res) => {
             if(res.data.Response == 'Issue Closed'){
                 alert('Issue Closed')
@@ -176,11 +179,14 @@ class IssueComments extends Component{
         if(this.state.delete_issue_name == this.state.issue.title){
             axios({
                 method: 'get',
-                url: `${API_URL}issues/${id}/delete_issue/`
+                url: `${API_URL}issues/${id}/delete_issue/`,
+                params:{
+                    code: sessionStorage.getItem('access_token') 
+                }
             }).then((res) => {
                 if(res.data.Response == 'Issue Deleted'){
                     alert('Issue Deleted')
-                    window.location = `${SITE_URL}mypage`
+                    window.location = `${SITE_URL}onlogin`
                 }
                 else if(res.data.Response == 'User cannot delete this issue'){
                     alert('You cannot delete this issue')
@@ -291,11 +297,11 @@ class IssueComments extends Component{
             <Responsive minWidth={768}>
             <div className="ui fixed inverted menu">
           <div className="ui container">
-          <a href={`${SITE_URL}mypage`}>
+          <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>
@@ -322,11 +328,11 @@ class IssueComments extends Component{
             <Responsive maxWidth={768}>
             <Menu fixed inverted>
             <Container>
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
           <img src={logo} height="60px" width="60px" style={{marginTop: 4}}/>
            </a> 
            <h2 className="header item">
-            <a href={`${SITE_URL}mypage`}>
+            <a href={`${SITE_URL}onlogin`}>
                 BugTracker
                 </a>
             </h2>

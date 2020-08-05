@@ -34,7 +34,8 @@ class OnLogin extends Component{
                         got_response: true,
                         access_token: response.data["access_token"],
                     });
-                    console.log(this.state)
+                    sessionStorage.clear();	
+                    sessionStorage.setItem('access_token', this.state.access_token)
                 }
                 else if(response.data["status"] === "User not in IMG"){
                     this.setState({
@@ -49,7 +50,8 @@ class OnLogin extends Component{
                         got_response: true,
                         access_token: response.data["access_token"]
                     })
-                    console.log(this.state)
+                    sessionStorage.clear();	
+                    sessionStorage.setItem('access_token', this.state.access_token)
                 }
             })
         }
@@ -58,12 +60,15 @@ class OnLogin extends Component{
     render(){
         if(this.state.got_response){
             if(this.state.user_found){
-                return(<MyPage />)
+                return(<MyPage access_token={this.state.access_token}/>)
             }
             else {
                 alert("You must be an IMG member to use this app");
                 return (<Redirect to ="/" exact/>)
             }
+        }
+        else if(!(sessionStorage.length == 0)){	
+            return(<MyPage access_token = {sessionStorage.getItem('access_token')}/>)	
         }
         else{
             return(
