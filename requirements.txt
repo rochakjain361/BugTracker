@@ -20,7 +20,7 @@ django-guardian==2.2.0
 django-oauth-toolkit==1.3.2
 django-rest-auth==0.9.5
 django-richtextfield==1.5.0
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 hiredis==1.0.1
 hyperlink==19.0.0
 idna==2.9
