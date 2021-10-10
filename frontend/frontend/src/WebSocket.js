@@ -25,23 +25,23 @@ class WebSocketService {
       this.socketNewMessage(e.data);
     };
 
-    this.socketRef.onopen = () => {
-      //console.log("WebSocket open");
-    };
+    // this.socketRef.onopen = () => {
+    //   console.log("WebSocket open");
+    // };
 
-    this.socketRef.onerror = (e) => {
-      console.log(e.message);
-    };
+    // this.socketRef.onerror = (e) => {
+    //   console.log(e.message);
+    // };
 
     this.socketRef.onclose = () => {
-      console.log("WebSocket closed, restarting..");
+      //   console.log("WebSocket closed, restarting..");
       this.connect();
     };
   }
 
   socketNewMessage(data) {
     const parsedData = JSON.parse(data);
-    //console.log('Message:',parsedData)
+    // console.log('Message:',parsedData)
     const command = parsedData.command;
     if (Object.keys(this.callbacks).length === 0) {
       return;
@@ -50,7 +50,7 @@ class WebSocketService {
       this.callbacks[command](parsedData.comments);
     }
     if (command === "new_comment") {
-      console.log("okay so this was called");
+      //   console.log("okay so this was called");
       this.callbacks[command](parsedData.comment);
     }
   }
@@ -79,10 +79,10 @@ class WebSocketService {
 
   sendComment(data) {
     try {
-      //console.log({...data})
+      //   console.log({...data})
       this.socketRef.send(JSON.stringify({ ...data }));
     } catch (err) {
-      console.log(err.message);
+      //   console.log(err.message);
     }
   }
   state() {
@@ -93,13 +93,13 @@ class WebSocketService {
     const recursion = this.waitForSocketConnection;
     setTimeout(function () {
       if (socket.readyState === 1) {
-        console.log("Connection is made");
+        // console.log("Connection is made");
         if (callback != null) {
           callback();
         }
         return;
       } else {
-        console.log("Wait for connection..");
+        // console.log("Wait for connection..");
         recursion(callback);
       }
     }, 1);
