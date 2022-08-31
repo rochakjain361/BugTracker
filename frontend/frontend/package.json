@@ -10,7 +10,7 @@
     "@tinymce/tinymce-react": "^3.6.0",
     "axios": "^0.21.1",
     "moment": "^2.26.0",
-    "moment-timezone": "^0.5.31",
+    "moment-timezone": "^0.5.35",
     "prop-types": "^15.7.2",
     "qs": "^6.9.4",
     "react": "^16.13.1",
