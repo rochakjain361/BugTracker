@@ -21,10 +21,7 @@ class IssuesViewSet(viewsets.ModelViewSet):
     queryset = Issues.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return IssuePOSTSerializer
-        else:
-            return IssueGETSerializer
+        return IssuePOSTSerializer
         
     @action(methods=['get',], detail=True, url_path='comments', url_name='comments', permission_classes=[AllowAny])
     def get_issue_comments(self, request, pk):
