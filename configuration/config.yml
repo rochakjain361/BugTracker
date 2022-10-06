@@ -5,5 +5,5 @@ secrets:
   mysqlPassword: '' #MySQL Database Password 
 services:
   mailing:
-    email_host_user: 'bugtracker274@gmail.com' # email address
-    email_host_password: '@Bugtracker53' # email password
+    email_host_user: # email address
+    email_host_password: # email password
