@@ -57,8 +57,6 @@ class IssuesViewSet(viewsets.ModelViewSet):
             instance.newIssueOpened(project_name=project.name, issue_title= title, reported_by=reported_by, team_members=project.members.all())
 
             return Response({'Status':'New Issue Added', 'Id': issue.pk})
-        else: 
-            return Response({'Status':'User not Authenticated or is disabled'})
 
     @action(methods=['get',], detail=True, url_path='assign', url_name='assign', permission_classes=[AllowAny])
     def assign_issue(self, request, pk):
