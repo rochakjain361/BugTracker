@@ -18,8 +18,7 @@ class ProjectGETSerializer(serializers.ModelSerializer):
 class ProjectPOSTSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
-        fields = ['name', 'wiki', 'status', 'creator', 'members', 'created_at', 'id']
-        read_only_fields = ['id', 'created_at']
+        fields = '__all__'
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
