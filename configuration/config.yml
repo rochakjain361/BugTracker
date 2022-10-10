@@ -1,8 +1,8 @@
 secrets:
-  secretKey: 'o%bv+g)ca%(pn2nk#owwin=h$xoqg1vzhqp3f27!6)twvrpg23' #your secret key
-  clientID: 'gfZHj4O7eZKrzv8Vpgqi1s5kKWgvgyFCf5vt822c' #OAuth Client ID
-  clientSecret: '0DTRwGP07h4r4gF7IUGdEvpw6jp9mvk7hYchwDldW1PjnqvbhBacIFXBeFSA0etDI8CBouTGeJb42t9hEOhraSXcRWkUrSZ2bidOjawPD4QZBCGiuZV0F4emsGSmYxMz' #OAuth Client Secret
-  mysqlPassword: '' #MySQL Database Password 
+  secretKey:  #your secret key
+  clientID:  #OAuth Client ID
+  clientSecret: #OAuth Client Secret
+  mysqlPassword: #MySQL Database Password 
 services:
   mailing:
     email_host_user: # email address
