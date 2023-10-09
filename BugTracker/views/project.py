@@ -32,7 +32,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         code1 = request.GET.get('code')
         user = AppUser.objects.get(access_token = code1)
         if user.is_authenticated and not user.is_disabled:
-            code = request.GET
             name = request.GET.get('name')
             wiki = request.GET.get('wiki')
             status = request.GET.get('status')
@@ -86,7 +85,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
             creator = project.creator
             if user == creator or user.user_role == 2 or user in project.members.all():
                 wiki = request.GET.get('wiki')
-                print(wiki)
                 project.wiki = wiki
                 project.save()
                 instance = Mailer()
