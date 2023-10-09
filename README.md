@@ -1,5 +1,4 @@
 # BugTracker
-IMG Summer Project
 
 ## Set Up Instructions for Backend
 * Clone this repository to a folder on your device.
@@ -9,7 +8,7 @@ IMG Summer Project
 pip install -r requirements.txt
 ```
 (using Python version 3.6.9 in virtual environment)
-* Create a MySQL Database name ```bugtracker_data``` (the name of the database can be changed to something else too, but for that update the settings.py in the IMG_Summer_Project folder)
+* Create a MySQL Database name ```bugtracker_data``` 
 * From the root directory execute the following commands:
 1. ```cd configuration``` <br>
 2. ```vi config.yml``` <br>
@@ -20,7 +19,6 @@ pip install -r requirements.txt
 3. ```redis-server``` <br>
 4. ```python manage.py runserver``` this runs the server. <br> 
 * Tags in the App should be added manually by the setup setter. You can either populate the database with tags by going to <a href=" http://127.0.0.1:8000/tags/"> http://127.0.0.1:8000/tags/</a> or otherwise you should be admin in the app to add more tags<br>
-* Backend is now ready for the roll.<br>
 
 ## Set Up Intructions for frontend
 * From the root directory of the project switch to frontend, then execute the following commands:
