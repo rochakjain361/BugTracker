@@ -13,20 +13,12 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AppUser.objects.all()
     serializer_class = AppUserSerializer
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
     def perform_destroy(self, instance):
         instance.delete()
 
     @action(methods=['get', ], detail=False, url_name='onlogin', url_path='onlogin', permission_classes=[AllowAny])
     def on_login(self, request):
         code = request.GET.get('code')
-        print(code)
-        #GETTING THE AUTHORISATION CODE
-        
         url = 'https://internet.channeli.in/open_auth/token/'
         data = {
                 'client_id': base_config['secrets']['clientID'],
@@ -37,11 +29,8 @@ class AppUserViewSet(viewsets.ReadOnlyModelViewSet):
                 } 
         
         user_data = requests.post(url=url, data=data).json()
-        print(user_data)
         acs_token = user_data['access_token']
-        #print(acs_token)
-        
-        #GET ACCESS TOKEN
+
         
         headers={
                 'Authorization':'Bearer ' + acs_token
