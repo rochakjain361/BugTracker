@@ -24,24 +24,18 @@ COLORS = (
         (1, 'red'),
         (2, 'orange'),
         (3, 'yellow'),
-        (4, 'olive'),
-        (5, 'green'),
-        (6, 'teal'),
-        (7, 'blue'),
-        (8, 'violet'),
-        (9, 'purple'),
-        (10, 'pink'),
-        (11, 'brown'),
-        (12, 'grey'),
-        (13, 'black')
+        (4, 'green'),
+        (5, 'blue'),
+        (6, 'indigo'),
+        (7, 'violet')
 )
 
 class AppUser(AbstractUser):
     user_role = models.IntegerField(choices = USER_ROLE, default = 1)
     display_picture = models.CharField(max_length=500)
-    enrNo = models.IntegerField(default=0)
-    access_token = models.CharField(max_length=100, default='', blank=True)
-    is_disabled = models.BooleanField(default=0)
+    enrNo = models.IntegerField()
+    access_token = models.CharField(max_length=100, blank=True)
+    is_disabled = models.BooleanField()
     def __str__(self):
         return self.get_username()
 
